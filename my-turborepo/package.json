@@ -4,6 +4,9 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:host": "turbo run dev --filter=web-host",
+    "dev:auth": "turbo run dev --filter=web-mfe-auth",
+    "dev:sequential": "pnpm dev:host & sleep 3 && pnpm dev:auth",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
