@@ -1,3 +1,7 @@
+"use client";
+
+import { Button } from "@repo/ui/button";
+
 export default function Home() {
   return (
     <div
@@ -30,6 +34,11 @@ export default function Home() {
       >
         Seu assistente de bem-estar cognitivo
       </p>
+
+      {/* Adicione o botao do package aqui */}
+      <Button style={{ marginTop: 24 }} onClick={() => alert("Botão clicado!")}>
+        Clique aqui
+      </Button>
     </div>
   );
 }
