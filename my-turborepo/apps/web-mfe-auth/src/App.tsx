@@ -1,13 +1,22 @@
-import { Button } from "@repo/ui/button";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { LoginForm } from "./components/LoginForm";
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 function App() {
   return (
-    <>
-      <h1>Hello from Web MFE Auth!</h1>
-      <Button onClick={() => alert("Button clicked!")}>
-        Click me - Auth MFE
-      </Button>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <LoginForm />
+    </QueryClientProvider>
   );
 }
 
