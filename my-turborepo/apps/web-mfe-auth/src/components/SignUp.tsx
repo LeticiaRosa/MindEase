@@ -80,7 +80,7 @@ export function SignUp({ onToggleMode }: SignUpProps) {
   return (
     <Card className="w-full max-w-md mx-auto ">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold">Criar Conta</CardTitle>
+        <CardTitle className="text-2xl font-bold">Começe agora</CardTitle>
         <CardDescription>
           Preencha os dados para criar sua conta
         </CardDescription>
