@@ -15,3 +15,5 @@ export * from "./hooks/use-auth-toast";
 
 // Utils
 export * from "./lib/utils";
+
+export { Toaster } from "./components/ui/sonner";

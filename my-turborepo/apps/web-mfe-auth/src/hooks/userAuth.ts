@@ -42,6 +42,15 @@ class AuthenticationService {
     return await supabase.auth.signOut();
   }
 
+  public async signInWithMagicLink(email: string, redirectTo?: string) {
+    return await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: redirectTo || window.location.origin,
+      },
+    });
+  }
+
   public async getSession(): Promise<Session | null> {
     const { data } = await supabase.auth.getSession();
     return data.session;
@@ -115,6 +124,22 @@ export function useAuth() {
     },
     onError: (error) => {
       console.error("Sign out error:", error);
+    },
+  });
+
+  const signInWithMagicLinkMutation = useMutation({
+    mutationFn: ({
+      email,
+      redirectTo,
+    }: {
+      email: string;
+      redirectTo?: string;
+    }) => authService.signInWithMagicLink(email, redirectTo),
+    onSuccess: () => {
+      // Magic link will authenticate on callback, no immediate user update
+    },
+    onError: (error: AuthError) => {
+      console.error("Magic link error:", error);
     },
   });
 
@@ -208,16 +233,58 @@ export function useAuth() {
     }
   };
 
+  const signInWithMagicLink = async (email: string, redirectTo?: string) => {
+    try {
+      const result = await signInWithMagicLinkMutation.mutateAsync({
+        email,
+        redirectTo,
+      });
+
+      if (result.error) {
+        return {
+          success: false,
+          error: {
+            message: result.error.message,
+            status: result.error.status,
+          },
+        };
+      }
+
+      // Log magic link request to our tracking table
+      try {
+        await supabase.from("magic_link_requests").insert({
+          email,
+          used: false,
+        });
+      } catch (trackingError) {
+        console.warn("Failed to track magic link request:", trackingError);
+      }
+
+      return { success: true };
+    } catch (error: unknown) {
+      const authError = error as AuthError;
+      return {
+        success: false,
+        error: {
+          message: authError?.message || "Erro ao enviar magic link",
+          status: authError?.status || 500,
+        },
+      };
+    }
+  };
+
   return {
     user,
     loading:
       userLoading ||
       signInMutation.isPending ||
       signUpMutation.isPending ||
-      signOutMutation.isPending,
+      signOutMutation.isPending ||
+      signInWithMagicLinkMutation.isPending,
     error: userError ? userError : null,
     signIn,
     signUp,
     signOut,
+    signInWithMagicLink,
   };
 }

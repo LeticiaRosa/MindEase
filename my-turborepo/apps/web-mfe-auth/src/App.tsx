@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Auth from "./components/Auth";
 
-// Create a client
+// Create a clients
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
