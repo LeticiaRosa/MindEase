@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthForm } from "./components/AuthForm";
+import Auth from "./components/Auth";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -15,9 +15,7 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-r from-amber-300 to-amber-800">
-        <AuthForm />
-      </div>
+      <Auth />
     </QueryClientProvider>
   );
 }

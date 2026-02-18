@@ -1,12 +1,14 @@
 import { defineConfig } from "vite";
-import viteReact from "@vitejs/plugin-react";
+import react from "@vitejs/plugin-react";
 import { federation } from "@module-federation/vite";
+import tailwindcss from "@tailwindcss/vite";
 import { resolve } from "node:path";
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    viteReact(),
+    react(),
+    tailwindcss(),
     federation({
       name: "host",
       filename: "remoteEntry.js",
@@ -31,6 +33,9 @@ export default defineConfig({
           requiredVersion: "^18.3.1",
           singleton: true,
         },
+        "@tanstack/react-query": {
+          singleton: true,
+        },
       },
     }),
   ],
@@ -48,7 +53,7 @@ export default defineConfig({
   build: {
     target: "esnext",
     minify: true,
-    cssCodeSplit: true,
+    cssCodeSplit: false,
     rollupOptions: {
       output: {
         assetFileNames: "assets/[name]-[hash][extname]",

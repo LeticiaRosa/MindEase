@@ -15,7 +15,7 @@ export default defineConfig({
       manifest: true,
       dts: false,
       exposes: {
-        "./auth": "./src/App.tsx",
+        "./auth": "./src/export.tsx",
       },
       shared: {
         react: {
@@ -24,6 +24,9 @@ export default defineConfig({
         },
         "react-dom": {
           requiredVersion: "^18.3.1",
+          singleton: true,
+        },
+        "@tanstack/react-query": {
           singleton: true,
         },
       },
@@ -45,7 +48,7 @@ export default defineConfig({
   build: {
     target: "esnext",
     minify: true,
-    cssCodeSplit: true,
+    cssCodeSplit: false,
     rollupOptions: {
       output: {
         assetFileNames: "assets/[name]-[hash][extname]",
