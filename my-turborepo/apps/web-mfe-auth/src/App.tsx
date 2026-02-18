@@ -15,7 +15,7 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-r from-amber-400 to-amber-700">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-r from-amber-300 to-amber-800">
         <AuthForm />
       </div>
     </QueryClientProvider>
