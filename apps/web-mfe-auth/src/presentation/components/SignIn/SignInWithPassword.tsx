@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
   TabsContent,
   Button,
@@ -13,14 +12,11 @@ import {
   FormMessage,
   useAuthToast,
 } from "@repo/ui";
-import { useAuth } from "../../hooks/userAuth";
-
-const loginSchema = z.object({
-  email: z.string().email("Email inválido"),
-  password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
+import { useAuth } from "@/presentation/hooks/useAuth";
+import {
+  loginSchema,
+  type LoginFormData,
+} from "@/domain/valueObjects/authSchemas";
 
 export function SignInWithPassword() {
   const { signIn, loading, error } = useAuth();

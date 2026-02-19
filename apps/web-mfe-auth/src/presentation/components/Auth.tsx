@@ -2,19 +2,11 @@ import { useState } from "react";
 import { SignIn } from "./SignIn";
 import { SignUp } from "./SignUp";
 import { Toaster } from "@repo/ui";
-// import { useAuth } from '../hooks/userAuth'
 
 export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
-  // const { user } = useAuth()
 
   const toggleMode = () => setIsSignUp(!isSignUp);
-
-  /*
-  if (user) {
-    return <UserProfile />
-  }
-    */
 
   return (
     <div>

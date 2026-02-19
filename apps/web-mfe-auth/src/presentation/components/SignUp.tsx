@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
   Card,
   CardContent,
@@ -18,21 +17,11 @@ import {
   FormMessage,
   useAuthToast,
 } from "@repo/ui";
-import { useAuth } from "../hooks/userAuth";
-
-const signUpSchema = z
-  .object({
-    email: z.string().email("Email inválido"),
-    password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
-    confirmPassword: z.string().min(6, "Confirmação de senha obrigatória"),
-    fullName: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Senhas não coincidem",
-    path: ["confirmPassword"],
-  });
-
-type SignUpFormData = z.infer<typeof signUpSchema>;
+import { useAuth } from "@/presentation/hooks/useAuth";
+import {
+  signUpSchema,
+  type SignUpFormData,
+} from "@/domain/valueObjects/authSchemas";
 
 interface SignUpProps {
   onToggleMode: () => void;
@@ -54,7 +43,6 @@ export function SignUp({ onToggleMode }: SignUpProps) {
 
   const onSignUpSubmit = async (data: SignUpFormData) => {
     try {
-      // Criando uma promise que rejeita em caso de erro
       const signUpPromise = signUp(
         data.email,
         data.password,
@@ -72,7 +60,7 @@ export function SignUp({ onToggleMode }: SignUpProps) {
         success: `Conta criada com sucesso! Bem-vindo, ${data.fullName}!`,
         error: (error) => error.message,
       });
-    } catch (error) {
+    } catch {
       // O toast.promise já mostra a mensagem de erro
     }
   };

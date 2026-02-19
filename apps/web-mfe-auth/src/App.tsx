@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Auth from "./components/Auth";
+import Auth from "./presentation/components/Auth";
 
 // Create a clients
 const queryClient = new QueryClient({

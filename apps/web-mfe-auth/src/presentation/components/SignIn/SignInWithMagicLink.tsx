@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
   TabsContent,
   Button,
@@ -15,13 +14,11 @@ import {
   useAuthToast,
 } from "@repo/ui";
 import { CheckCircle2, Sparkles } from "lucide-react";
-import { useAuth } from "../../hooks/userAuth";
-
-const magicLinkSchema = z.object({
-  email: z.string().email("Email inválido"),
-});
-
-type MagicLinkFormData = z.infer<typeof magicLinkSchema>;
+import { useAuth } from "@/presentation/hooks/useAuth";
+import {
+  magicLinkSchema,
+  type MagicLinkFormData,
+} from "@/domain/valueObjects/authSchemas";
 
 export function SignInWithMagicLink() {
   const { signInWithMagicLink, loading, error } = useAuth();

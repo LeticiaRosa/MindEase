@@ -5,8 +5,3 @@ export type User = {
     full_name?: string;
   };
 };
-
-export type AuthError = {
-  message: string;
-  status?: number;
-};

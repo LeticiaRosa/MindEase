@@ -9,7 +9,7 @@ import {
   CardTitle,
   Button,
 } from "@repo/ui";
-import { useAuth } from "../hooks/userAuth";
+import { useAuth } from "@/presentation/hooks/useAuth";
 import { Mail, Sparkles } from "lucide-react";
 import { SignInWithMagicLink } from "./SignIn/SignInWithMagicLink";
 import { SignInWithPassword } from "./SignIn/SignInWithPassword";
