@@ -1,5 +1,6 @@
+import { RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Auth from "@/presentation/components/Auth";
+import { router } from "@/presentation/router";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,7 +15,7 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Auth />
+      <RouterProvider router={router} />
     </QueryClientProvider>
   );
 }
