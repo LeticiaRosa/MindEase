@@ -9,16 +9,14 @@ import {
   CardTitle,
   Button,
 } from "@repo/ui";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/presentation/hooks/useAuth";
 import { Mail, Sparkles } from "lucide-react";
 import { SignInWithMagicLink } from "./SignIn/SignInWithMagicLink";
 import { SignInWithPassword } from "./SignIn/SignInWithPassword";
 
-interface SignInProps {
-  onToggleMode: () => void;
-}
-
-export function SignIn({ onToggleMode }: SignInProps) {
+export function SignIn() {
+  const navigate = useNavigate();
   const { loading } = useAuth();
 
   return (
@@ -53,7 +51,11 @@ export function SignIn({ onToggleMode }: SignInProps) {
         </Tabs>
 
         <div className="mt-4 text-center">
-          <Button variant="link" onClick={onToggleMode} disabled={loading}>
+          <Button
+            variant="link"
+            onClick={() => navigate("/register")}
+            disabled={loading}
+          >
             Não tem conta? Criar conta
           </Button>
         </div>

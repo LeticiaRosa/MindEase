@@ -17,17 +17,15 @@ import {
   FormMessage,
   useAuthToast,
 } from "@repo/ui";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/presentation/hooks/useAuth";
 import {
   signUpSchema,
   type SignUpFormData,
 } from "@/domain/valueObjects/authSchemas";
 
-interface SignUpProps {
-  onToggleMode: () => void;
-}
-
-export function SignUp({ onToggleMode }: SignUpProps) {
+export function SignUp() {
+  const navigate = useNavigate();
   const { signUp, loading, error } = useAuth();
   const toast = useAuthToast();
 
@@ -157,7 +155,11 @@ export function SignUp({ onToggleMode }: SignUpProps) {
         </Form>
 
         <div className="mt-4 text-center">
-          <Button variant="link" onClick={onToggleMode} disabled={loading}>
+          <Button
+            variant="link"
+            onClick={() => navigate("/login")}
+            disabled={loading}
+          >
             Já tem uma conta? Faça login
           </Button>
         </div>

@@ -77,7 +77,8 @@ export class SupabaseAuthRepository implements IAuthRepository {
     const { error } = await supabaseClient.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: redirectTo || window.location.origin,
+        emailRedirectTo:
+          redirectTo || `${window.location.origin}/auth/callback`,
       },
     });
 
