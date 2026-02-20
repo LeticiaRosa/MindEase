@@ -1,4 +1,4 @@
-declare module "auth/useAuth" {
+declare module "auth/auth" {
   import type { User } from "@supabase/supabase-js";
 
   interface UseAuthReturn {

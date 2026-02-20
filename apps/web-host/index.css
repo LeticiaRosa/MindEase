@@ -1,2 +1,59 @@
 @import "tailwindcss";
 @import "@repo/ui/styles";
+
+/* ── Font size overrides ─────────────────────────────────────────────────── */
+:root[data-font-size="sm"] {
+  font-size: 0.875rem;
+}
+
+:root[data-font-size="md"] {
+  font-size: 1rem;
+}
+
+:root[data-font-size="lg"] {
+  font-size: 1.125rem;
+}
+
+/* ── Spacing scale overrides ─────────────────────────────────────────────── */
+:root {
+  --spacing-scale: 1;
+}
+
+:root[data-spacing="compact"] {
+  --spacing-scale: 0.8;
+}
+
+:root[data-spacing="relaxed"] {
+  --spacing-scale: 1.25;
+}
+
+/* ── Soft theme ──────────────────────────────────────────────────────────── */
+:root[data-theme="soft"] {
+  --foreground: oklch(0.28 0.02 261.692);
+  --background: oklch(0.98 0.005 247.839);
+  --card: oklch(0.97 0.005 247.839);
+  --card-foreground: oklch(0.28 0.02 261.692);
+  --popover: oklch(0.97 0.005 247.839);
+  --popover-foreground: oklch(0.28 0.02 261.692);
+  --muted: oklch(0.94 0.006 264.542);
+  --muted-foreground: oklch(0.55 0.018 264.364);
+  --border: oklch(0.9 0.006 264.531);
+  --input: oklch(0.9 0.006 264.531);
+}
+
+/* ── High-contrast theme (WCAG AAA ≥ 7:1) ────────────────────────────────── */
+:root[data-theme="high-contrast"] {
+  --foreground: oklch(0.04 0 0);
+  --background: oklch(1 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.04 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.04 0 0);
+  --muted: oklch(0.94 0 0);
+  --muted-foreground: oklch(0.2 0 0);
+  --border: oklch(0.2 0 0);
+  --input: oklch(0.2 0 0);
+  --ring: oklch(0.04 0 0);
+  --primary: oklch(0.3 0.18 84.429);
+  --primary-foreground: oklch(1 0 0);
+}

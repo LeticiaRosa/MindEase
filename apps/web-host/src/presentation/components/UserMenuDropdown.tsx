@@ -1,0 +1,215 @@
+import { useNavigate } from "react-router-dom";
+import { User, LogOut, Timer, Palette } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  Button,
+  Separator,
+} from "@repo/ui";
+import { useAuth } from "auth/auth";
+import {
+  useThemePreferences,
+  type ColourTheme,
+  type FontSize,
+  type SpacingDensity,
+} from "@/presentation/contexts/ThemePreferencesContext";
+import { TimerPreferencesPanel } from "@/presentation/components/TimerPreferencesPanel";
+import { cn } from "@repo/ui";
+import { useToast } from "@repo/ui";
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function truncate(str: string, max: number): string {
+  return str.length > max ? `${str.slice(0, max)}…` : str;
+}
+
+function getDisplayName(
+  user: { email?: string; user_metadata?: { full_name?: string } } | null,
+): string {
+  if (!user) return "";
+  const name = user.user_metadata?.full_name;
+  if (name && name.trim()) return truncate(name.trim(), 20);
+  return truncate(user.email ?? "", 20);
+}
+
+// ─── Sub-components ──────────────────────────────────────────────────────────
+
+interface SegmentedControlProps<T extends string> {
+  value: T;
+  options: { value: T; label: string }[];
+  onChange: (value: T) => void;
+  label: string;
+}
+
+export function SegmentedControl<T extends string>({
+  value,
+  options,
+  onChange,
+  label,
+}: SegmentedControlProps<T>) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <span className="text-xs font-medium text-muted-foreground">{label}</span>
+      <div className="flex gap-1">
+        {options.map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => onChange(opt.value)}
+            className={cn(
+              "flex-1 rounded-md px-2 py-1 text-xs font-medium transition-colors",
+              "focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+              value === opt.value
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground hover:bg-muted/70",
+            )}
+            aria-pressed={value === opt.value}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── UserMenuDropdown ─────────────────────────────────────────────────────────
+
+export function UserMenuDropdown() {
+  const { user, loading, signOut } = useAuth();
+  const { theme, fontSize, spacing, updatePreferences } = useThemePreferences();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const displayName = getDisplayName(user);
+
+  const handleSignOut = async () => {
+    const result = await signOut();
+    if (result.success) {
+      navigate("/");
+    } else {
+      toast.error("Couldn't sign out. Please try again.");
+    }
+  };
+
+  return (
+    <DropdownMenu>
+      {/* ── Trigger ─────────────────────────────────────────────────────── */}
+      <DropdownMenuTrigger render={<Button variant="outline">Open</Button>}>
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={loading && !user}
+          aria-label="User menu"
+          className={cn(
+            "gap-2 text-muted-foreground hover:text-foreground",
+            "focus-visible:ring-2 focus-visible:ring-ring",
+          )}
+        >
+          <User className="size-4 shrink-0" />
+          {loading && !user ? (
+            <span className="h-3 w-20 animate-pulse rounded bg-muted" />
+          ) : (
+            <span className="max-w-[10rem] truncate text-sm">
+              {displayName}
+            </span>
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+
+      {/* ── Panel ───────────────────────────────────────────────────────── */}
+      <DropdownMenuContent
+        align="end"
+        className="w-80 max-h-[85vh] overflow-y-auto p-0"
+        sideOffset={8}
+      >
+        {/* User info — read-only, not a MenuItem */}
+        <div className="px-4 py-3">
+          <p className="text-sm font-semibold text-foreground leading-tight">
+            {user?.user_metadata?.full_name ?? user?.email ?? "—"}
+          </p>
+          {user?.user_metadata?.full_name && (
+            <p className="text-xs text-muted-foreground mt-0.5">{user.email}</p>
+          )}
+        </div>
+
+        <Separator />
+
+        {/* Timer settings — plain div, stays open on form interaction */}
+        <div className="px-4 py-3">
+          <div className="flex items-center gap-2 mb-3">
+            <Timer className="size-3.5 text-muted-foreground" />
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Timer
+            </span>
+          </div>
+          {/* Remove the card wrapper — use inline panel styling */}
+          <div className="[&>div]:border-0 [&>div]:shadow-none [&>div]:p-0 [&>div]:w-full [&>div]:bg-transparent">
+            <TimerPreferencesPanel />
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Appearance — live apply, no Save needed */}
+        <div className="px-4 py-3 flex flex-col gap-3">
+          <div className="flex items-center gap-2 mb-0.5">
+            <Palette className="size-3.5 text-muted-foreground" />
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Appearance
+            </span>
+          </div>
+
+          <SegmentedControl<ColourTheme>
+            label="Colour theme"
+            value={theme}
+            options={[
+              { value: "default", label: "Default" },
+              { value: "soft", label: "Soft" },
+              { value: "high-contrast", label: "High contrast" },
+            ]}
+            onChange={(value) => updatePreferences({ theme: value })}
+          />
+
+          <SegmentedControl<FontSize>
+            label="Font size"
+            value={fontSize}
+            options={[
+              { value: "sm", label: "S" },
+              { value: "md", label: "M" },
+              { value: "lg", label: "L" },
+            ]}
+            onChange={(value) => updatePreferences({ fontSize: value })}
+          />
+
+          <SegmentedControl<SpacingDensity>
+            label="Spacing"
+            value={spacing}
+            options={[
+              { value: "compact", label: "Compact" },
+              { value: "default", label: "Default" },
+              { value: "relaxed", label: "Relaxed" },
+            ]}
+            onChange={(value) => updatePreferences({ spacing: value })}
+          />
+        </div>
+
+        <DropdownMenuSeparator />
+
+        {/* Sign out */}
+        <DropdownMenuItem
+          className={cn(
+            "mx-1 mb-1 gap-2 text-destructive focus:text-destructive",
+            "focus-visible:ring-2 focus-visible:ring-ring cursor-pointer",
+          )}
+          onSelect={handleSignOut}
+        >
+          <LogOut className="size-4" />
+          Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}

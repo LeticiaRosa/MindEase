@@ -65,109 +65,118 @@ export function TimerPreferencesPanel({ onClose }: TimerPreferencesPanelProps) {
 
   return (
     <div className="bg-card border border-border rounded-xl p-5 w-72 shadow-md">
-      <div className="flex items-center gap-2 mb-4">
-        <Settings className="size-4 text-muted-foreground" />
-        <h3 className="text-sm font-semibold">Timer Settings</h3>
-      </div>
-
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
-          <FormField
-            control={form.control}
-            name="focusDuration"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-xs">Focus (minutes)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={120}
-                    className="h-8 text-sm"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage className="text-xs" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="breakDuration"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-xs">Short break (minutes)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={60}
-                    className="h-8 text-sm"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage className="text-xs" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="longBreakDuration"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-xs">Long break (minutes)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={120}
-                    className="h-8 text-sm"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage className="text-xs" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="cyclesBeforeLongBreak"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-xs">
-                  Cycles before long break
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={10}
-                    className="h-8 text-sm"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage className="text-xs" />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="focusDuration"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-muted-foreground whitespace-nowrap">
+                    Focus (minutes)
+                  </FormLabel>
 
-          <div className="flex gap-2 pt-1">
-            <Button
-              type="submit"
-              size="sm"
-              disabled={isUpdating}
-              className="flex-1"
-            >
-              Save
-            </Button>
-            {onClose && (
-              <Button type="button" variant="ghost" size="sm" onClick={onClose}>
-                Cancel
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={120}
+                      className="h-8 text-sm text-muted-foreground"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="breakDuration"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-muted-foreground whitespace-nowrap">
+                    Short break (minutes)
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={60}
+                      className="h-8 text-sm text-muted-foreground"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="longBreakDuration"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-muted-foreground whitespace-nowrap">
+                    Long break (minutes)
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={120}
+                      className="h-8 text-sm text-muted-foreground"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cyclesBeforeLongBreak"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-muted-foreground whitespace-nowrap">
+                    Cycles before long break
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={10}
+                      className="h-8 text-sm text-muted-foreground"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex gap-2 pt-1">
+              <Button
+                type="submit"
+                size="sm"
+                disabled={isUpdating}
+                className="flex-1"
+              >
+                Save
               </Button>
-            )}
+              {onClose && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={onClose}
+                >
+                  Cancel
+                </Button>
+              )}
+            </div>
           </div>
         </form>
       </Form>
