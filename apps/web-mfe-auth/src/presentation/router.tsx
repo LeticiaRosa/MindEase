@@ -8,7 +8,7 @@ import { ProtectedRoute } from "@/presentation/components/ProtectedRoute";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to="/login" replace />,
+    element: <Navigate to="/dashboard" replace />,
   },
   {
     path: "/login",

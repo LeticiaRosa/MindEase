@@ -9,7 +9,7 @@ import {
   CardTitle,
   Button,
 } from "@repo/ui";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "@/presentation/hooks/useAuth";
 import { Mail, Sparkles } from "lucide-react";
 import { SignInWithMagicLink } from "./SignIn/SignInWithMagicLink";
@@ -17,7 +17,11 @@ import { SignInWithPassword } from "./SignIn/SignInWithPassword";
 
 export function SignIn() {
   const navigate = useNavigate();
-  const { loading } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <Card className="w-full max-w-md mx-auto">

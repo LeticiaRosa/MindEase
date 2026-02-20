@@ -17,6 +17,7 @@ import {
   loginSchema,
   type LoginFormData,
 } from "@/domain/valueObjects/authSchemas";
+import { useNavigate } from "react-router-dom";
 
 export function SignInWithPassword() {
   const { signIn, loading, error } = useAuth();
@@ -30,10 +31,13 @@ export function SignInWithPassword() {
     },
   });
 
+  const navigate = useNavigate();
+
   const onLoginSubmit = async (data: LoginFormData) => {
     try {
       const loginPromise = signIn(data.email, data.password).then((result) => {
         if (result.success) {
+          navigate("/register");
           return result;
         } else {
           throw new Error(result.error?.message || "Erro ao fazer login");
