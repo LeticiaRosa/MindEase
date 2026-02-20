@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { Check, X, ChevronDown } from "lucide-react";
+import { Check, X, ChevronDown, ChevronUp } from "lucide-react";
 import { Checkbox, Progress } from "@repo/ui";
 import { cn } from "@repo/ui";
 import { useSmartChecklist } from "@/presentation/hooks/useSmartChecklist";
@@ -12,6 +12,7 @@ interface SmartChecklistProps {
 export function SmartChecklist({ taskId }: SmartChecklistProps) {
   const {
     completedSteps,
+    incompleteSteps,
     currentStep,
     remainingCount,
     allDone,
@@ -22,9 +23,12 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
     deleteStep,
   } = useSmartChecklist(taskId);
 
+  const upcomingSteps = incompleteSteps.slice(1);
+
   const currentCheckboxRef = useRef<HTMLButtonElement>(null);
   const prevCurrentIdRef = useRef<string | null>(null);
   const [animatingId, setAnimatingId] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
   const animateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Auto-focus next step when current step changes (using ref to avoid cascading renders)
@@ -140,12 +144,58 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
         </div>
       )}
 
-      {/* Remaining steps count */}
+      {/* Upcoming steps — toggled */}
       {remainingCount > 0 && (
-        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-          <ChevronDown className="size-3" />
-          {remainingCount} more {remainingCount === 1 ? "step" : "steps"}
-        </div>
+        <>
+          <button
+            onClick={() => setShowAll((v) => !v)}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors w-fit focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+            aria-expanded={showAll}
+            aria-label={
+              showAll
+                ? "Hide remaining steps"
+                : `Show ${remainingCount} more ${remainingCount === 1 ? "step" : "steps"}`
+            }
+          >
+            {showAll ? (
+              <ChevronUp className="size-3" />
+            ) : (
+              <ChevronDown className="size-3" />
+            )}
+            {showAll
+              ? "Hide steps"
+              : `${remainingCount} more ${remainingCount === 1 ? "step" : "steps"}`}
+          </button>
+
+          {showAll && (
+            <div className="flex flex-col gap-1 pl-1 border-l border-border/40">
+              {upcomingSteps.map((step) => (
+                <div key={step.id} className="flex items-center gap-2 py-0.5">
+                  <Checkbox
+                    id={`step-upcoming-${step.id}`}
+                    checked={false}
+                    onCheckedChange={() => toggleStep(step.id, true)}
+                    className="shrink-0"
+                    aria-label={`Complete: ${step.title}`}
+                  />
+                  <label
+                    htmlFor={`step-upcoming-${step.id}`}
+                    className="text-xs flex-1 min-w-0 truncate cursor-pointer text-muted-foreground"
+                  >
+                    {step.title}
+                  </label>
+                  <button
+                    onClick={() => deleteStep(step.id)}
+                    className="shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+                    aria-label={`Remove step: ${step.title}`}
+                  >
+                    <X className="size-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
 
       {/* Add step form */}
