@@ -19,8 +19,8 @@ export function SignIn() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
 
-  if (!user) {
-    return <Navigate to="/" replace />;
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return (

@@ -37,7 +37,7 @@ export function SignInWithPassword() {
     try {
       const loginPromise = signIn(data.email, data.password).then((result) => {
         if (result.success) {
-          navigate("/register");
+          navigate("/dashboard");
           return result;
         } else {
           throw new Error(result.error?.message || "Erro ao fazer login");
