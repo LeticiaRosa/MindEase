@@ -8,6 +8,10 @@ export * from "./components/ui/label";
 export * from "./components/ui/card";
 export * from "./components/ui/form";
 export * from "./components/ui/tabs";
+export * from "./components/ui/checkbox";
+export * from "./components/ui/progress";
+export * from "./components/ui/dropdown-menu";
+export * from "./components/ui/separator";
 
 // Hooks
 export * from "./hooks/use-toast";
