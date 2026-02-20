@@ -7,6 +7,8 @@
     "dev:host": "turbo run dev --filter=web-host",
     "dev:auth": "turbo run dev --filter=web-mfe-auth",
     "dev:sequential": "pnpm dev:auth & sleep 3 && pnpm dev:host",
+    "clean": "rm -rf .turbo packages/ui/dist apps/web-host/node_modules/.vite apps/web-mfe-auth/node_modules/.vite /tmp/metro-cache",
+    "dev:clean": "pnpm clean && pnpm dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"

@@ -3,7 +3,16 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Plus } from "lucide-react";
-import { Button, Input } from "@repo/ui";
+import {
+  Button,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+} from "@repo/ui";
 
 const schema = z.object({
   title: z.string().min(1, "Title is required").max(200),
@@ -19,18 +28,16 @@ export function TaskCreateForm({ onSubmit }: TaskCreateFormProps) {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormValues>({
+  const formTask = useForm<FormValues>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      title: "",
+    },
   });
 
   const submit = (values: FormValues) => {
     onSubmit(values.title);
-    reset();
+    formTask.reset();
     setOpen(false);
   };
 
@@ -53,41 +60,46 @@ export function TaskCreateForm({ onSubmit }: TaskCreateFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(submit)} className="flex flex-col gap-2">
-      <Input
-        {...register("title")}
-        ref={(el) => {
-          register("title").ref(el);
-          (
-            inputRef as React.MutableRefObject<HTMLInputElement | null>
-          ).current = el;
-        }}
-        placeholder="Task title…"
-        autoComplete="off"
-        className="text-sm"
-        aria-label="New task title"
-      />
-      {errors.title && (
-        <p className="text-xs text-destructive" role="alert">
-          {errors.title.message}
-        </p>
-      )}
-      <div className="flex gap-2">
-        <Button type="submit" size="sm" className="flex-1">
-          Add
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            reset();
-            setOpen(false);
-          }}
-        >
-          Cancel
-        </Button>
-      </div>
-    </form>
+    <Form {...formTask}>
+      <form
+        onSubmit={formTask.handleSubmit(submit)}
+        className="flex flex-col gap-2"
+      >
+        <FormField
+          control={formTask.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>New Task</FormLabel>
+              <FormControl>
+                <Input placeholder="Task title…" type="text" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {formTask.formState.errors.title && (
+          <p className="text-xs text-destructive" role="alert">
+            {formTask.formState.errors.title.message}
+          </p>
+        )}
+        <div className="flex gap-2">
+          <Button type="submit" size="sm" className="flex-1">
+            Add
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              formTask.reset();
+              setOpen(false);
+            }}
+          >
+            Cancel
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

@@ -15,7 +15,7 @@ function DashboardContent() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold tracking-tight text-foreground">
-              My Tasks
+              MindEase
             </h1>
             <p className="text-xs text-muted-foreground mt-0.5">
               Focus on what matters next

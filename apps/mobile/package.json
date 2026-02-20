@@ -4,7 +4,8 @@
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
-    "dev": "ANDROID_HOME=/home/lenix/Android/Sdk expo start --tunnel",
+    "dev": "ANDROID_HOME=/home/lenix/Android/Sdk expo start --lan --clear",
+    "dev:tunnel": "ANDROID_HOME=/home/lenix/Android/Sdk expo start --tunnel --clear",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
