@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Trash2, ChevronDown, ChevronUp, Timer } from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, Timer, Move } from "lucide-react";
 import { Button } from "@repo/ui";
 import { cn } from "@repo/ui";
 import type { Task } from "@/domain/entities/Task";
@@ -51,43 +51,45 @@ export function TaskCard({ task, onDelete }: TaskCardProps) {
       aria-label={`Task: ${task.title}`}
     >
       {/* Drag handle + title row */}
-      <div className="flex items-start gap-2">
+      <div className="flex items-center gap-2">
         {/* Drag handle */}
-        <button
+        <span
           {...listeners}
           {...attributes}
-          className="shrink-0 mt-0.5 cursor-grab active:cursor-grabbing text-muted-foreground/40 hover:text-muted-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+          className="flex w-full items-center gap-2 cursor-grab active:cursor-grabbing focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
           aria-label="Drag to reorder"
           tabIndex={0}
+          id="dnd"
         >
-          <svg
-            className="size-4"
-            fill="currentColor"
-            viewBox="0 0 16 16"
-            aria-hidden="true"
+          <Move className="size-3 text-muted-foreground" aria-hidden="true" />
+          {/* Title */}
+          <p className="flex-1 text-sm font-medium min-w-0 wrap-break-word">
+            {task.title}
+          </p>
+
+          {/* Focus indicator */}
+          {isTimerActive && (
+            <span
+              className="shrink-0 size-2 rounded-full bg-primary animate-pulse"
+              aria-label="Timer active"
+              role="status"
+            />
+          )}
+
+          <Button
+            size="icon"
+            variant="ghost"
+            className="shrink-0 size-6 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:ring-2 focus-visible:ring-ring"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(task.id);
+            }}
+            aria-label={`Delete task: ${task.title}`}
           >
-            <circle cx="5" cy="5" r="1.2" />
-            <circle cx="11" cy="5" r="1.2" />
-            <circle cx="5" cy="8" r="1.2" />
-            <circle cx="11" cy="8" r="1.2" />
-            <circle cx="5" cy="11" r="1.2" />
-            <circle cx="11" cy="11" r="1.2" />
-          </svg>
-        </button>
-
-        {/* Title */}
-        <p className="flex-1 text-sm font-medium min-w-0 break-words">
-          {task.title}
-        </p>
-
-        {/* Focus indicator */}
-        {isTimerActive && (
-          <span
-            className="shrink-0 size-2 rounded-full bg-primary animate-pulse mt-1.5"
-            aria-label="Timer active"
-            role="status"
-          />
-        )}
+            <Trash2 className="size-3" />
+          </Button>
+        </span>
       </div>
 
       {/* Action row */}
@@ -139,16 +141,6 @@ export function TaskCard({ task, onDelete }: TaskCardProps) {
         </Button>
 
         <div className="flex-1" />
-
-        <Button
-          size="icon"
-          variant="ghost"
-          className="size-6 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:ring-2 focus-visible:ring-ring"
-          onClick={() => onDelete(task.id)}
-          aria-label={`Delete task: ${task.title}`}
-        >
-          <Trash2 className="size-3" />
-        </Button>
       </div>
 
       {/* Timer (collapsible) */}

@@ -46,7 +46,7 @@ function DashboardContent() {
       {focusOpen && (
         <FocusTimerFocus
           taskId="dashboard"
-          taskTitle="Dashboard Focus Session"
+          taskTitle="Focus Session"
           onClose={() => setFocusOpen(false)}
         />
       )}
