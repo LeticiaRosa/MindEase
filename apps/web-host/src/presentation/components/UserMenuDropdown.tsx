@@ -212,6 +212,7 @@ export function UserMenuDropdown() {
                 value={theme}
                 options={[
                   { value: "default", label: "Default" },
+                  { value: "dark", label: "Dark" },
                   { value: "soft", label: "Soft" },
                   { value: "high-contrast", label: "High contrast" },
                 ]}

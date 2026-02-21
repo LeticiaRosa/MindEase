@@ -9,7 +9,7 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type ColourTheme = "default" | "soft" | "high-contrast";
+export type ColourTheme = "default" | "soft" | "high-contrast" | "dark";
 export type FontSize = "sm" | "md" | "lg";
 export type SpacingDensity = "compact" | "default" | "relaxed";
 

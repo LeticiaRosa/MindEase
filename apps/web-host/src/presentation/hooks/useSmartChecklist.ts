@@ -49,8 +49,15 @@ export function useSmartChecklist(taskId: string) {
     },
     onSuccess: (_, { completed }) => {
       if (completed) {
-        const newIncomplete = steps.filter((s) => !s.completed).length - 1;
-        if (newIncomplete === 0) {
+        // Read from the cache: onMutate already applied the optimistic update,
+        // so the toggled step is already marked completed here. The stale
+        // `steps` closure would have the same state, making the previous
+        // `steps.filter(!s.completed).length - 1` double-subtract and fire
+        // a false-positive toast whenever 2 steps remained.
+        const current =
+          queryClient.getQueryData<ChecklistStep[]>(qKey) ?? steps;
+        const remaining = current.filter((s) => !s.completed).length;
+        if (remaining === 0) {
           toast.info("All steps complete!", { duration: 3000 });
         }
       }

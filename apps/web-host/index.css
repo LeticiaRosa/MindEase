@@ -15,16 +15,25 @@
 }
 
 /* ── Spacing scale overrides ─────────────────────────────────────────────── */
+/*
+ * --spacing-scale  → semantic multiplier (used for non-Tailwind spacing needs)
+ * --spacing        → Tailwind CSS v4 base unit; utilities like p-4 resolve to
+ *                    calc(4 * var(--spacing)), so overriding this scales the
+ *                    entire Tailwind spacing system at runtime.
+ */
 :root {
   --spacing-scale: 1;
+  --spacing: 0.25rem; /* Tailwind v4 default */
 }
 
 :root[data-spacing="compact"] {
   --spacing-scale: 0.8;
+  --spacing: 0.2rem; /* 0.25rem × 0.8 */
 }
 
 :root[data-spacing="relaxed"] {
   --spacing-scale: 1.25;
+  --spacing: 0.3125rem; /* 0.25rem × 1.25 */
 }
 
 /* ── Soft theme ──────────────────────────────────────────────────────────── */
@@ -39,6 +48,33 @@
   --muted-foreground: oklch(0.55 0.018 264.364);
   --border: oklch(0.9 0.006 264.531);
   --input: oklch(0.9 0.006 264.531);
+}
+
+/* ── Dark theme ─────────────────────────────────────────────────────────── */
+:root[data-theme="dark"] {
+  --background: oklch(0.13 0.028 261.692);
+  --foreground: oklch(0.985 0.002 247.839);
+  --card: oklch(0.21 0.034 264.665);
+  --card-foreground: oklch(0.985 0.002 247.839);
+  --popover: oklch(0.21 0.034 264.665);
+  --popover-foreground: oklch(0.985 0.002 247.839);
+  --primary: oklch(0.769 0.188 70.08);
+  --primary-foreground: oklch(0.21 0.034 264.665);
+  --secondary: oklch(0.769 0.188 70.08);
+  --secondary-foreground: oklch(0.985 0.002 247.839);
+  --muted: oklch(0.278 0.033 256.848);
+  --muted-foreground: oklch(0.707 0.022 261.325);
+  --accent: oklch(0.278 0.033 256.848);
+  --accent-foreground: oklch(0.985 0.002 247.839);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.551 0.027 264.364);
+  --sidebar: oklch(0.21 0.034 264.665);
+  --sidebar-foreground: oklch(0.985 0.002 247.839);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.551 0.027 264.364);
+  color-scheme: dark;
 }
 
 /* ── High-contrast theme (WCAG AAA ≥ 7:1) ────────────────────────────────── */
