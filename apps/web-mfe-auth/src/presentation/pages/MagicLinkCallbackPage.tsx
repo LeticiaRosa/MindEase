@@ -1,16 +1,15 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/presentation/hooks/useAuth";
 
 export default function MagicLinkCallbackPage() {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!loading && user) {
-      navigate("/", { replace: true });
+      const hostUrl = import.meta.env.VITE_HOST_URL ?? "http://localhost:3000";
+      window.location.href = `${hostUrl}/dashboard`;
     }
-  }, [user, loading, navigate]);
+  }, [user, loading]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-r from-amber-300 to-amber-800">

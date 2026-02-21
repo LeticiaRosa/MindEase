@@ -9,7 +9,8 @@ import {
   CardTitle,
   Button,
 } from "@repo/ui";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/presentation/hooks/useAuth";
 import { Mail, Sparkles } from "lucide-react";
 import { SignInWithMagicLink } from "./SignIn/SignInWithMagicLink";
@@ -19,9 +20,12 @@ export function SignIn() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
 
-  if (user) {
-    return <Navigate to="/dashboard" replace />;
-  }
+  useEffect(() => {
+    if (user) {
+      const hostUrl = import.meta.env.VITE_HOST_URL ?? "http://localhost:3000";
+      window.location.href = `${hostUrl}/dashboard`;
+    }
+  }, [user]);
 
   return (
     <Card className="w-full max-w-md mx-auto">

@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { User, LogOut, Timer, Palette } from "lucide-react";
 import {
   DropdownMenu,
@@ -81,15 +80,12 @@ export function SegmentedControl<T extends string>({
 export function UserMenuDropdown() {
   const { user, loading, signOut } = useAuth();
   const { theme, fontSize, spacing, updatePreferences } = useThemePreferences();
-  const navigate = useNavigate();
   const { toast } = useToast();
   const displayName = getDisplayName(user);
 
   const handleSignOut = async () => {
     const result = await signOut();
-    if (result.success) {
-      navigate("/");
-    } else {
+    if (!result.success) {
       toast.error("Couldn't sign out. Please try again.");
     }
   };

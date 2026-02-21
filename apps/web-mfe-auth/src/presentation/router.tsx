@@ -2,13 +2,12 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import LoginPage from "@/presentation/pages/LoginPage";
 import RegisterPage from "@/presentation/pages/RegisterPage";
 import MagicLinkCallbackPage from "@/presentation/pages/MagicLinkCallbackPage";
-import Dashboard from "@/presentation/pages/Dashboard";
-import { ProtectedRoute } from "@/presentation/components/ProtectedRoute";
+import type { RouteObject } from "react-router-dom";
 
-export const router = createBrowserRouter([
+export const routes: RouteObject[] = [
   {
     path: "/",
-    element: <Navigate to="/dashboard" replace />,
+    element: <Navigate to="/login" replace />,
   },
   {
     path: "/login",
@@ -22,13 +21,7 @@ export const router = createBrowserRouter([
     path: "/auth/callback",
     element: <MagicLinkCallbackPage />,
   },
-  {
-    element: <ProtectedRoute />,
-    children: [
-      {
-        path: "/dashboard",
-        element: <Dashboard />,
-      },
-    ],
-  },
-]);
+];
+
+// Used only when running standalone (localhost:3001)
+export const router = createBrowserRouter(routes);

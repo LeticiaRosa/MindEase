@@ -15,7 +15,7 @@ export default defineConfig({
       manifest: true,
       dts: false,
       exposes: {
-        "./host": "./src/App.tsx",
+        "./host": "./src/presentation/pages/Dashboard.tsx",
       },
       remotes: {
         auth: {
