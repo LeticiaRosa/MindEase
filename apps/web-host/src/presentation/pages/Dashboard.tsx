@@ -1,8 +1,14 @@
+import { useState } from "react";
 import { TimerProvider } from "@/presentation/contexts/TimerContext";
 import { KanbanBoard } from "@/presentation/components/KanbanBoard";
 import { UserMenuDropdown } from "@/presentation/components/UserMenuDropdown";
+import { Button } from "@repo/ui";
+import { Timer } from "lucide-react";
+import { FocusTimerFocus } from "../components/FocusTimerFocus";
 
 function DashboardContent() {
+  const [focusOpen, setFocusOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -16,14 +22,33 @@ function DashboardContent() {
               Focus on what matters next
             </p>
           </div>
-          <UserMenuDropdown />
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => setFocusOpen(true)}
+              aria-label="Enter focus mode"
+            >
+              <Timer className="size-4 text-muted-foreground" />
+              Focus Mode
+            </Button>
+            <UserMenuDropdown />
+          </div>
         </div>
       </header>
 
-      {/* Main content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
         <KanbanBoard />
       </main>
+
+      {/* Full-screen focus overlay — rendered at root level so fixed positioning covers everything */}
+      {focusOpen && (
+        <FocusTimerFocus
+          taskId="dashboard"
+          onClose={() => setFocusOpen(false)}
+        />
+      )}
     </div>
   );
 }

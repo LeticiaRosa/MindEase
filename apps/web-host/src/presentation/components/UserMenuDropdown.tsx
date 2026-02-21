@@ -1,4 +1,11 @@
-import { User, LogOut, Timer, Palette } from "lucide-react";
+import {
+  User,
+  LogOut,
+  Timer,
+  Palette,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +25,7 @@ import {
 import { TimerPreferencesPanel } from "@/presentation/components/TimerPreferencesPanel";
 import { cn } from "@repo/ui";
 import { useToast } from "@repo/ui";
+import { useState } from "react";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -83,6 +91,9 @@ export function UserMenuDropdown() {
   const { toast } = useToast();
   const displayName = getDisplayName(user);
 
+  const [showConfigTimer, setShowConfigTimer] = useState(false);
+  const [showConfigAppearance, setShowConfigAppearance] = useState(false);
+
   const handleSignOut = async () => {
     const result = await signOut();
     if (!result.success) {
@@ -141,10 +152,27 @@ export function UserMenuDropdown() {
               Timer
             </span>
           </div>
-          {/* Remove the card wrapper — use inline panel styling */}
-          <div className="[&>div]:border-0 [&>div]:shadow-none [&>div]:p-0 [&>div]:w-full [&>div]:bg-transparent">
-            <TimerPreferencesPanel />
-          </div>
+          <button
+            onClick={() => setShowConfigTimer((v) => !v)}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors w-fit focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+            aria-expanded={showConfigTimer}
+            aria-label={
+              showConfigTimer ? "Hide timer settings" : "Show timer settings"
+            }
+          >
+            {showConfigTimer ? (
+              <ChevronUp className="size-3" />
+            ) : (
+              <ChevronDown className="size-3" />
+            )}
+            {showConfigTimer ? "Hide timer settings" : "Show timer settings"}
+          </button>
+
+          {showConfigTimer && (
+            <div className="[&>div]:border-0 [&>div]:shadow-none [&>div]:p-0 [&>div]:w-full [&>div]:bg-transparent pt-2">
+              <TimerPreferencesPanel />
+            </div>
+          )}
         </div>
 
         <Separator />
@@ -157,39 +185,62 @@ export function UserMenuDropdown() {
               Appearance
             </span>
           </div>
+          <button
+            onClick={() => setShowConfigAppearance((v) => !v)}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors w-fit focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+            aria-expanded={showConfigAppearance}
+            aria-label={
+              showConfigAppearance
+                ? "Hide appearance settings"
+                : "Show appearance settings"
+            }
+          >
+            {showConfigAppearance ? (
+              <ChevronUp className="size-3" />
+            ) : (
+              <ChevronDown className="size-3" />
+            )}
+            {showConfigAppearance
+              ? "Hide appearance settings"
+              : "Show appearance settings"}
+          </button>
 
-          <SegmentedControl<ColourTheme>
-            label="Colour theme"
-            value={theme}
-            options={[
-              { value: "default", label: "Default" },
-              { value: "soft", label: "Soft" },
-              { value: "high-contrast", label: "High contrast" },
-            ]}
-            onChange={(value) => updatePreferences({ theme: value })}
-          />
+          {showConfigAppearance && (
+            <div className="[&>div]:border-0 [&>div]:shadow-none [&>div]:p-0 [&>div]:w-full [&>div]:bg-transparent">
+              <SegmentedControl<ColourTheme>
+                label="Colour theme"
+                value={theme}
+                options={[
+                  { value: "default", label: "Default" },
+                  { value: "soft", label: "Soft" },
+                  { value: "high-contrast", label: "High contrast" },
+                ]}
+                onChange={(value) => updatePreferences({ theme: value })}
+              />
 
-          <SegmentedControl<FontSize>
-            label="Font size"
-            value={fontSize}
-            options={[
-              { value: "sm", label: "S" },
-              { value: "md", label: "M" },
-              { value: "lg", label: "L" },
-            ]}
-            onChange={(value) => updatePreferences({ fontSize: value })}
-          />
+              <SegmentedControl<FontSize>
+                label="Font size"
+                value={fontSize}
+                options={[
+                  { value: "sm", label: "S" },
+                  { value: "md", label: "M" },
+                  { value: "lg", label: "L" },
+                ]}
+                onChange={(value) => updatePreferences({ fontSize: value })}
+              />
 
-          <SegmentedControl<SpacingDensity>
-            label="Spacing"
-            value={spacing}
-            options={[
-              { value: "compact", label: "Compact" },
-              { value: "default", label: "Default" },
-              { value: "relaxed", label: "Relaxed" },
-            ]}
-            onChange={(value) => updatePreferences({ spacing: value })}
-          />
+              <SegmentedControl<SpacingDensity>
+                label="Spacing"
+                value={spacing}
+                options={[
+                  { value: "compact", label: "Compact" },
+                  { value: "default", label: "Default" },
+                  { value: "relaxed", label: "Relaxed" },
+                ]}
+                onChange={(value) => updatePreferences({ spacing: value })}
+              />
+            </div>
+          )}
         </div>
 
         <DropdownMenuSeparator />
@@ -202,7 +253,7 @@ export function UserMenuDropdown() {
           )}
           onSelect={handleSignOut}
         >
-          <LogOut className="size-4" />
+          <LogOut className="size-4" color="red" />
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
