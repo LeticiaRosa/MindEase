@@ -1,6 +1,17 @@
-import { Play, Pause, RotateCcw, X, Coffee, Brain } from "lucide-react";
-import { Button } from "@repo/ui";
+import {
+  Play,
+  Pause,
+  RotateCcw,
+  X,
+  Coffee,
+  Brain,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
+import { Button, ScrollArea } from "@repo/ui";
 import { useFocusTimer } from "@/presentation/hooks/useFocusTimer";
+import { SmartChecklist } from "./SmartChecklist";
+import { useState } from "react";
 
 interface FocusTimerFocusProps {
   taskId: string;
@@ -26,6 +37,7 @@ export function FocusTimerFocus({
     pause,
     reset,
   } = useFocusTimer(taskId);
+  const [open, setOpen] = useState(false);
 
   const isFocus = mode === "focus";
   const isBreak = mode === "break";
@@ -63,7 +75,7 @@ export function FocusTimerFocus({
       )}
 
       {/* Mode badge */}
-      <div className="flex items-center gap-2 mb-10">
+      <div className="flex items-center gap-2 mb-5">
         <ModeIcon className="size-4 text-muted-foreground" aria-hidden="true" />
         <span className="text-sm font-medium tracking-wide text-muted-foreground uppercase">
           {modeLabel}
@@ -121,20 +133,19 @@ export function FocusTimerFocus({
         </div>
       </div>
 
-      {/* Contextual description */}
-      <p className="mt-8 text-sm text-muted-foreground text-center max-w-xs leading-relaxed">
-        {modeDescription}
-      </p>
-
       {/* Task title (if provided) */}
       {taskTitle && (
-        <p className="mt-2 text-base font-medium text-foreground text-center max-w-xs truncate">
+        <p className="mt-2 text-lg font-medium text-foreground text-center max-w-xs truncate">
           {taskTitle}
         </p>
       )}
+      {/* Contextual description */}
+      <p className="mt-2 text-xs text-muted-foreground text-center max-w-xs leading-relaxed">
+        {modeDescription}
+      </p>
 
       {/* Controls */}
-      <div className="flex items-center gap-4 mt-10">
+      <div className="flex items-center gap-10 mt-10">
         {isRunning ? (
           <Button
             size="lg"
@@ -171,6 +182,30 @@ export function FocusTimerFocus({
           </Button>
         )}
       </div>
+      {taskId !== "dashboard" && (
+        <div className="w-full max-w-md mt-4 px-4 scroll-auto [@media(max-height:700px)]:hidden">
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-6 text-xs text-muted-foreground hover:text-foreground gap-1 focus-visible:ring-2 focus-visible:ring-ring"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-label={open ? "Hide checklist" : "Show checklist"}
+          >
+            {open ? (
+              <ChevronUp className="size-3" />
+            ) : (
+              <ChevronDown className="size-3" />
+            )}
+            {open ? "Hide steps" : "Show steps"}
+          </Button>
+          {open && (
+            <ScrollArea className="border-none p-2">
+              <SmartChecklist taskId={taskId} />
+            </ScrollArea>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -12,6 +12,7 @@ export * from "./components/ui/checkbox";
 export * from "./components/ui/progress";
 export * from "./components/ui/dropdown-menu";
 export * from "./components/ui/separator";
+export * from "./components/ui/scroll-area";
 
 // Hooks
 export * from "./hooks/use-toast";

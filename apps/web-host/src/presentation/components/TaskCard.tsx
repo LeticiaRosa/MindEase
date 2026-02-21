@@ -8,6 +8,7 @@ import type { Task } from "@/domain/entities/Task";
 import { SmartChecklist } from "@/presentation/components/SmartChecklist";
 import { FocusTimer } from "@/presentation/components/FocusTimer";
 import { useTimerContext } from "@/presentation/contexts/TimerContext";
+import { FocusTimerFocus } from "./FocusTimerFocus";
 
 interface TaskCardProps {
   task: Task;
@@ -17,6 +18,8 @@ interface TaskCardProps {
 export function TaskCard({ task, onDelete }: TaskCardProps) {
   const [checklistOpen, setChecklistOpen] = useState(false);
   const [timerOpen, setTimerOpen] = useState(false);
+  const [timerFocusOpen, setTimerFocusOpen] = useState(false);
+
   const { state: timerState } = useTimerContext();
   const isTimerActive =
     timerState.activeTaskId === task.id && timerState.status === "running";
@@ -88,7 +91,7 @@ export function TaskCard({ task, onDelete }: TaskCardProps) {
       </div>
 
       {/* Action row */}
-      <div className="flex items-center gap-1 mt-2">
+      <div className="flex items-center  mt-2">
         <Button
           size="sm"
           variant="ghost"
@@ -120,6 +123,21 @@ export function TaskCard({ task, onDelete }: TaskCardProps) {
           Timer
         </Button>
 
+        <Button
+          size="sm"
+          variant="ghost"
+          className={cn(
+            "h-6 px-2 text-xs text-muted-foreground hover:text-foreground gap-1 focus-visible:ring-2 focus-visible:ring-ring",
+            isTimerActive && "text-primary",
+          )}
+          onClick={() => setTimerFocusOpen((v) => !v)}
+          aria-expanded={timerFocusOpen}
+          aria-label={timerFocusOpen ? "Hide focus timer" : "Show focus timer"}
+        >
+          <Timer className="size-3" />
+          Focus
+        </Button>
+
         <div className="flex-1" />
 
         <Button
@@ -140,7 +158,17 @@ export function TaskCard({ task, onDelete }: TaskCardProps) {
         </div>
       )}
 
+      {/* Focus Timer (collapsible) */}
+      {timerFocusOpen && (
+        <FocusTimerFocus
+          taskId={task.id}
+          taskTitle={task.title}
+          onClose={() => setTimerFocusOpen(false)}
+        />
+      )}
+
       {/* Checklist (collapsible) */}
+
       {checklistOpen && (
         <div className="mt-2 animate-in fade-in slide-in-from-top-1 duration-200">
           <SmartChecklist taskId={task.id} />
