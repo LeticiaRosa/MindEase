@@ -5,6 +5,7 @@ import {
   Palette,
   ChevronUp,
   ChevronDown,
+  Bell,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -15,6 +16,7 @@ import {
   Button,
   Separator,
 } from "@repo/ui";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "auth/auth";
 import {
   useThemePreferences,
@@ -89,6 +91,7 @@ export function UserMenuDropdown() {
   const { user, loading, signOut } = useAuth();
   const { theme, fontSize, spacing, updatePreferences } = useThemePreferences();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const displayName = getDisplayName(user);
 
   const [showConfigTimer, setShowConfigTimer] = useState(false);
@@ -243,6 +246,20 @@ export function UserMenuDropdown() {
             </div>
           )}
         </div>
+
+        <DropdownMenuSeparator />
+
+        {/* Cognitive Alerts settings */}
+        <DropdownMenuItem
+          className={cn(
+            "mx-1 gap-2 cursor-pointer",
+            "focus-visible:ring-2 focus-visible:ring-ring",
+          )}
+          onSelect={() => navigate("/settings/cognitive-alerts")}
+        >
+          <Bell className="size-4 text-muted-foreground" />
+          Alertas Cognitivos
+        </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 

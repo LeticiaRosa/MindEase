@@ -2,12 +2,23 @@ import { useState } from "react";
 import { TimerProvider } from "@/presentation/contexts/TimerContext";
 import { KanbanBoard } from "@/presentation/components/KanbanBoard";
 import { UserMenuDropdown } from "@/presentation/components/UserMenuDropdown";
+import { CognitiveAlertBanner } from "@/presentation/components/CognitiveAlertBanner";
+import { CognitiveAlertModal } from "@/presentation/components/CognitiveAlertModal";
 import { Button } from "@repo/ui";
 import { Timer } from "lucide-react";
 import { FocusTimerFocus } from "../components/FocusTimerFocus";
+import { useAlertEngine } from "@/presentation/hooks/useAlertEngine";
 
 function DashboardContent() {
   const [focusOpen, setFocusOpen] = useState(false);
+  const {
+    bannerActive,
+    bannerMessage,
+    modalOpen,
+    modalMessage,
+    dismissBanner,
+    dismissModal,
+  } = useAlertEngine();
 
   return (
     <div className="min-h-screen bg-background">
@@ -23,6 +34,11 @@ function DashboardContent() {
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <CognitiveAlertBanner
+              active={bannerActive}
+              message={bannerMessage}
+              onDismiss={dismissBanner}
+            />
             <Button
               variant="outline"
               size="sm"
@@ -50,6 +66,13 @@ function DashboardContent() {
           onClose={() => setFocusOpen(false)}
         />
       )}
+
+      {/* Cognitive alert modal (intensity: ativo) */}
+      <CognitiveAlertModal
+        open={modalOpen}
+        message={modalMessage}
+        onClose={dismissModal}
+      />
     </div>
   );
 }

@@ -17,6 +17,7 @@ import { TaskStatus as TS } from "@/domain/valueObjects/TaskStatus";
 import { KanbanColumn } from "@/presentation/components/KanbanColumn";
 import { TaskCard } from "@/presentation/components/TaskCard";
 import { useTaskKanban } from "@/presentation/hooks/useTaskKanban";
+import { useActivitySignals } from "@/presentation/contexts/ActivitySignalsContext";
 
 const COLUMNS: TaskStatus[] = [TS.TODO, TS.IN_PROGRESS, TS.DONE];
 
@@ -30,6 +31,7 @@ export function KanbanBoard() {
     deleteTask,
   } = useTaskKanban();
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const { recordTaskSwitch, setCurrentTask } = useActivitySignals();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -70,7 +72,10 @@ export function KanbanBoard() {
     let reordered: Task[];
 
     if (activeTask.status !== targetStatus) {
-      // Moving to a different column — append at end
+      // Moving to a different column — record task switch signal
+      recordTaskSwitch();
+      setCurrentTask({ startedAt: Date.now(), isComplex: false });
+      // append at end
       reordered = [
         ...columnTasks.filter((t) => t.id !== activeId),
         { ...activeTask, status: targetStatus },

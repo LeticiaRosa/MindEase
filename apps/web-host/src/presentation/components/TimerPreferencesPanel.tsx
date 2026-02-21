@@ -156,27 +156,16 @@ export function TimerPreferencesPanel({ onClose }: TimerPreferencesPanelProps) {
                 </FormItem>
               )}
             />
-
-            <div className="flex gap-2 pt-1">
-              <Button
-                type="submit"
-                size="sm"
-                disabled={isUpdating}
-                className="flex-1"
-              >
-                Save
-              </Button>
-              {onClose && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={onClose}
-                >
-                  Cancel
-                </Button>
-              )}
-            </div>
+          </div>
+          <div className="flex place-content-end gap-2 pt-1">
+            <Button
+              type="submit"
+              size="sm"
+              disabled={isUpdating}
+              className="flex w-20"
+            >
+              Save
+            </Button>
           </div>
         </form>
       </Form>

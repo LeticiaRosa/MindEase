@@ -74,14 +74,6 @@ export function FocusTimerFocus({
         </button>
       )}
 
-      {/* Mode badge */}
-      <div className="flex items-center gap-2 mb-5">
-        <ModeIcon className="size-4 text-muted-foreground" aria-hidden="true" />
-        <span className="text-sm font-medium tracking-wide text-muted-foreground uppercase">
-          {modeLabel}
-        </span>
-      </div>
-
       {/* Circular progress ring + time */}
       <div
         className="relative flex items-center justify-center"

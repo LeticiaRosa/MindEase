@@ -13,6 +13,9 @@ export * from "./components/ui/progress";
 export * from "./components/ui/dropdown-menu";
 export * from "./components/ui/separator";
 export * from "./components/ui/scroll-area";
+export * from "./components/ui/dialog";
+export * from "./components/ui/radio-group";
+export * from "./components/ui/switch";
 
 // Hooks
 export * from "./hooks/use-toast";

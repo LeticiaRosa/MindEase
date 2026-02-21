@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import AuthWrapper from "@/components/AuthWrapper";
 import Dashboard from "@/presentation/pages/Dashboard";
+import CognitiveAlertConfigPage from "@/presentation/pages/CognitiveAlertConfigPage";
 import { ProtectedRoute } from "@/presentation/components/ProtectedRoute";
 
 export const router = createBrowserRouter([
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <Dashboard />,
+      },
+      {
+        path: "/settings/cognitive-alerts",
+        element: <CognitiveAlertConfigPage />,
       },
     ],
   },
