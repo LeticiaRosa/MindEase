@@ -13,7 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Button,
+  buttonVariants,
   Separator,
 } from "@repo/ui";
 import { useNavigate } from "react-router-dom";
@@ -107,26 +107,21 @@ export function UserMenuDropdown() {
   return (
     <DropdownMenu>
       {/* ── Trigger ─────────────────────────────────────────────────────── */}
-      <DropdownMenuTrigger render={<Button variant="outline">Open</Button>}>
-        <Button
-          variant="ghost"
-          size="sm"
-          disabled={loading && !user}
-          aria-label="User menu"
-          className={cn(
-            "gap-2 text-muted-foreground hover:text-foreground",
-            "focus-visible:ring-2 focus-visible:ring-ring",
-          )}
-        >
-          <User className="size-4 shrink-0" />
-          {loading && !user ? (
-            <span className="h-3 w-20 animate-pulse rounded bg-muted" />
-          ) : (
-            <span className="max-w-[10rem] truncate text-sm">
-              {displayName}
-            </span>
-          )}
-        </Button>
+      <DropdownMenuTrigger
+        disabled={loading && !user}
+        aria-label="User menu"
+        className={cn(
+          buttonVariants({ variant: "ghost", size: "sm" }),
+          "gap-2 text-muted-foreground hover:text-foreground",
+          "focus-visible:ring-2 focus-visible:ring-ring",
+        )}
+      >
+        <User className="size-4 shrink-0" />
+        {loading && !user ? (
+          <span className="h-3 w-20 animate-pulse rounded bg-muted" />
+        ) : (
+          <span className="max-w-40 truncate text-sm">{displayName}</span>
+        )}
       </DropdownMenuTrigger>
 
       {/* ── Panel ───────────────────────────────────────────────────────── */}

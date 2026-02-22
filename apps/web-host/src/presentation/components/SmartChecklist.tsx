@@ -79,27 +79,27 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
       )}
 
       {/* Completed steps — dimmed */}
-
-      <button
-        onClick={() => setShowAllStepsConcluded((v) => !v)}
-        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors w-fit focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
-        aria-expanded={showAllStepsConcluded}
-        aria-label={
-          showAllStepsConcluded
-            ? "Hide concluded steps"
-            : `Show ${completedSteps.length} more ${completedSteps.length === 1 ? "step concluded" : "steps concluded"}`
-        }
-      >
-        {showAllStepsConcluded ? (
-          <ChevronUp className="size-3" />
-        ) : (
-          <ChevronDown className="size-3" />
-        )}
-        {showAllStepsConcluded
-          ? "Hide steps"
-          : `${completedSteps.length} more ${completedSteps.length === 1 ? "step concluded" : "steps concluded"}`}
-      </button>
-
+      {completedSteps.length > 0 && (
+        <button
+          onClick={() => setShowAllStepsConcluded((v) => !v)}
+          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors w-fit focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+          aria-expanded={showAllStepsConcluded}
+          aria-label={
+            showAllStepsConcluded
+              ? "Hide concluded steps"
+              : `Show ${completedSteps.length} ${completedSteps.length === 1 ? "step concluded" : "steps concluded"}`
+          }
+        >
+          {showAllStepsConcluded ? (
+            <ChevronUp className="size-3" />
+          ) : (
+            <ChevronDown className="size-3" />
+          )}
+          {showAllStepsConcluded
+            ? "Hide steps"
+            : `${completedSteps.length} ${completedSteps.length === 1 ? "step concluded" : "steps concluded"}`}
+        </button>
+      )}
       {showAllStepsConcluded &&
         completedSteps.map((step) => (
           <div

@@ -12,6 +12,7 @@ import {
   FormLabel,
   FormMessage,
   Input,
+  useToast,
 } from "@repo/ui";
 import { useTimerPreferences } from "@/presentation/hooks/useTimerPreferences";
 
@@ -30,6 +31,7 @@ interface TimerPreferencesPanelProps {
 
 export function TimerPreferencesPanel({ onClose }: TimerPreferencesPanelProps) {
   const { preferences, updatePreferences, isUpdating } = useTimerPreferences();
+  const toast = useToast();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -61,6 +63,10 @@ export function TimerPreferencesPanel({ onClose }: TimerPreferencesPanelProps) {
   const onSubmit = (values: FormValues) => {
     updatePreferences(values);
     onClose?.();
+    toast.success("Preferências de temporizador atualizadas!", {
+      description: "Suas preferências foram salvas.",
+      duration: 4000,
+    });
   };
 
   return (
@@ -76,7 +82,7 @@ export function TimerPreferencesPanel({ onClose }: TimerPreferencesPanelProps) {
               name="focusDuration"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs text-muted-foreground whitespace-nowrap">
+                  <FormLabel className="text-xs text-muted-foreground">
                     Focus (minutes)
                   </FormLabel>
 
@@ -98,7 +104,7 @@ export function TimerPreferencesPanel({ onClose }: TimerPreferencesPanelProps) {
               name="breakDuration"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs text-muted-foreground whitespace-nowrap">
+                  <FormLabel className="text-xs text-muted-foreground">
                     Short break (minutes)
                   </FormLabel>
                   <FormControl>
@@ -119,7 +125,7 @@ export function TimerPreferencesPanel({ onClose }: TimerPreferencesPanelProps) {
               name="longBreakDuration"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs text-muted-foreground whitespace-nowrap">
+                  <FormLabel className="text-xs text-muted-foreground">
                     Long break (minutes)
                   </FormLabel>
                   <FormControl>

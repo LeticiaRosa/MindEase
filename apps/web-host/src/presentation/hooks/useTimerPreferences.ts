@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useAuth } from "auth/auth";
 import { SupabaseTaskRepository } from "@/infrastructure/adapters/SupabaseTaskRepository";
 import { UpdateTimerPreferences } from "@/application/useCases/UpdateTimerPreferences";
 import { DEFAULT_TIMER_PREFERENCES } from "@/domain/entities/TimerPreferences";
@@ -12,10 +13,13 @@ const updatePreferences = new UpdateTimerPreferences(repository);
 export function useTimerPreferences() {
   const queryClient = useQueryClient();
   const { syncPreferences } = useTimerContext();
+  const { user, loading } = useAuth();
+  const userId = user?.id ?? null;
 
   const { data: preferences } = useQuery<TimerPreferences | null>({
-    queryKey: ["timer_preferences"],
+    queryKey: ["timer_preferences", userId],
     queryFn: () => repository.getTimerPreferences(),
+    enabled: !loading && Boolean(userId),
   });
 
   // Sync loaded preferences into the timer context
@@ -34,7 +38,7 @@ export function useTimerPreferences() {
     mutationFn: (prefs: Partial<Omit<TimerPreferences, "userId">>) =>
       updatePreferences.execute(prefs),
     onSuccess: (data) => {
-      queryClient.setQueryData(["timer_preferences"], data);
+      queryClient.setQueryData(["timer_preferences", userId], data);
       syncPreferences({
         focusDuration: data.focusDuration,
         breakDuration: data.breakDuration,
@@ -43,7 +47,9 @@ export function useTimerPreferences() {
       });
     },
     onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: ["timer_preferences"] }),
+      queryClient.invalidateQueries({
+        queryKey: ["timer_preferences", userId],
+      }),
   });
 
   const effective = preferences ?? { userId: "", ...DEFAULT_TIMER_PREFERENCES };

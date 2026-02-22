@@ -8,8 +8,10 @@ import { Button } from "@repo/ui";
 import { Timer } from "lucide-react";
 import { FocusTimerFocus } from "../components/FocusTimerFocus";
 import { useAlertEngine } from "@/presentation/hooks/useAlertEngine";
+import { useTimerPreferences } from "@/presentation/hooks/useTimerPreferences";
 
 function DashboardContent() {
+  useTimerPreferences();
   const [focusOpen, setFocusOpen] = useState(false);
   const {
     bannerActive,
