@@ -4,8 +4,12 @@ import type { Task } from "@/domain/entities/Task";
 export class CreateTask {
   constructor(private readonly repository: ITaskRepository) {}
 
-  async execute(title: string, description?: string): Promise<Task> {
+  async execute(
+    routineId: string,
+    title: string,
+    description?: string,
+  ): Promise<Task> {
     if (!title.trim()) throw new Error("Task title cannot be empty");
-    return this.repository.createTask(title.trim(), description?.trim());
+    return this.repository.createTask(routineId, title.trim(), description?.trim());
   }
 }

@@ -18,10 +18,12 @@ import { KanbanColumn } from "@/presentation/components/KanbanColumn";
 import { TaskCard } from "@/presentation/components/TaskCard";
 import { useTaskKanban } from "@/presentation/hooks/useTaskKanban";
 import { useActivitySignals } from "@/presentation/contexts/ActivitySignalsContext";
+import { useActiveRoutine } from "@/presentation/contexts/ActiveRoutineContext";
 
 const COLUMNS: TaskStatus[] = [TS.TODO, TS.IN_PROGRESS, TS.DONE];
 
 export function KanbanBoard() {
+  const { activeRoutineId } = useActiveRoutine();
   const {
     tasks,
     isLoading,
@@ -29,7 +31,7 @@ export function KanbanBoard() {
     createTask,
     reorderTasks,
     deleteTask,
-  } = useTaskKanban();
+  } = useTaskKanban(activeRoutineId ?? "");
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const { recordTaskSwitch, setCurrentTask } = useActivitySignals();
 

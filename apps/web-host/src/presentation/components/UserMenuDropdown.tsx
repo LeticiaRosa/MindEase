@@ -6,6 +6,7 @@ import {
   ChevronUp,
   ChevronDown,
   Bell,
+  LayoutGrid,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -241,6 +242,20 @@ export function UserMenuDropdown() {
             </div>
           )}
         </div>
+
+        <DropdownMenuSeparator />
+
+        {/* Gerenciar Kanbans */}
+        <DropdownMenuItem
+          className={cn(
+            "mx-1 gap-2 cursor-pointer",
+            "focus-visible:ring-2 focus-visible:ring-ring",
+          )}
+          onSelect={() => navigate("/settings/routines")}
+        >
+          <LayoutGrid className="size-4 text-muted-foreground" />
+          Gerenciar Kanbans
+        </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 

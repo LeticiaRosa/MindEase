@@ -13,6 +13,7 @@ import {
   FormMessage,
   Input,
 } from "@repo/ui";
+import { useActiveRoutine } from "@/presentation/contexts/ActiveRoutineContext";
 
 const schema = z.object({
   title: z.string().min(1, "Title is required").max(200),
@@ -27,6 +28,8 @@ interface TaskCreateFormProps {
 export function TaskCreateForm({ onSubmit }: TaskCreateFormProps) {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { activeRoutineId } = useActiveRoutine();
+  const isDisabled = !activeRoutineId;
 
   const formTask = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -50,7 +53,8 @@ export function TaskCreateForm({ onSubmit }: TaskCreateFormProps) {
     return (
       <button
         onClick={handleOpen}
-        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        disabled={isDisabled}
+        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:opacity-50 disabled:cursor-not-allowed"
         aria-label="Add a task"
       >
         <Plus className="size-4" />

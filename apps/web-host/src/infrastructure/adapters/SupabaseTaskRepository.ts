@@ -9,10 +9,11 @@ import supabaseClient from "@/infrastructure/api/clients/supabaseClient";
 export class SupabaseTaskRepository implements ITaskRepository {
   // ─── Tasks ───────────────────────────────────────────────────────────
 
-  async getTasks(): Promise<Task[]> {
+  async getTasks(routineId: string): Promise<Task[]> {
     const { data, error } = await supabaseClient
       .from("tasks")
       .select("*")
+      .eq("routine_id", routineId)
       .order("position", { ascending: true });
 
     if (error) throw new Error(error.message);
@@ -20,10 +21,15 @@ export class SupabaseTaskRepository implements ITaskRepository {
     return (data ?? []).map(this.mapTask);
   }
 
-  async createTask(title: string, description?: string): Promise<Task> {
+  async createTask(
+    routineId: string,
+    title: string,
+    description?: string,
+  ): Promise<Task> {
     const { data: existing } = await supabaseClient
       .from("tasks")
       .select("position")
+      .eq("routine_id", routineId)
       .eq("status", "todo")
       .order("position", { ascending: false })
       .limit(1)
@@ -33,7 +39,13 @@ export class SupabaseTaskRepository implements ITaskRepository {
 
     const { data, error } = await supabaseClient
       .from("tasks")
-      .insert({ title, description, status: "todo", position: nextPosition })
+      .insert({
+        routine_id: routineId,
+        title,
+        description,
+        status: "todo",
+        position: nextPosition,
+      })
       .select()
       .single();
 
@@ -192,6 +204,7 @@ export class SupabaseTaskRepository implements ITaskRepository {
     return {
       id: row.id as string,
       userId: row.user_id as string,
+      routineId: row.routine_id as string,
       title: row.title as string,
       description: row.description as string | undefined,
       status: row.status as TaskStatus,

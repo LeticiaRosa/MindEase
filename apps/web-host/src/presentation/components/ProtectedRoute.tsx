@@ -1,6 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "auth/auth";
 import { BrainTodayModal } from "@/presentation/components/BrainTodayModal";
+import { ActiveRoutineProvider } from "@/presentation/contexts/ActiveRoutineContext";
 
 export function ProtectedRoute() {
   const { user, loading } = useAuth();
@@ -18,9 +19,9 @@ export function ProtectedRoute() {
   }
 
   return (
-    <>
+    <ActiveRoutineProvider>
       <BrainTodayModal />
       <Outlet />
-    </>
+    </ActiveRoutineProvider>
   );
 }

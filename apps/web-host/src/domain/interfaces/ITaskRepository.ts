@@ -5,8 +5,8 @@ import type { TaskStatus } from "@/domain/valueObjects/TaskStatus";
 
 export interface ITaskRepository {
   // Tasks
-  getTasks(): Promise<Task[]>;
-  createTask(title: string, description?: string): Promise<Task>;
+  getTasks(routineId: string): Promise<Task[]>;
+  createTask(routineId: string, title: string, description?: string): Promise<Task>;
   updateTask(
     id: string,
     updates: Partial<

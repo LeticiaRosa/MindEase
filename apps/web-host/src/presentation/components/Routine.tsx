@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Select,
   SelectContent,
@@ -8,20 +7,29 @@ import {
   SelectGroup,
   SelectLabel,
 } from "@repo/ui";
-import { BriefcaseBusiness, NotebookPen } from "lucide-react";
+import { useRoutines } from "@/presentation/hooks/useRoutines";
+import { useActiveRoutine } from "@/presentation/contexts/ActiveRoutineContext";
+import { RoutineIcon } from "@/presentation/components/RoutineIcon";
 
 export function Routine() {
-  const [selectedKanban, setSelectedKanban] = useState<"study" | "work">(
-    "study",
-  );
+  const { routines, isLoading } = useRoutines();
+  const { activeRoutineId, setActiveRoutineId } = useActiveRoutine();
+
+  if (isLoading) {
+    return (
+      <div
+        className="h-9 w-48 rounded-md bg-muted/40 animate-pulse"
+        aria-label="A carregar Kanbans…"
+      />
+    );
+  }
 
   return (
     <div className="flex items-center gap-4">
       <Select
-        value={selectedKanban}
-        onValueChange={(value: string) =>
-          setSelectedKanban(value as "study" | "work")
-        }
+        value={activeRoutineId ?? ""}
+        onValueChange={setActiveRoutineId}
+        disabled={routines.length === 0}
       >
         <SelectTrigger
           id="kanban-select"
@@ -33,18 +41,17 @@ export function Routine() {
         <SelectContent>
           <SelectGroup>
             <SelectLabel>Kanbans</SelectLabel>
-            <SelectItem value="study">
-              <span className="flex items-center gap-2 m-2">
-                <NotebookPen className="size-4 text-muted-foreground" />
-                Estudo
-              </span>
-            </SelectItem>
-            <SelectItem value="work">
-              <span className="flex items-center gap-2 m-2">
-                <BriefcaseBusiness className="size-4 text-muted-foreground" />
-                Trabalho
-              </span>
-            </SelectItem>
+            {routines.map((routine) => (
+              <SelectItem key={routine.id} value={routine.id}>
+                <span className="flex items-center gap-2 m-2">
+                  <RoutineIcon
+                    name={routine.icon}
+                    className="size-4 text-muted-foreground"
+                  />
+                  {routine.name}
+                </span>
+              </SelectItem>
+            ))}
           </SelectGroup>
         </SelectContent>
       </Select>

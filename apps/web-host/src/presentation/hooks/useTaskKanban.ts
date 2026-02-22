@@ -14,49 +14,51 @@ const updateTaskStatus = new UpdateTaskStatus(repository);
 const reorderTasks = new ReorderTasks(repository);
 const deleteTask = new DeleteTask(repository);
 
-export function useTaskKanban() {
+export function useTaskKanban(routineId: string) {
   const queryClient = useQueryClient();
   const toast = useToast();
 
   const { data: tasks = [], isLoading } = useQuery<Task[]>({
-    queryKey: ["tasks"],
-    queryFn: () => repository.getTasks(),
+    queryKey: ["tasks", routineId],
+    queryFn: () => repository.getTasks(routineId),
+    enabled: Boolean(routineId),
   });
 
   const createMutation = useMutation({
-    mutationFn: (title: string) => createTask.execute(title),
+    mutationFn: (title: string) => createTask.execute(routineId, title),
     onMutate: async (title) => {
-      await queryClient.cancelQueries({ queryKey: ["tasks"] });
-      const previous = queryClient.getQueryData<Task[]>(["tasks"]);
+      await queryClient.cancelQueries({ queryKey: ["tasks", routineId] });
+      const previous = queryClient.getQueryData<Task[]>(["tasks", routineId]);
       const optimistic: Task = {
         id: `optimistic-${Date.now()}`,
         userId: "",
+        routineId,
         title,
         status: "todo",
         position: previous?.length ?? 0,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-      queryClient.setQueryData<Task[]>(["tasks"], (old = []) => [
+      queryClient.setQueryData<Task[]>(["tasks", routineId], (old = []) => [
         ...old,
         optimistic,
       ]);
       return { previous };
     },
     onError: (_, __, ctx) => {
-      if (ctx?.previous) queryClient.setQueryData(["tasks"], ctx.previous);
+      if (ctx?.previous) queryClient.setQueryData(["tasks", routineId], ctx.previous);
       toast.error("Failed to create task");
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
   });
 
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: TaskStatus }) =>
       updateTaskStatus.execute(id, status),
     onMutate: async ({ id, status }) => {
-      await queryClient.cancelQueries({ queryKey: ["tasks"] });
-      const previous = queryClient.getQueryData<Task[]>(["tasks"]);
-      queryClient.setQueryData<Task[]>(["tasks"], (old = []) =>
+      await queryClient.cancelQueries({ queryKey: ["tasks", routineId] });
+      const previous = queryClient.getQueryData<Task[]>(["tasks", routineId]);
+      queryClient.setQueryData<Task[]>(["tasks", routineId], (old = []) =>
         old.map((t) => (t.id === id ? { ...t, status } : t)),
       );
       if (status === "done")
@@ -64,10 +66,10 @@ export function useTaskKanban() {
       return { previous };
     },
     onError: (_, __, ctx) => {
-      if (ctx?.previous) queryClient.setQueryData(["tasks"], ctx.previous);
+      if (ctx?.previous) queryClient.setQueryData(["tasks", routineId], ctx.previous);
       toast.error("Failed to update task");
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
   });
 
   const reorderMutation = useMutation({
@@ -75,9 +77,9 @@ export function useTaskKanban() {
       updates: Array<{ id: string; position: number; status: TaskStatus }>,
     ) => reorderTasks.execute(updates),
     onMutate: async (updates) => {
-      await queryClient.cancelQueries({ queryKey: ["tasks"] });
-      const previous = queryClient.getQueryData<Task[]>(["tasks"]);
-      queryClient.setQueryData<Task[]>(["tasks"], (old = []) =>
+      await queryClient.cancelQueries({ queryKey: ["tasks", routineId] });
+      const previous = queryClient.getQueryData<Task[]>(["tasks", routineId]);
+      queryClient.setQueryData<Task[]>(["tasks", routineId], (old = []) =>
         old.map((t) => {
           const upd = updates.find((u) => u.id === t.id);
           return upd ? { ...t, status: upd.status, position: upd.position } : t;
@@ -86,27 +88,27 @@ export function useTaskKanban() {
       return { previous };
     },
     onError: (_, __, ctx) => {
-      if (ctx?.previous) queryClient.setQueryData(["tasks"], ctx.previous);
+      if (ctx?.previous) queryClient.setQueryData(["tasks", routineId], ctx.previous);
       toast.error("Failed to reorder tasks");
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteTask.execute(id),
     onMutate: async (id) => {
-      await queryClient.cancelQueries({ queryKey: ["tasks"] });
-      const previous = queryClient.getQueryData<Task[]>(["tasks"]);
-      queryClient.setQueryData<Task[]>(["tasks"], (old = []) =>
+      await queryClient.cancelQueries({ queryKey: ["tasks", routineId] });
+      const previous = queryClient.getQueryData<Task[]>(["tasks", routineId]);
+      queryClient.setQueryData<Task[]>(["tasks", routineId], (old = []) =>
         old.filter((t) => t.id !== id),
       );
       return { previous };
     },
     onError: (_, __, ctx) => {
-      if (ctx?.previous) queryClient.setQueryData(["tasks"], ctx.previous);
+      if (ctx?.previous) queryClient.setQueryData(["tasks", routineId], ctx.previous);
       toast.error("Failed to delete task");
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
   });
 
   const tasksByStatus = (status: TaskStatus) =>
@@ -127,7 +129,8 @@ export function useTaskKanban() {
         duration: 3000,
         action: {
           label: "Undo",
-          onClick: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+          onClick: () =>
+            queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
         },
       });
     },
