@@ -18,7 +18,9 @@ interface ActiveRoutineContextValue {
 
 // ─── Context ──────────────────────────────────────────────────────────────────
 
-const ActiveRoutineContext = createContext<ActiveRoutineContextValue | null>(null);
+const ActiveRoutineContext = createContext<ActiveRoutineContextValue | null>(
+  null,
+);
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -32,9 +34,13 @@ interface ActiveRoutineProviderProps {
   children: ReactNode;
 }
 
-export function ActiveRoutineProvider({ children }: ActiveRoutineProviderProps) {
+export function ActiveRoutineProvider({
+  children,
+}: ActiveRoutineProviderProps) {
   const [userId, setUserId] = useState<string | null>(null);
-  const [activeRoutineId, setActiveRoutineIdState] = useState<string | null>(null);
+  const [activeRoutineId, setActiveRoutineIdState] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     supabaseClient.auth.getUser().then(({ data }) => {

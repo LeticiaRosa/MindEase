@@ -91,15 +91,13 @@ export function useRoutines() {
       return { previous };
     },
     onError: (_, __, ctx) => {
-      if (ctx?.previous)
-        queryClient.setQueryData(["routines"], ctx.previous);
+      if (ctx?.previous) queryClient.setQueryData(["routines"], ctx.previous);
       toast.error("Falha ao criar Kanban");
     },
     onSuccess: () => {
       toast.success("Kanban criado com sucesso");
     },
-    onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: ["routines"] }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["routines"] }),
   });
 
   const updateMutation = useMutation({
@@ -119,15 +117,13 @@ export function useRoutines() {
       return { previous };
     },
     onError: (_, __, ctx) => {
-      if (ctx?.previous)
-        queryClient.setQueryData(["routines"], ctx.previous);
+      if (ctx?.previous) queryClient.setQueryData(["routines"], ctx.previous);
       toast.error("Falha ao atualizar Kanban");
     },
     onSuccess: () => {
       toast.success("Kanban atualizado");
     },
-    onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: ["routines"] }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["routines"] }),
   });
 
   const deleteMutation = useMutation({
@@ -141,15 +137,13 @@ export function useRoutines() {
       return { previous };
     },
     onError: (_, __, ctx) => {
-      if (ctx?.previous)
-        queryClient.setQueryData(["routines"], ctx.previous);
+      if (ctx?.previous) queryClient.setQueryData(["routines"], ctx.previous);
       toast.error("Falha ao remover Kanban");
     },
     onSuccess: () => {
       toast.success("Kanban removido");
     },
-    onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: ["routines"] }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["routines"] }),
   });
 
   const reorderMutation = useMutation({
@@ -169,12 +163,10 @@ export function useRoutines() {
       return { previous };
     },
     onError: (_, __, ctx) => {
-      if (ctx?.previous)
-        queryClient.setQueryData(["routines"], ctx.previous);
+      if (ctx?.previous) queryClient.setQueryData(["routines"], ctx.previous);
       toast.error("Falha ao reordenar Kanbans");
     },
-    onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: ["routines"] }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["routines"] }),
   });
 
   return {

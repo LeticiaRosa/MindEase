@@ -14,7 +14,10 @@ interface IconPickerProps {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export function IconPicker({ value = DEFAULT_ROUTINE_ICON, onChange }: IconPickerProps) {
+export function IconPicker({
+  value = DEFAULT_ROUTINE_ICON,
+  onChange,
+}: IconPickerProps) {
   return (
     <div
       role="radiogroup"

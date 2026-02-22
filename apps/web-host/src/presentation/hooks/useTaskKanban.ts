@@ -46,10 +46,12 @@ export function useTaskKanban(routineId: string) {
       return { previous };
     },
     onError: (_, __, ctx) => {
-      if (ctx?.previous) queryClient.setQueryData(["tasks", routineId], ctx.previous);
+      if (ctx?.previous)
+        queryClient.setQueryData(["tasks", routineId], ctx.previous);
       toast.error("Failed to create task");
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
   });
 
   const updateStatusMutation = useMutation({
@@ -66,10 +68,12 @@ export function useTaskKanban(routineId: string) {
       return { previous };
     },
     onError: (_, __, ctx) => {
-      if (ctx?.previous) queryClient.setQueryData(["tasks", routineId], ctx.previous);
+      if (ctx?.previous)
+        queryClient.setQueryData(["tasks", routineId], ctx.previous);
       toast.error("Failed to update task");
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
   });
 
   const reorderMutation = useMutation({
@@ -88,10 +92,12 @@ export function useTaskKanban(routineId: string) {
       return { previous };
     },
     onError: (_, __, ctx) => {
-      if (ctx?.previous) queryClient.setQueryData(["tasks", routineId], ctx.previous);
+      if (ctx?.previous)
+        queryClient.setQueryData(["tasks", routineId], ctx.previous);
       toast.error("Failed to reorder tasks");
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
   });
 
   const deleteMutation = useMutation({
@@ -105,10 +111,12 @@ export function useTaskKanban(routineId: string) {
       return { previous };
     },
     onError: (_, __, ctx) => {
-      if (ctx?.previous) queryClient.setQueryData(["tasks", routineId], ctx.previous);
+      if (ctx?.previous)
+        queryClient.setQueryData(["tasks", routineId], ctx.previous);
       toast.error("Failed to delete task");
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
   });
 
   const tasksByStatus = (status: TaskStatus) =>

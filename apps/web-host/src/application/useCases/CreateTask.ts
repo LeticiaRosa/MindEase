@@ -10,6 +10,10 @@ export class CreateTask {
     description?: string,
   ): Promise<Task> {
     if (!title.trim()) throw new Error("Task title cannot be empty");
-    return this.repository.createTask(routineId, title.trim(), description?.trim());
+    return this.repository.createTask(
+      routineId,
+      title.trim(),
+      description?.trim(),
+    );
   }
 }
