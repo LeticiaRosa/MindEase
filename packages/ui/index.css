@@ -127,3 +127,9 @@
     @apply font-sans;
   }
 }
+
+@layer components {
+  .toaster [data-description] {
+    color: color-mix(in oklch, var(--foreground) 82%, transparent);
+  }
+}

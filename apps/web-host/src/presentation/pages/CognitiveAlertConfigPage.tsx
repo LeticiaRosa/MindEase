@@ -300,7 +300,10 @@ export default function CognitiveAlertConfigPage() {
             ) : (
               <Button
                 type="button"
-                onClick={handleNext}
+                onClick={(event) => {
+                  event.preventDefault();
+                  handleNext();
+                }}
                 disabled={step === 0 && selectedTriggers.length === 0}
                 className="gap-2"
               >
