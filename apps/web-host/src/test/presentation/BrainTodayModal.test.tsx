@@ -3,10 +3,12 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { BrainTodayModal } from "@/presentation/components/BrainTodayModal";
 import type { BrainStateValue } from "@/domain/valueObjects/BrainState";
 import { BRAIN_STATE_SESSION_KEY } from "@/domain/valueObjects/BrainState";
+import { CalibrateAlertPreferencesFromBrainState } from "@/application/useCases/CalibrateAlertPreferencesFromBrainState";
 
 // Mock the BrainTodayContext
 const mockRecordState = vi.fn();
 const mockSkip = vi.fn();
+const mockSavePreferences = vi.fn();
 
 vi.mock("@/presentation/contexts/BrainTodayContext", () => ({
   useBrainToday: () => ({
@@ -15,6 +17,13 @@ vi.mock("@/presentation/contexts/BrainTodayContext", () => ({
     skip: mockSkip,
   }),
   hasBrainStateForSession: () => false,
+}));
+
+vi.mock("@/presentation/contexts/AlertPreferencesContext", () => ({
+  useAlertPreferences: () => ({
+    preferences: null,
+    savePreferences: mockSavePreferences,
+  }),
 }));
 
 describe("BrainTodayModal", () => {
@@ -48,11 +57,23 @@ describe("BrainTodayModal", () => {
     );
   });
 
+  it("applies calibrated alert preferences when a brain state is selected", () => {
+    render(<BrainTodayModal />);
+    fireEvent.click(screen.getByRole("button", { name: /ansioso/i }));
+
+    expect(mockSavePreferences).toHaveBeenCalledWith(
+      CalibrateAlertPreferencesFromBrainState.execute(
+        "ansioso" satisfies BrainStateValue,
+      ),
+    );
+  });
+
   it('calls skip when "Pular por hoje" is activated', () => {
     render(<BrainTodayModal />);
     fireEvent.click(screen.getByRole("button", { name: /pular por hoje/i }));
     expect(mockSkip).toHaveBeenCalled();
     expect(mockRecordState).not.toHaveBeenCalled();
+    expect(mockSavePreferences).not.toHaveBeenCalled();
   });
 
   it("does not render when brain state is already set in sessionStorage", () => {

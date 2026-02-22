@@ -11,12 +11,15 @@ import {
   type BrainStateValue,
 } from "@/domain/valueObjects/BrainState";
 import { useBrainToday } from "@/presentation/contexts/BrainTodayContext";
+import { useAlertPreferences } from "@/presentation/contexts/AlertPreferencesContext";
+import { CalibrateAlertPreferencesFromBrainState } from "@/application/useCases/CalibrateAlertPreferencesFromBrainState";
 import { useThemePreferences } from "../contexts/ThemePreferencesContext";
 import { useState } from "react";
 import { useToast } from "@repo/ui";
 
 export function BrainTodayModal() {
   const { recordState, skip } = useBrainToday();
+  const { savePreferences } = useAlertPreferences();
   const { theme } = useThemePreferences();
   const toast = useToast();
   // Check if the modal should be shown:
@@ -29,6 +32,7 @@ export function BrainTodayModal() {
 
   const handleSelect = (value: BrainStateValue) => {
     recordState(value);
+    savePreferences(CalibrateAlertPreferencesFromBrainState.execute(value));
     setOpen(false);
     toast.success(
       "Estado registrado! Personalizando seus alertas para hoje...",

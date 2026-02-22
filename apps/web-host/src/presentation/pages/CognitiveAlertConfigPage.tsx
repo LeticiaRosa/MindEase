@@ -76,6 +76,7 @@ export default function CognitiveAlertConfigPage() {
   };
 
   const onSubmit = (data: AlertPreferencesDTO) => {
+    console.log("Submitting alert preferences:", data);
     savePreferences(data);
     toast.success("Alertas cognitivos atualizados!", {
       description: "Suas preferências foram salvas.",
