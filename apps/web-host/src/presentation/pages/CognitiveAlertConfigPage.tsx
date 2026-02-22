@@ -18,6 +18,7 @@ import {
   type AlertTone,
   type AlertIntensity,
 } from "@/domain/valueObjects/AlertTypes";
+import { Logo } from "../components/Logo";
 const TRIGGERS = Object.keys(ALERT_TRIGGER_LABELS) as AlertTrigger[];
 const TONES = Object.keys(ALERT_TONE_LABELS) as AlertTone[];
 const INTENSITIES = Object.keys(ALERT_INTENSITY_LABELS) as AlertIntensity[];
@@ -88,23 +89,26 @@ export default function CognitiveAlertConfigPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50">
-        <div className="max-w-2xl mx-auto px-6 py-4 flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate(-1)}
-            aria-label="Voltar"
-          >
-            <ChevronLeft className="size-5" />
-          </Button>
-          <div>
-            <h1 className="text-lg font-semibold tracking-tight">
-              Alertas Cognitivos
-            </h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Personalize seus apoios executivos
-            </p>
+        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate(-1)}
+              aria-label="Voltar"
+            >
+              <ChevronLeft className="size-5" />
+            </Button>
+            <div>
+              <h1 className="text-lg font-semibold tracking-tight">
+                Alertas Cognitivos
+              </h1>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Personalize seus apoios executivos
+              </p>
+            </div>
           </div>
+          <Logo />
         </div>
       </header>
 

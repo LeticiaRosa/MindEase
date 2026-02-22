@@ -16,6 +16,7 @@ export * from "./components/ui/scroll-area";
 export * from "./components/ui/dialog";
 export * from "./components/ui/radio-group";
 export * from "./components/ui/switch";
+export * from "./components/ui/select";
 
 // Hooks
 export * from "./hooks/use-toast";
