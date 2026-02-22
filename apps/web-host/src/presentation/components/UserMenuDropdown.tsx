@@ -90,7 +90,7 @@ export function SegmentedControl<T extends string>({
 export function UserMenuDropdown() {
   const { user, loading, signOut } = useAuth();
   const { theme, fontSize, spacing, updatePreferences } = useThemePreferences();
-  const { toast } = useToast();
+  const toast = useToast();
   const navigate = useNavigate();
   const displayName = getDisplayName(user);
 

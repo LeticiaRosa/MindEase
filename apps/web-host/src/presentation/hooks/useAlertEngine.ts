@@ -28,7 +28,7 @@ export function useAlertEngine(options: UseAlertEngineOptions = {}) {
   const { signals } = useActivitySignals();
   const { preferences } = useAlertPreferences();
   const { brainState } = useBrainToday();
-  const { toast } = useToast();
+  const toast = useToast();
 
   const lastFiredAt = useRef<Partial<Record<AlertTrigger, number>>>({});
   const [state, setState] = useState<AlertEngineState>({
@@ -45,10 +45,7 @@ export function useAlertEngine(options: UseAlertEngineOptions = {}) {
 
       switch (payload.channel) {
         case "toast":
-          toast.success(payload.message, {
-            duration: 6000,
-            position: "bottom-right",
-          });
+          toast.success(payload.message, { duration: 6000 });
           break;
         case "icon":
           setState((prev) => ({

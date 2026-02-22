@@ -4,29 +4,44 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  Button,
+  DialogClose,
 } from "@repo/ui";
 import {
   BRAIN_STATE_OPTIONS,
   type BrainStateValue,
 } from "@/domain/valueObjects/BrainState";
 import { useBrainToday } from "@/presentation/contexts/BrainTodayContext";
+import { useThemePreferences } from "../contexts/ThemePreferencesContext";
+import { useState } from "react";
+import { useToast } from "@repo/ui";
 
 export function BrainTodayModal() {
   const { recordState, skip } = useBrainToday();
-
+  const { theme } = useThemePreferences();
+  const toast = useToast();
   // Check if the modal should be shown:
   // Show when sessionStorage has no entry at all (hasBrainStateForSession handles __skipped__)
   const isOpen = sessionStorage.getItem("mindease:brain-state") === null;
+
+  const [open, setOpen] = useState(isOpen);
 
   if (!isOpen) return null;
 
   const handleSelect = (value: BrainStateValue) => {
     recordState(value);
+    setOpen(false);
+    toast.success(
+      "Estado registrado! Personalizando seus alertas para hoje...",
+    );
+  };
+
+  const handleSkip = () => {
+    skip();
+    setOpen(false);
   };
 
   return (
-    <Dialog open modal>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
         className="max-w-md p-8 rounded-2xl focus:outline-none"
         // Suppress default close button — user must select or skip
@@ -56,8 +71,8 @@ export function BrainTodayModal() {
                 flex items-center gap-4 w-full rounded-xl border-2 px-5 py-4
                 text-left text-base font-medium transition-colors duration-150
                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-                focus-visible:ring-amber-500
-                ${option.colour}
+                focus-visible:ring-primary/50 focus-visible:ring-offset-background
+                ${theme === "dark" ? option.darkColour : option.colour}
                 hover:opacity-90 active:scale-[0.98]
               `}
               aria-label={option.label}
@@ -71,14 +86,12 @@ export function BrainTodayModal() {
         </div>
 
         <div className="mt-6 text-center">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={skip}
-            className="text-muted-foreground hover:text-foreground"
+          <DialogClose
+            onClick={isOpen ? handleSkip : undefined}
+            className="text-muted-foreground hover:text-foreground p-2"
           >
             Pular por hoje
-          </Button>
+          </DialogClose>
         </div>
       </DialogContent>
     </Dialog>

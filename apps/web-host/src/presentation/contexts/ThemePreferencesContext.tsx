@@ -67,12 +67,15 @@ function writeToStorage(prefs: ThemePreferences): void {
 
 function applyToDocument(prefs: ThemePreferences): void {
   const root = document.documentElement;
+  const isDarkTheme = prefs.theme === "dark";
 
   if (prefs.theme === "default") {
     root.removeAttribute("data-theme");
   } else {
     root.setAttribute("data-theme", prefs.theme);
   }
+
+  root.classList.toggle("dark", isDarkTheme);
 
   root.setAttribute("data-font-size", prefs.fontSize);
   root.setAttribute("data-spacing", prefs.spacing);

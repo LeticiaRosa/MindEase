@@ -43,7 +43,7 @@ const STEPS = [
 export default function CognitiveAlertConfigPage() {
   const navigate = useNavigate();
   const { preferences, savePreferences } = useAlertPreferences();
-  const { toast } = useToast();
+  const toast = useToast();
   const [step, setStep] = useState<number>(0);
 
   const {
