@@ -25,7 +25,7 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, onDelete, onArchive }: TaskCardProps) {
-  const { mode } = useThemePreferences();
+  const { mode, helpers } = useThemePreferences();
   const [checklistOpen, setChecklistOpen] = useState(mode === "detail");
   const [timerOpen, setTimerOpen] = useState(false);
 
@@ -130,9 +130,11 @@ export function TaskCard({ task, onDelete, onArchive }: TaskCardProps) {
                 <Trash2 className="size-3" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>
-              <p>Delete task</p>
-            </TooltipContent>
+            {helpers === "show" && (
+              <TooltipContent>
+                <p>Delete task</p>
+              </TooltipContent>
+            )}
           </Tooltip>
 
           {onArchive && (
@@ -152,9 +154,11 @@ export function TaskCard({ task, onDelete, onArchive }: TaskCardProps) {
                   <Archive className="size-3" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>
-                <p>Archive task</p>
-              </TooltipContent>
+              {helpers === "show" && (
+                <TooltipContent>
+                  <p>Archive task</p>
+                </TooltipContent>
+              )}
             </Tooltip>
           )}
         </span>

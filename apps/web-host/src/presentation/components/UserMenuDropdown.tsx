@@ -24,6 +24,7 @@ import {
   useThemePreferences,
   type ColourTheme,
   type FontSize,
+  type HelpersVisibility,
   type SpacingDensity,
   type ThemeMode,
 } from "@/presentation/contexts/ThemePreferencesContext";
@@ -92,7 +93,7 @@ export function SegmentedControl<T extends string>({
 
 export function UserMenuDropdown() {
   const { user, loading, signOut } = useAuth();
-  const { theme, fontSize, spacing, updatePreferences, mode } =
+  const { theme, fontSize, spacing, updatePreferences, mode, helpers } =
     useThemePreferences();
   const toast = useToast();
   const navigate = useNavigate();
@@ -249,6 +250,15 @@ export function UserMenuDropdown() {
                   { value: "detail", label: "Detail" },
                 ]}
                 onChange={(value) => updatePreferences({ mode: value })}
+              />
+              <SegmentedControl<HelpersVisibility>
+                label="Helpers"
+                value={helpers}
+                options={[
+                  { value: "show", label: "Show" },
+                  { value: "hide", label: "Hide" },
+                ]}
+                onChange={(value) => updatePreferences({ helpers: value })}
               />
             </div>
           )}

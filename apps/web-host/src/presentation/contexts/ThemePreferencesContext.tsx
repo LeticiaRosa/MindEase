@@ -13,12 +13,14 @@ export type ColourTheme = "default" | "soft" | "high-contrast" | "dark";
 export type FontSize = "sm" | "md" | "lg";
 export type SpacingDensity = "compact" | "default" | "relaxed";
 export type ThemeMode = "resume" | "detail";
+export type HelpersVisibility = "show" | "hide";
 
 export interface ThemePreferences {
   theme: ColourTheme;
   fontSize: FontSize;
   spacing: SpacingDensity;
   mode: ThemeMode;
+  helpers: HelpersVisibility;
 }
 
 interface ThemePreferencesContextValue {
@@ -26,6 +28,7 @@ interface ThemePreferencesContextValue {
   fontSize: FontSize;
   spacing: SpacingDensity;
   mode: ThemeMode;
+  helpers: HelpersVisibility;
   updatePreferences: (patch: Partial<ThemePreferences>) => void;
 }
 
@@ -38,6 +41,7 @@ const DEFAULT_PREFERENCES: ThemePreferences = {
   fontSize: "md",
   spacing: "default",
   mode: "resume",
+  helpers: "show",
 };
 
 // ─── Context ──────────────────────────────────────────────────────────────────
@@ -84,6 +88,7 @@ function applyToDocument(prefs: ThemePreferences): void {
   root.setAttribute("data-font-size", prefs.fontSize);
   root.setAttribute("data-spacing", prefs.spacing);
   root.setAttribute("data-mode", prefs.mode);
+  root.setAttribute("data-helpers", prefs.helpers);
 }
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
@@ -115,6 +120,7 @@ export function ThemePreferencesProvider({
         fontSize: prefs.fontSize,
         spacing: prefs.spacing,
         mode: prefs.mode,
+        helpers: prefs.helpers,
         updatePreferences,
       }}
     >

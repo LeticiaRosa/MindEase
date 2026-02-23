@@ -1,6 +1,12 @@
 import { useRef, useEffect, useState } from "react";
 import { Check, X, ChevronDown, ChevronUp } from "lucide-react";
-import { Checkbox, Progress } from "@repo/ui";
+import {
+  Checkbox,
+  Progress,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@repo/ui";
 import { cn } from "@repo/ui";
 import { useSmartChecklist } from "@/presentation/hooks/useSmartChecklist";
 import { AddStepForm } from "@/presentation/components/AddStepForm";
@@ -28,7 +34,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
 
   const currentCheckboxRef = useRef<HTMLButtonElement>(null);
   const prevCurrentIdRef = useRef<string | null>(null);
-  const { mode } = useThemePreferences();
+  const { mode, helpers } = useThemePreferences();
   const [animatingId, setAnimatingId] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(mode === "detail");
   const animateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -125,13 +131,22 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
             <span className="text-xs line-through text-muted-foreground flex-1 min-w-0 truncate">
               {step.title}
             </span>
-            <button
-              onClick={() => deleteStep(step.id)}
-              className="shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
-              aria-label={`Remove step: ${step.title}`}
-            >
-              <X className="size-3" />
-            </button>
+            <Tooltip>
+              <TooltipTrigger>
+                <button
+                  onClick={() => deleteStep(step.id)}
+                  className="shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+                  aria-label={`Remove step: ${step.title}`}
+                >
+                  <X className="size-3" />
+                </button>
+              </TooltipTrigger>
+              {helpers === "show" && (
+                <TooltipContent>
+                  <p>Remove step</p>
+                </TooltipContent>
+              )}
+            </Tooltip>
           </div>
         ))}
 
@@ -158,13 +173,22 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
           >
             {currentStep.title}
           </label>
-          <button
-            onClick={() => deleteStep(currentStep.id)}
-            className="shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
-            aria-label={`Remove step: ${currentStep.title}`}
-          >
-            <X className="size-3" />
-          </button>
+          <Tooltip>
+            <TooltipTrigger>
+              <button
+                onClick={() => deleteStep(currentStep.id)}
+                className="shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+                aria-label={`Remove step: ${currentStep.title}`}
+              >
+                <X className="size-3" />
+              </button>
+            </TooltipTrigger>
+            {helpers === "show" && (
+              <TooltipContent>
+                <p>Remove step</p>
+              </TooltipContent>
+            )}
+          </Tooltip>
         </div>
       )}
 
@@ -216,13 +240,22 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                   >
                     {step.title}
                   </label>
-                  <button
-                    onClick={() => deleteStep(step.id)}
-                    className="shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
-                    aria-label={`Remove step: ${step.title}`}
-                  >
-                    <X className="size-3" />
-                  </button>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <button
+                        onClick={() => deleteStep(step.id)}
+                        className="shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+                        aria-label={`Remove step: ${step.title}`}
+                      >
+                        <X className="size-3" />
+                      </button>
+                    </TooltipTrigger>
+                    {helpers === "show" && (
+                      <TooltipContent>
+                        <p>Remove step</p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
                 </div>
               ))}
             </div>
