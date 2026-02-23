@@ -146,7 +146,7 @@ export function TimerPreferencesPanel({ onClose }: TimerPreferencesPanelProps) {
               name="cyclesBeforeLongBreak"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs text-muted-foreground whitespace-nowrap">
+                  <FormLabel className="text-xs text-muted-foreground ">
                     Cycles before long break
                   </FormLabel>
                   <FormControl>

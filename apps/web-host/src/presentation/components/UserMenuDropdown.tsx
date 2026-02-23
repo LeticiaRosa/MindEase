@@ -7,6 +7,7 @@ import {
   ChevronDown,
   Bell,
   LayoutGrid,
+  GamepadDirectional,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -94,7 +95,7 @@ export function UserMenuDropdown() {
   const toast = useToast();
   const navigate = useNavigate();
   const displayName = getDisplayName(user);
-
+  const [mode, setMode] = useState<string | null>("resume");
   const [showConfigTimer, setShowConfigTimer] = useState(false);
   const [showConfigAppearance, setShowConfigAppearance] = useState(false);
 
@@ -205,7 +206,7 @@ export function UserMenuDropdown() {
           </button>
 
           {showConfigAppearance && (
-            <div className="[&>div]:border-0 [&>div]:shadow-none [&>div]:p-0 [&>div]:w-full [&>div]:bg-transparent">
+            <div className="[&>div]:border-0 [&>div]:shadow-none [&>div]:p-0 [&>div]:w-full [&>div]:bg-transparent gap-2 flex flex-col pt-2">
               <SegmentedControl<ColourTheme>
                 label="Colour theme"
                 value={theme}
@@ -238,6 +239,15 @@ export function UserMenuDropdown() {
                   { value: "relaxed", label: "Relaxed" },
                 ]}
                 onChange={(value) => updatePreferences({ spacing: value })}
+              />
+              <SegmentedControl<string>
+                label="Mode"
+                value={mode ?? "resume"}
+                options={[
+                  { value: "resume", label: "Resume" },
+                  { value: "detail", label: "Detail" },
+                ]}
+                onChange={(value) => setMode(value)}
               />
             </div>
           )}
