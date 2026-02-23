@@ -38,6 +38,20 @@ export function TaskCard({ task, onDelete }: TaskCardProps) {
     transition: transition ?? "transform 200ms ease-in-out",
   };
 
+  const toLocaleRelativeTime = () => {
+    const now = new Date();
+    const updatedAt = new Date(task.statusUpdatedAt);
+    const diffMs = now.getTime() - updatedAt.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24)
+      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+    const diffDays = Math.floor(diffHours / 24);
+    return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+  };
+
   return (
     <article
       ref={setNodeRef}
@@ -66,6 +80,18 @@ export function TaskCard({ task, onDelete }: TaskCardProps) {
           <p className="flex-1 text-sm font-medium min-w-0 wrap-break-word">
             {task.title}
           </p>
+
+          {/* Date in Status */}
+          {task.statusUpdatedAt && (
+            <span
+              className="text-xs text-muted-foreground shrink-0 font-light"
+              aria-label={`Status updated at ${new Date(
+                task.statusUpdatedAt,
+              ).toLocaleString()}`}
+            >
+              {toLocaleRelativeTime()}
+            </span>
+          )}
 
           {/* Focus indicator */}
           {isTimerActive && (

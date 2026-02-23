@@ -7,7 +7,6 @@ import {
   ChevronDown,
   Bell,
   LayoutGrid,
-  GamepadDirectional,
 } from "lucide-react";
 import {
   DropdownMenu,

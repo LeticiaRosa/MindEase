@@ -8,6 +8,7 @@ export interface TaskDTO {
   position: number;
   createdAt: string;
   updatedAt: string;
+  statusUpdatedAt: string;
 }
 
 export interface ChecklistStepDTO {
@@ -17,4 +18,5 @@ export interface ChecklistStepDTO {
   completed: boolean;
   position: number;
   createdAt: string;
+  statusUpdatedAt: string;
 }

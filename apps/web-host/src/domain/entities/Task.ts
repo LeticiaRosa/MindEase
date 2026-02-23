@@ -10,4 +10,5 @@ export interface Task {
   position: number;
   createdAt: string;
   updatedAt: string;
+  statusUpdatedAt: string;
 }

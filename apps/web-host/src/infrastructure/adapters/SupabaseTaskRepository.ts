@@ -61,7 +61,13 @@ export class SupabaseTaskRepository implements ITaskRepository {
   ): Promise<Task> {
     const { data, error } = await supabaseClient
       .from("tasks")
-      .update({ ...updates, updated_at: new Date().toISOString() })
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString(),
+        ...(updates.status
+          ? { status_updated_at: new Date().toISOString() }
+          : {}),
+      })
       .eq("id", id)
       .select()
       .single();
@@ -76,14 +82,25 @@ export class SupabaseTaskRepository implements ITaskRepository {
   }
 
   async reorderTasks(
-    updates: Array<{ id: string; position: number; status: TaskStatus }>,
+    updates: Array<{
+      id: string;
+      position: number;
+      status: TaskStatus;
+      previousStatus: TaskStatus;
+    }>,
   ): Promise<void> {
     // Batch update: execute in parallel since Supabase doesn't support bulk update with different values
+    const now = new Date().toISOString();
     await Promise.all(
-      updates.map(({ id, position, status }) =>
+      updates.map(({ id, position, status, previousStatus }) =>
         supabaseClient
           .from("tasks")
-          .update({ position, status, updated_at: new Date().toISOString() })
+          .update({
+            position,
+            status,
+            updated_at: now,
+            ...(previousStatus !== status ? { status_updated_at: now } : {}),
+          })
           .eq("id", id),
       ),
     );
@@ -211,6 +228,7 @@ export class SupabaseTaskRepository implements ITaskRepository {
       position: row.position as number,
       createdAt: row.created_at as string,
       updatedAt: row.updated_at as string,
+      statusUpdatedAt: row.status_updated_at as string,
     };
   }
 

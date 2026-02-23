@@ -19,7 +19,12 @@ export interface ITaskRepository {
   ): Promise<Task>;
   deleteTask(id: string): Promise<void>;
   reorderTasks(
-    updates: Array<{ id: string; position: number; status: TaskStatus }>,
+    updates: Array<{
+      id: string;
+      position: number;
+      status: TaskStatus;
+      previousStatus: TaskStatus;
+    }>,
   ): Promise<void>;
 
   // Checklist steps

@@ -90,11 +90,15 @@ export function KanbanBoard() {
       reordered = arrayMove(columnTasks, oldIndex, newIndex);
     }
 
-    const updates = reordered.map((t, i) => ({
-      id: t.id,
-      position: i,
-      status: targetStatus,
-    }));
+    const updates = reordered.map((t, i) => {
+      const original = tasks.find((task) => task.id === t.id);
+      return {
+        id: t.id,
+        position: i,
+        status: targetStatus,
+        previousStatus: original?.status ?? targetStatus,
+      };
+    });
 
     reorderTasks(updates);
   };

@@ -2,7 +2,11 @@ import type { ITaskRepository } from "@/domain/interfaces/ITaskRepository";
 import type { TimerPreferences } from "@/domain/entities/TimerPreferences";
 
 export class UpdateTimerPreferences {
-  constructor(private readonly repository: ITaskRepository) {}
+  private readonly repository: ITaskRepository;
+
+  constructor(repository: ITaskRepository) {
+    this.repository = repository;
+  }
 
   async execute(
     prefs: Partial<Omit<TimerPreferences, "userId">>,

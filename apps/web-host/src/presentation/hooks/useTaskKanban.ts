@@ -38,6 +38,7 @@ export function useTaskKanban(routineId: string) {
         position: previous?.length ?? 0,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        statusUpdatedAt: new Date().toISOString(),
       };
       queryClient.setQueryData<Task[]>(["tasks", routineId], (old = []) => [
         ...old,
