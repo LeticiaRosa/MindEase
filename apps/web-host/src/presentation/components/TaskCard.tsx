@@ -1,25 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Trash2, ChevronDown, ChevronUp, Timer, Move } from "lucide-react";
-import { Button } from "@repo/ui";
+import {
+  Trash2,
+  ChevronDown,
+  ChevronUp,
+  Timer,
+  Move,
+  Archive,
+} from "lucide-react";
+import { Button, Tooltip, TooltipTrigger, TooltipContent } from "@repo/ui";
 import { cn } from "@repo/ui";
 import type { Task } from "@/domain/entities/Task";
 import { SmartChecklist } from "@/presentation/components/SmartChecklist";
 import { FocusTimer } from "@/presentation/components/FocusTimer";
 import { useTimerContext } from "@/presentation/contexts/TimerContext";
 import { FocusTimerFocus } from "./FocusTimerFocus";
+import { useThemePreferences } from "../contexts/ThemePreferencesContext";
 
 interface TaskCardProps {
   task: Task;
   onDelete: (id: string) => void;
+  onArchive?: (id: string) => void;
 }
 
-export function TaskCard({ task, onDelete }: TaskCardProps) {
-  const [checklistOpen, setChecklistOpen] = useState(false);
+export function TaskCard({ task, onDelete, onArchive }: TaskCardProps) {
+  const { mode } = useThemePreferences();
+  const [checklistOpen, setChecklistOpen] = useState(mode === "detail");
   const [timerOpen, setTimerOpen] = useState(false);
-  const [timerFocusOpen, setTimerFocusOpen] = useState(false);
 
+  useEffect(() => {
+    setChecklistOpen(mode === "detail");
+  }, [mode]);
+  const [timerFocusOpen, setTimerFocusOpen] = useState(false);
   const { state: timerState } = useTimerContext();
   const isTimerActive =
     timerState.activeTaskId === task.id && timerState.status === "running";
@@ -101,20 +114,49 @@ export function TaskCard({ task, onDelete }: TaskCardProps) {
               role="status"
             />
           )}
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="shrink-0 size-6 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:ring-2 focus-visible:ring-ring"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(task.id);
+                }}
+                aria-label={`Delete task: ${task.title}`}
+              >
+                <Trash2 className="size-3" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Delete task</p>
+            </TooltipContent>
+          </Tooltip>
 
-          <Button
-            size="icon"
-            variant="ghost"
-            className="shrink-0 size-6 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:ring-2 focus-visible:ring-ring"
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete(task.id);
-            }}
-            aria-label={`Delete task: ${task.title}`}
-          >
-            <Trash2 className="size-3" />
-          </Button>
+          {onArchive && (
+            <Tooltip>
+              <TooltipTrigger>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="shrink-0 size-6 text-muted-foreground/50 hover:text-muted-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring"
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onArchive(task.id);
+                  }}
+                  aria-label={`Archive task: ${task.title}`}
+                >
+                  <Archive className="size-3" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Archive task</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
         </span>
       </div>
 

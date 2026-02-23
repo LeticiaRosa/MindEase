@@ -3,6 +3,7 @@ import AuthWrapper from "@/components/AuthWrapper";
 import Dashboard from "@/presentation/pages/Dashboard";
 import CognitiveAlertConfigPage from "@/presentation/pages/CognitiveAlertConfigPage";
 import RoutineManagementPage from "@/presentation/pages/RoutineManagementPage";
+import ArchivedTasksPage from "@/presentation/pages/ArchivedTasksPage";
 import { ProtectedRoute } from "@/presentation/components/ProtectedRoute";
 
 export const router = createBrowserRouter([
@@ -38,6 +39,10 @@ export const router = createBrowserRouter([
       {
         path: "/settings/routines",
         element: <RoutineManagementPage />,
+      },
+      {
+        path: "/archived-tasks",
+        element: <ArchivedTasksPage />,
       },
     ],
   },

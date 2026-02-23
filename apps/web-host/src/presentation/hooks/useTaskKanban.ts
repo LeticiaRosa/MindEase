@@ -120,6 +120,27 @@ export function useTaskKanban(routineId: string) {
       queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
   });
 
+  const archiveMutation = useMutation({
+    mutationFn: (id: string) => updateTaskStatus.execute(id, "archived"),
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ["tasks", routineId] });
+      const previous = queryClient.getQueryData<Task[]>(["tasks", routineId]);
+      queryClient.setQueryData<Task[]>(["tasks", routineId], (old = []) =>
+        old.filter((t) => t.id !== id),
+      );
+      return { previous };
+    },
+    onError: (_, __, ctx) => {
+      if (ctx?.previous)
+        queryClient.setQueryData(["tasks", routineId], ctx.previous);
+      toast.error("Failed to archive task");
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks", routineId] });
+      queryClient.invalidateQueries({ queryKey: ["archivedTasks"] });
+    },
+  });
+
   const tasksByStatus = (status: TaskStatus) =>
     tasks
       .filter((t) => t.status === status)
@@ -140,6 +161,18 @@ export function useTaskKanban(routineId: string) {
           label: "Undo",
           onClick: () =>
             queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
+        },
+      });
+    },
+    archiveTask: (id: string) => {
+      archiveMutation.mutate(id);
+      toast.info("Task archived", {
+        duration: 3000,
+        action: {
+          label: "View",
+          onClick: () => {
+            window.location.href = "/archived-tasks";
+          },
         },
       });
     },

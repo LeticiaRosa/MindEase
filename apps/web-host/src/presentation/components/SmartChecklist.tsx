@@ -4,6 +4,7 @@ import { Checkbox, Progress } from "@repo/ui";
 import { cn } from "@repo/ui";
 import { useSmartChecklist } from "@/presentation/hooks/useSmartChecklist";
 import { AddStepForm } from "@/presentation/components/AddStepForm";
+import { useThemePreferences } from "@/presentation/contexts/ThemePreferencesContext";
 
 interface SmartChecklistProps {
   taskId: string;
@@ -27,10 +28,18 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
 
   const currentCheckboxRef = useRef<HTMLButtonElement>(null);
   const prevCurrentIdRef = useRef<string | null>(null);
+  const { mode } = useThemePreferences();
   const [animatingId, setAnimatingId] = useState<string | null>(null);
-  const [showAll, setShowAll] = useState(false);
+  const [showAll, setShowAll] = useState(mode === "detail");
   const animateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [showAllStepsConcluded, setShowAllStepsConcluded] = useState(false);
+  const [showAllStepsConcluded, setShowAllStepsConcluded] = useState(
+    mode === "detail",
+  );
+
+  useEffect(() => {
+    setShowAll(mode === "detail");
+    setShowAllStepsConcluded(mode === "detail");
+  }, [mode]);
 
   // Auto-focus next step when current step changes (using ref to avoid cascading renders)
   useEffect(() => {

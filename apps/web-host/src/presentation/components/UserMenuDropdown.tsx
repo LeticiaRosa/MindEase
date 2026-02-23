@@ -7,6 +7,7 @@ import {
   ChevronDown,
   Bell,
   LayoutGrid,
+  Archive,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -24,6 +25,7 @@ import {
   type ColourTheme,
   type FontSize,
   type SpacingDensity,
+  type ThemeMode,
 } from "@/presentation/contexts/ThemePreferencesContext";
 import { TimerPreferencesPanel } from "@/presentation/components/TimerPreferencesPanel";
 import { cn } from "@repo/ui";
@@ -90,11 +92,11 @@ export function SegmentedControl<T extends string>({
 
 export function UserMenuDropdown() {
   const { user, loading, signOut } = useAuth();
-  const { theme, fontSize, spacing, updatePreferences } = useThemePreferences();
+  const { theme, fontSize, spacing, updatePreferences, mode } =
+    useThemePreferences();
   const toast = useToast();
   const navigate = useNavigate();
   const displayName = getDisplayName(user);
-  const [mode, setMode] = useState<string | null>("resume");
   const [showConfigTimer, setShowConfigTimer] = useState(false);
   const [showConfigAppearance, setShowConfigAppearance] = useState(false);
 
@@ -239,14 +241,14 @@ export function UserMenuDropdown() {
                 ]}
                 onChange={(value) => updatePreferences({ spacing: value })}
               />
-              <SegmentedControl<string>
+              <SegmentedControl<ThemeMode>
                 label="Mode"
-                value={mode ?? "resume"}
+                value={mode}
                 options={[
                   { value: "resume", label: "Resume" },
                   { value: "detail", label: "Detail" },
                 ]}
-                onChange={(value) => setMode(value)}
+                onChange={(value) => updatePreferences({ mode: value })}
               />
             </div>
           )}
@@ -278,6 +280,20 @@ export function UserMenuDropdown() {
         >
           <Bell className="size-4 text-muted-foreground" />
           Alertas Cognitivos
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        {/* Archived Tasks */}
+        <DropdownMenuItem
+          className={cn(
+            "mx-1 gap-2 cursor-pointer",
+            "focus-visible:ring-2 focus-visible:ring-ring",
+          )}
+          onSelect={() => navigate("/archived-tasks")}
+        >
+          <Archive className="size-4 text-muted-foreground" />
+          Tarefas Arquivadas
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />

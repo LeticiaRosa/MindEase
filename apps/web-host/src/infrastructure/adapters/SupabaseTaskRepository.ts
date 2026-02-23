@@ -14,7 +14,20 @@ export class SupabaseTaskRepository implements ITaskRepository {
       .from("tasks")
       .select("*")
       .eq("routine_id", routineId)
+      .neq("status", "archived")
       .order("position", { ascending: true });
+
+    if (error) throw new Error(error.message);
+
+    return (data ?? []).map(this.mapTask);
+  }
+
+  async getArchivedTasks(): Promise<Task[]> {
+    const { data, error } = await supabaseClient
+      .from("tasks")
+      .select("*")
+      .eq("status", "archived")
+      .order("status_updated_at", { ascending: false });
 
     if (error) throw new Error(error.message);
 

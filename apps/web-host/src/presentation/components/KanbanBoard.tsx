@@ -31,6 +31,7 @@ export function KanbanBoard() {
     createTask,
     reorderTasks,
     deleteTask,
+    archiveTask,
   } = useTaskKanban(activeRoutineId ?? "");
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const { recordTaskSwitch, setCurrentTask } = useActivitySignals();
@@ -140,6 +141,7 @@ export function KanbanBoard() {
             tasks={tasksByStatus(status)}
             onCreateTask={createTask}
             onDeleteTask={deleteTask}
+            onArchiveTask={archiveTask}
           />
         ))}
       </div>
@@ -148,7 +150,11 @@ export function KanbanBoard() {
       <DragOverlay>
         {activeTask ? (
           <div className="opacity-80 scale-105 shadow-xl rotate-1">
-            <TaskCard task={activeTask} onDelete={() => {}} />
+            <TaskCard
+              task={activeTask}
+              onDelete={() => {}}
+              onArchive={undefined}
+            />
           </div>
         ) : null}
       </DragOverlay>

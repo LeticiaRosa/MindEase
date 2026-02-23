@@ -15,12 +15,14 @@ interface KanbanColumnProps {
   tasks: Task[];
   onCreateTask: (title: string) => void;
   onDeleteTask: (id: string) => void;
+  onArchiveTask: (id: string) => void;
 }
 
 const COLUMN_STYLES: Record<TaskStatus, string> = {
   todo: "border-t-2 border-t-muted-foreground/30",
   in_progress: "border-t-2 border-t-primary/50",
   done: "border-t-2 border-t-green-500/50",
+  archived: "border-t-2 border-t-muted-foreground/20",
 };
 
 export function KanbanColumn({
@@ -28,6 +30,7 @@ export function KanbanColumn({
   tasks,
   onCreateTask,
   onDeleteTask,
+  onArchiveTask,
 }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id: status });
 
@@ -69,7 +72,12 @@ export function KanbanColumn({
             </p>
           ) : (
             tasks.map((task) => (
-              <TaskCard key={task.id} task={task} onDelete={onDeleteTask} />
+              <TaskCard
+                key={task.id}
+                task={task}
+                onDelete={onDeleteTask}
+                onArchive={onArchiveTask}
+              />
             ))
           )}
         </SortableContext>
