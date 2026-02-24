@@ -25,7 +25,7 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, onDelete, onArchive }: TaskCardProps) {
-  const { mode, helpers } = useThemePreferences();
+  const { mode, helpers, complexity } = useThemePreferences();
   const [checklistOpen, setChecklistOpen] = useState(mode === "detail");
   const [timerOpen, setTimerOpen] = useState(false);
 
@@ -95,7 +95,7 @@ export function TaskCard({ task, onDelete, onArchive }: TaskCardProps) {
           </p>
 
           {/* Date in Status */}
-          {task.statusUpdatedAt && (
+          {complexity === "complex" && task.statusUpdatedAt && (
             <span
               className="text-xs text-muted-foreground shrink-0 font-light"
               aria-label={`Status updated at ${new Date(
@@ -114,6 +114,7 @@ export function TaskCard({ task, onDelete, onArchive }: TaskCardProps) {
               role="status"
             />
           )}
+
           <Tooltip>
             <TooltipTrigger>
               <Button

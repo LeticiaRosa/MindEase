@@ -14,6 +14,7 @@ export type FontSize = "sm" | "md" | "lg";
 export type SpacingDensity = "compact" | "default" | "relaxed";
 export type ThemeMode = "resume" | "detail";
 export type HelpersVisibility = "show" | "hide";
+export type ComplexityMode = "simple" | "complex";
 
 export interface ThemePreferences {
   theme: ColourTheme;
@@ -21,6 +22,7 @@ export interface ThemePreferences {
   spacing: SpacingDensity;
   mode: ThemeMode;
   helpers: HelpersVisibility;
+  complexity: ComplexityMode;
 }
 
 interface ThemePreferencesContextValue {
@@ -29,6 +31,7 @@ interface ThemePreferencesContextValue {
   spacing: SpacingDensity;
   mode: ThemeMode;
   helpers: HelpersVisibility;
+  complexity: ComplexityMode;
   updatePreferences: (patch: Partial<ThemePreferences>) => void;
 }
 
@@ -42,6 +45,7 @@ const DEFAULT_PREFERENCES: ThemePreferences = {
   spacing: "default",
   mode: "resume",
   helpers: "show",
+  complexity: "simple",
 };
 
 // ─── Context ──────────────────────────────────────────────────────────────────
@@ -121,6 +125,7 @@ export function ThemePreferencesProvider({
         spacing: prefs.spacing,
         mode: prefs.mode,
         helpers: prefs.helpers,
+        complexity: prefs.complexity,
         updatePreferences,
       }}
     >

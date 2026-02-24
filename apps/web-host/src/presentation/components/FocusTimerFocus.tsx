@@ -60,7 +60,7 @@ export function FocusTimerFocus({
       role="dialog"
       aria-modal="true"
       aria-label="Full-screen focus timer"
-      className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-background overflow-hidden"
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-background overflow-hidden"
     >
       {/* Exit button — top-right, unobtrusive */}
       {onClose && (

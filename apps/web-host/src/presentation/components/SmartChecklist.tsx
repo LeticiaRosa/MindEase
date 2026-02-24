@@ -34,7 +34,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
 
   const currentCheckboxRef = useRef<HTMLButtonElement>(null);
   const prevCurrentIdRef = useRef<string | null>(null);
-  const { mode, helpers } = useThemePreferences();
+  const { mode, helpers, complexity } = useThemePreferences();
   const [animatingId, setAnimatingId] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(mode === "detail");
   const animateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -80,7 +80,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
   return (
     <div className="flex flex-col gap-2 pt-1">
       {/* Progress indicator */}
-      {totalSteps > 0 && (
+      {complexity === "complex" && totalSteps > 0 && (
         <div className="flex items-center gap-2">
           <Progress
             value={(completedCount / totalSteps) * 100}
