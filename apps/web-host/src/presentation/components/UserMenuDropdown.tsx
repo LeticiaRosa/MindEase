@@ -17,7 +17,6 @@ import {
   DropdownMenuTrigger,
   buttonVariants,
   Separator,
-  Button,
 } from "@repo/ui";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "auth/auth";
