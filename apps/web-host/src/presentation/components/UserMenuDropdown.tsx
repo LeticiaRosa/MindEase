@@ -298,13 +298,15 @@ export function UserMenuDropdown() {
             )}
           </div>
 
-          {complexity === "simple" && (
+          {(complexity === "simple" || complexity === "complex") && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className={cn(
                   "mx-1 gap-2 cursor-pointer",
                   "focus-visible:ring-2 focus-visible:ring-ring",
+                  // Mostra a opção apenas em telas menores (mobile)
+                  "sm:hidden",
                 )}
                 onClick={() => setFocusOpen(true)}
                 aria-label="Enter focus mode"

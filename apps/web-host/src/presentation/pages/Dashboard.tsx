@@ -49,7 +49,7 @@ function DashboardContent() {
               <Button
                 variant="link"
                 size="sm"
-                className="gap-2 text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                className="gap-2 text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring hidden sm:inline-flex"
                 onClick={() => setFocusOpen(true)}
                 aria-label="Enter focus mode"
               >
@@ -61,7 +61,7 @@ function DashboardContent() {
           </div>
         </div>
       </header>
-
+      {/* Incluir scroll overflow */}
       <main className="max-w-7xl my-6 mx-auto px-6 py-4 border border-border rounded-lg shadow-xs">
         <div className="flex items-center place-content-between mb-2 gap-4">
           <h1 className="text-xl font-semibold tracking-tight text-foreground">
@@ -73,7 +73,7 @@ function DashboardContent() {
         <div className="flex items-center place-content-end mb-4 ">
           <Routine />
         </div>
-        <div className="mb-2 place-items-center">
+        <div className="mb-2 place-items-start overflow-auto">
           <KanbanBoard />
         </div>
         {complexity === "complex" && (

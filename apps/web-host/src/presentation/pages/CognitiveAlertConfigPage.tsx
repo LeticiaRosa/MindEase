@@ -103,15 +103,20 @@ export default function CognitiveAlertConfigPage() {
               <h1 className="text-lg font-semibold tracking-tight">
                 Alertas Cognitivos
               </h1>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Personalize seus apoios executivos
-              </p>
             </div>
           </div>
           <Logo />
         </div>
       </header>
-
+      <div className="max-w-2xl mx-auto px-6 pt-8 space-y-8">
+        {/* ── Creation form ─────────────────────────────────────────────── */}
+        <section aria-labelledby="create-heading">
+          <p className="text-xs text-muted-foreground mb-4">
+            Personalize seus alertas cognitivos para receber lembretes e apoios
+            que se encaixemm melhor na sua rotina.
+          </p>
+        </section>
+      </div>
       {/* Step indicator */}
       <div className="max-w-2xl mx-auto px-6 pt-4">
         <div

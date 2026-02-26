@@ -78,7 +78,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
   }
 
   return (
-    <div className="flex flex-col gap-2 pt-1">
+    <div className="flex flex-col gap-2 pt-1 overflow-auto">
       {/* Progress indicator */}
       {complexity === "complex" && totalSteps > 0 && (
         <div className="flex items-center gap-2">
@@ -111,7 +111,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
             <ChevronDown className="size-3" />
           )}
           {showAllStepsConcluded
-            ? "Hide steps"
+            ? "Hide concluded steps"
             : `${completedSteps.length} ${completedSteps.length === 1 ? "step concluded" : "steps concluded"}`}
         </button>
       )}
@@ -219,7 +219,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
               <ChevronDown className="size-3" />
             )}
             {showAll
-              ? "Hide steps"
+              ? "Hide pending steps "
               : `${remainingCount} more ${remainingCount === 1 ? "step pending" : "steps pending"}`}
           </button>
 

@@ -157,9 +157,6 @@ export default function RoutineManagementPage() {
               <h1 className="text-lg font-semibold tracking-tight">
                 Gerenciar Kanbans
               </h1>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Organize suas rotinas de trabalho e estudo
-              </p>
             </div>
           </div>
           <Logo />
@@ -169,13 +166,16 @@ export default function RoutineManagementPage() {
       <div className="max-w-2xl mx-auto px-6 py-8 space-y-8">
         {/* ── Creation form ─────────────────────────────────────────────── */}
         <section aria-labelledby="create-heading">
+          <p className="text-xs text-muted-foreground mb-4">
+            Personalize suas rotinas do jeito que quiser! Adicione quantos
+            Kanbans precisar para organizar suas tarefas de forma eficiente.
+          </p>
           <h2
             id="create-heading"
             className="text-base font-semibold mb-4 text-foreground"
           >
             Novo Kanban
           </h2>
-
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleCreate)}

@@ -189,7 +189,7 @@ export function FocusTimerFocus({
             ) : (
               <ChevronDown className="size-3" />
             )}
-            {open ? "Hide steps" : "Show steps"}
+            {open ? "Hide steps" : "Show  steps"}
           </Button>
           {open && (
             <ScrollArea className="border-none p-2">
