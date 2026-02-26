@@ -120,7 +120,7 @@ export function TaskCard({ task, onDelete, onArchive }: TaskCardProps) {
               <Button
                 size="icon"
                 variant="ghost"
-                className="shrink-0 size-6 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:ring-2 focus-visible:ring-ring"
+                className="shrink-0 size-7 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:ring-2 focus-visible:ring-ring "
                 onPointerDown={(e) => e.stopPropagation()}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -144,7 +144,7 @@ export function TaskCard({ task, onDelete, onArchive }: TaskCardProps) {
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="shrink-0 size-6 text-muted-foreground/50 hover:text-muted-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring"
+                  className="shrink-0 size-7 text-muted-foreground/50 hover:text-muted-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring"
                   onPointerDown={(e) => e.stopPropagation()}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -202,7 +202,7 @@ export function TaskCard({ task, onDelete, onArchive }: TaskCardProps) {
           size="sm"
           variant="ghost"
           className={cn(
-            "h-6 px-2 text-xs text-muted-foreground hover:text-foreground gap-1 focus-visible:ring-2 focus-visible:ring-ring",
+            "h-6 px-4 text-xs text-muted-foreground hover:text-foreground gap-1 focus-visible:ring-2 focus-visible:ring-ring",
             isTimerActive && "text-primary",
           )}
           onClick={() => setTimerFocusOpen((v) => !v)}

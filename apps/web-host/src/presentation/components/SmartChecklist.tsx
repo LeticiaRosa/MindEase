@@ -119,7 +119,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
         completedSteps.map((step) => (
           <div
             key={step.id}
-            className="flex items-center gap-2 opacity-40 transition-opacity duration-300"
+            className="flex items-center gap-2 opacity-80 transition-opacity duration-300"
           >
             <Checkbox
               id={`step-${step.id}`}
@@ -135,7 +135,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
               <TooltipTrigger>
                 <button
                   onClick={() => deleteStep(step.id)}
-                  className="shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+                  className="p-2.5 shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
                   aria-label={`Remove step: ${step.title}`}
                 >
                   <X className="size-3" />
@@ -154,7 +154,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
       {currentStep && (
         <div
           className={cn(
-            "flex items-start gap-2 p-2 rounded-md bg-muted/40 border border-border/30 transition-all duration-300",
+            "flex items-center pl-2 gap-2 rounded-md bg-muted/40 border border-border/30 transition-all duration-300",
             animatingId === currentStep.id &&
               "animate-in fade-in slide-in-from-bottom-1",
           )}
@@ -177,7 +177,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
             <TooltipTrigger>
               <button
                 onClick={() => deleteStep(currentStep.id)}
-                className="shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+                className="p-2.5 shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
                 aria-label={`Remove step: ${currentStep.title}`}
               >
                 <X className="size-3" />
@@ -244,7 +244,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                     <TooltipTrigger>
                       <button
                         onClick={() => deleteStep(step.id)}
-                        className="shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+                        className="p-3 shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
                         aria-label={`Remove step: ${step.title}`}
                       >
                         <X className="size-3" />
