@@ -3,10 +3,9 @@ import {
   Pause,
   RotateCcw,
   X,
-  Coffee,
-  Brain,
   ChevronUp,
   ChevronDown,
+  Square,
 } from "lucide-react";
 import { Button, ScrollArea } from "@repo/ui";
 import { useFocusTimer } from "@/presentation/hooks/useFocusTimer";
@@ -36,19 +35,16 @@ export function FocusTimerFocus({
     start,
     pause,
     reset,
+    stop,
   } = useFocusTimer(taskId);
   const [open, setOpen] = useState(false);
 
-  const isFocus = mode === "focus";
-  const isBreak = mode === "break";
-  const modeLabel = isFocus ? "Focus" : isBreak ? "Short Break" : "Long Break";
-  const modeDescription = isFocus
-    ? "Stay with the task. One step at a time."
-    : isBreak
-      ? "Rest your mind. You earned it."
-      : "Take a longer rest before the next session.";
-
-  const ModeIcon = isFocus ? Brain : Coffee;
+  const modeDescription =
+    mode === "focus"
+      ? "Stay with the task. One step at a time."
+      : mode === "break"
+        ? "Rest your mind. You earned it."
+        : "Take a longer rest before the next session.";
 
   // Large ring: r=88, viewBox 200x200
   const r = 88;
@@ -60,7 +56,7 @@ export function FocusTimerFocus({
       role="dialog"
       aria-modal="true"
       aria-label="Full-screen focus timer"
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-background overflow-hidden"
+      className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-background overflow-hidden"
     >
       {/* Exit button — top-right, unobtrusive */}
       {onClose && (
@@ -162,16 +158,31 @@ export function FocusTimerFocus({
         )}
 
         {isActive && (
-          <Button
-            size="lg"
-            variant="ghost"
-            className="gap-2"
-            onClick={reset}
-            aria-label="Reset timer"
-          >
-            <RotateCcw className="size-4" aria-hidden="true" />
-            Reset
-          </Button>
+          <>
+            <Button
+              size="lg"
+              variant="ghost"
+              className="gap-2"
+              onClick={reset}
+              aria-label="Reset timer"
+            >
+              <RotateCcw className="size-4" aria-hidden="true" />
+              Reset
+            </Button>
+            <Button
+              size="lg"
+              variant="destructive"
+              className="gap-2"
+              onClick={async () => {
+                await stop();
+                if (onClose) onClose();
+              }}
+              aria-label="Stop and save time"
+            >
+              <Square className="size-4" aria-hidden="true" />
+              Stop
+            </Button>
+          </>
         )}
       </div>
       {taskId !== "dashboard" && (

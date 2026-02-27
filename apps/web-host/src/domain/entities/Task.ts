@@ -11,4 +11,5 @@ export interface Task {
   createdAt: string;
   updatedAt: string;
   statusUpdatedAt: string;
+  totalTimeSpent: number; // Total accumulated time spent on this task in seconds
 }

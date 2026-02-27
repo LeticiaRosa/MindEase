@@ -1,5 +1,5 @@
-import { Timer, Play, Pause, RotateCcw } from "lucide-react";
-import { Button } from "@repo/ui";
+import { Timer, Play, Pause, RotateCcw, Square } from "lucide-react";
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@repo/ui";
 import { useFocusTimer } from "@/presentation/hooks/useFocusTimer";
 
 interface FocusTimerProps {
@@ -19,6 +19,7 @@ export function FocusTimer({ taskId }: FocusTimerProps) {
     start,
     pause,
     reset,
+    stop,
   } = useFocusTimer(taskId);
 
   // Only show when active, or on hover (parent controls visibility)
@@ -77,36 +78,75 @@ export function FocusTimer({ taskId }: FocusTimerProps) {
       {/* Controls */}
       <div className="flex gap-1 ml-auto">
         {isRunning ? (
-          <Button
-            size="icon"
-            variant="ghost"
-            className="size-7"
-            onClick={pause}
-            aria-label="Pause timer"
-          >
-            <Pause className="size-3.5" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="size-7"
+                onClick={pause}
+                aria-label="Pause timer"
+              >
+                <Pause className="size-3.5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Pause timer</p>
+            </TooltipContent>
+          </Tooltip>
         ) : (
-          <Button
-            size="icon"
-            variant="ghost"
-            className="size-7"
-            onClick={start}
-            aria-label={isPaused ? "Resume timer" : "Start timer"}
-          >
-            <Play className="size-3.5" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="size-7"
+                onClick={start}
+                aria-label={isPaused ? "Resume timer" : "Start timer"}
+              >
+                <Play className="size-3.5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Play timer</p>
+            </TooltipContent>
+          </Tooltip>
         )}
         {isActive && (
-          <Button
-            size="icon"
-            variant="ghost"
-            className="size-7"
-            onClick={reset}
-            aria-label="Reset timer"
-          >
-            <RotateCcw className="size-3.5" />
-          </Button>
+          <>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="size-7"
+                  onClick={reset}
+                  aria-label="Reset timer"
+                >
+                  <RotateCcw className="size-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Reset timer</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="size-7 text-destructive/70 hover:text-destructive"
+                  onClick={stop}
+                  aria-label="Stop and save time"
+                >
+                  <Square className="size-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Stop and Save time</p>
+              </TooltipContent>
+            </Tooltip>
+          </>
         )}
       </div>
     </div>

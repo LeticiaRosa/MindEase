@@ -29,6 +29,7 @@ export function KanbanBoard() {
     isLoading,
     tasksByStatus,
     createTask,
+    updateTask,
     reorderTasks,
     deleteTask,
     archiveTask,
@@ -129,6 +130,7 @@ export function KanbanBoard() {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
+      <p>teste</p>
       <div
         className="flex gap-6 overflow-x-auto pb-4 min-h-[60vh]"
         role="region"
@@ -140,6 +142,7 @@ export function KanbanBoard() {
             status={status}
             tasks={tasksByStatus(status)}
             onCreateTask={createTask}
+            onUpdateTask={updateTask}
             onDeleteTask={deleteTask}
             onArchiveTask={archiveTask}
           />

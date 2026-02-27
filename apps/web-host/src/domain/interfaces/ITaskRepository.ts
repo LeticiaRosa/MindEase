@@ -19,6 +19,7 @@ export interface ITaskRepository {
     >,
   ): Promise<Task>;
   deleteTask(id: string): Promise<void>;
+  addTaskTimeSpent(id: string, secondsToAdd: number): Promise<Task>;
   reorderTasks(
     updates: Array<{
       id: string;

@@ -9,11 +9,13 @@ import type { TaskStatus } from "@/domain/valueObjects/TaskStatus";
 import { TASK_STATUS_LABELS } from "@/domain/valueObjects/TaskStatus";
 import { TaskCard } from "@/presentation/components/TaskCard";
 import { TaskCreateForm } from "@/presentation/components/TaskCreateForm";
+import type { UpdateTaskParams } from "@/application/useCases/UpdateTask";
 
 interface KanbanColumnProps {
   status: TaskStatus;
   tasks: Task[];
   onCreateTask: (title: string) => void;
+  onUpdateTask: (id: string, params: UpdateTaskParams) => void;
   onDeleteTask: (id: string) => void;
   onArchiveTask: (id: string) => void;
 }
@@ -29,6 +31,7 @@ export function KanbanColumn({
   status,
   tasks,
   onCreateTask,
+  onUpdateTask,
   onDeleteTask,
   onArchiveTask,
 }: KanbanColumnProps) {
@@ -75,6 +78,7 @@ export function KanbanColumn({
               <TaskCard
                 key={task.id}
                 task={task}
+                onUpdate={onUpdateTask}
                 onDelete={onDeleteTask}
                 onArchive={onArchiveTask}
               />

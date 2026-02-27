@@ -94,6 +94,34 @@ export class SupabaseTaskRepository implements ITaskRepository {
     if (error) throw new Error(error.message);
   }
 
+  async addTaskTimeSpent(id: string, secondsToAdd: number): Promise<Task> {
+    // Get current total_time_spent
+    const { data: currentTask, error: fetchError } = await supabaseClient
+      .from("tasks")
+      .select("total_time_spent")
+      .eq("id", id)
+      .single();
+
+    if (fetchError) throw new Error(fetchError.message);
+
+    const currentTotal = (currentTask.total_time_spent as number) ?? 0;
+    const newTotal = currentTotal + secondsToAdd;
+
+    // Update with new total
+    const { data, error } = await supabaseClient
+      .from("tasks")
+      .update({
+        total_time_spent: newTotal,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    return this.mapTask(data);
+  }
+
   async reorderTasks(
     updates: Array<{
       id: string;
@@ -242,6 +270,7 @@ export class SupabaseTaskRepository implements ITaskRepository {
       createdAt: row.created_at as string,
       updatedAt: row.updated_at as string,
       statusUpdatedAt: row.status_updated_at as string,
+      totalTimeSpent: (row.total_time_spent as number) ?? 0,
     };
   }
 

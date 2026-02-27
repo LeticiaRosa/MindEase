@@ -8,6 +8,7 @@ import {
   Timer,
   Move,
   Archive,
+  Pencil,
 } from "lucide-react";
 import { Button, Tooltip, TooltipTrigger, TooltipContent } from "@repo/ui";
 import { cn } from "@repo/ui";
@@ -17,25 +18,34 @@ import { FocusTimer } from "@/presentation/components/FocusTimer";
 import { useTimerContext } from "@/presentation/contexts/TimerContext";
 import { FocusTimerFocus } from "./FocusTimerFocus";
 import { useThemePreferences } from "../contexts/ThemePreferencesContext";
+import { TaskEditForm } from "./TaskEditForm";
+import type { UpdateTaskParams } from "@/application/useCases/UpdateTask";
 
 interface TaskCardProps {
   task: Task;
   onDelete: (id: string) => void;
   onArchive?: (id: string) => void;
+  onUpdate?: (id: string, params: UpdateTaskParams) => void;
 }
 
-export function TaskCard({ task, onDelete, onArchive }: TaskCardProps) {
+export function TaskCard({
+  task,
+  onDelete,
+  onArchive,
+  onUpdate,
+}: TaskCardProps) {
   const { mode, helpers, complexity } = useThemePreferences();
   const [checklistOpen, setChecklistOpen] = useState(mode === "detail");
   const [timerOpen, setTimerOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   useEffect(() => {
     setChecklistOpen(mode === "detail");
   }, [mode]);
   const [timerFocusOpen, setTimerFocusOpen] = useState(false);
   const { state: timerState } = useTimerContext();
-  const isTimerActive =
-    timerState.activeTaskId === task.id && timerState.status === "running";
+  const taskTimer = timerState.timers[task.id];
+  const isTimerActive = taskTimer?.status === "running";
 
   const {
     attributes,
@@ -65,6 +75,17 @@ export function TaskCard({ task, onDelete, onArchive }: TaskCardProps) {
     return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
   };
 
+  const formatTimeSpent = (seconds: number) => {
+    if (seconds === 0) return null;
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+    return `${minutes}m`;
+  };
+
   return (
     <article
       ref={setNodeRef}
@@ -77,6 +98,99 @@ export function TaskCard({ task, onDelete, onArchive }: TaskCardProps) {
       )}
       aria-label={`Task: ${task.title}`}
     >
+      <div className="flex justify-end items-center">
+        {/* Date in Status */}
+        {task.totalTimeSpent > 0 && (
+          <span
+            className="mx-2 shrink-0 px-2 py-0.5 text-xs font-medium rounded-full bg-primary/10 text-primary border border-primary/20"
+            aria-label={`Total time spent: ${formatTimeSpent(task.totalTimeSpent)}`}
+          >
+            {formatTimeSpent(task.totalTimeSpent)}
+          </span>
+        )}
+
+        {/* Focus indicator */}
+        {isTimerActive && (
+          <span
+            className="shrink-0 size-2 rounded-full bg-primary animate-pulse mx-2"
+            aria-label="Timer active"
+            role="status"
+          />
+        )}
+
+        {onUpdate && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="shrink-0 size-7 text-muted-foreground/50 hover:text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setEditDialogOpen(true);
+                }}
+                aria-label={`Edit task: ${task.title}`}
+              >
+                <Pencil className="size-3" />
+              </Button>
+            </TooltipTrigger>
+            {helpers === "show" && (
+              <TooltipContent>
+                <p>Edit task</p>
+              </TooltipContent>
+            )}
+          </Tooltip>
+        )}
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="shrink-0 size-7 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:ring-2 focus-visible:ring-ring "
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(task.id);
+              }}
+              aria-label={`Delete task: ${task.title}`}
+            >
+              <Trash2 className="size-3" />
+            </Button>
+          </TooltipTrigger>
+          {helpers === "show" && (
+            <TooltipContent>
+              <p>Delete task</p>
+            </TooltipContent>
+          )}
+        </Tooltip>
+
+        {onArchive && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="shrink-0 size-7 text-muted-foreground/50 hover:text-muted-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onArchive(task.id);
+                }}
+                aria-label={`Archive task: ${task.title}`}
+              >
+                <Archive className="size-3" />
+              </Button>
+            </TooltipTrigger>
+            {helpers === "show" && (
+              <TooltipContent>
+                <p>Archive task</p>
+              </TooltipContent>
+            )}
+          </Tooltip>
+        )}
+      </div>
       {/* Drag handle + title row */}
       <div className="flex items-center gap-2">
         {/* Drag handle */}
@@ -88,85 +202,34 @@ export function TaskCard({ task, onDelete, onArchive }: TaskCardProps) {
           tabIndex={0}
           id="dnd"
         >
-          <Move className="size-3 text-muted-foreground" aria-hidden="true" />
           {/* Title */}
-          <p className="flex-1 text-sm font-medium min-w-0 wrap-break-word">
-            {task.title}
-          </p>
-
-          {/* Date in Status */}
-          {complexity === "complex" && task.statusUpdatedAt && (
-            <span
-              className="text-xs text-muted-foreground shrink-0 font-light"
-              aria-label={`Status updated at ${new Date(
-                task.statusUpdatedAt,
-              ).toLocaleString()}`}
-            >
-              {toLocaleRelativeTime()}
-            </span>
-          )}
-
-          {/* Focus indicator */}
-          {isTimerActive && (
-            <span
-              className="shrink-0 size-2 rounded-full bg-primary animate-pulse"
-              aria-label="Timer active"
-              role="status"
-            />
-          )}
-
-          <Tooltip>
-            <TooltipTrigger>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="shrink-0 size-7 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:ring-2 focus-visible:ring-ring "
-                onPointerDown={(e) => e.stopPropagation()}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(task.id);
-                }}
-                aria-label={`Delete task: ${task.title}`}
+          <div>
+            <div className="flex items-center justify-start gap-2">
+              <Move
+                className="size-3 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <p className="flex-1 text-sm font-medium min-w-0 wrap-break-word">
+                {task.title}
+              </p>
+            </div>
+            {/* Total time spent badge */}
+            {complexity === "complex" && task.statusUpdatedAt && (
+              <span
+                className="flex justify-end text-xs text-muted-foreground shrink-0 font-light py-2"
+                aria-label={`Status updated at ${new Date(
+                  task.statusUpdatedAt,
+                ).toLocaleString()}`}
               >
-                <Trash2 className="size-3" />
-              </Button>
-            </TooltipTrigger>
-            {helpers === "show" && (
-              <TooltipContent>
-                <p>Delete task</p>
-              </TooltipContent>
+                Created {toLocaleRelativeTime()}
+              </span>
             )}
-          </Tooltip>
-
-          {onArchive && (
-            <Tooltip>
-              <TooltipTrigger>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="shrink-0 size-7 text-muted-foreground/50 hover:text-muted-foreground transition-colors focus-visible:ring-2 focus-visible:ring-ring"
-                  onPointerDown={(e) => e.stopPropagation()}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onArchive(task.id);
-                  }}
-                  aria-label={`Archive task: ${task.title}`}
-                >
-                  <Archive className="size-3" />
-                </Button>
-              </TooltipTrigger>
-              {helpers === "show" && (
-                <TooltipContent>
-                  <p>Archive task</p>
-                </TooltipContent>
-              )}
-            </Tooltip>
-          )}
+          </div>
         </span>
       </div>
 
       {/* Action row */}
-      <div className="flex items-center  mt-2">
+      <div className="flex items-center mt-2">
         <Button
           size="sm"
           variant="ghost"
@@ -238,6 +301,18 @@ export function TaskCard({ task, onDelete, onArchive }: TaskCardProps) {
         <div className="mt-2 animate-in fade-in slide-in-from-top-1 duration-200">
           <SmartChecklist taskId={task.id} />
         </div>
+      )}
+
+      {/* Edit Dialog */}
+      {onUpdate && (
+        <TaskEditForm
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          taskId={task.id}
+          initialTitle={task.title}
+          initialDescription={task.description}
+          onSubmit={onUpdate}
+        />
       )}
     </article>
   );

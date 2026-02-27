@@ -31,12 +31,12 @@ export function Routine() {
   return (
     <div className="flex items-center gap-4 ">
       <Tooltip>
-        <TooltipTrigger className="w-full">
-          <Select
-            value={activeRoutineId ?? ""}
-            onValueChange={setActiveRoutineId}
-            disabled={routines.length === 0}
-          >
+        <Select
+          value={activeRoutineId ?? ""}
+          onValueChange={setActiveRoutineId}
+          disabled={routines.length === 0}
+        >
+          <TooltipTrigger asChild className="w-full">
             <SelectTrigger
               id="kanban-select"
               className="w-full text-md cursor-pointer"
@@ -44,24 +44,24 @@ export function Routine() {
             >
               <SelectValue placeholder="Selecione um Kanban" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Kanbans</SelectLabel>
-                {routines.map((routine) => (
-                  <SelectItem key={routine.id} value={routine.id}>
-                    <span className="flex items-center gap-2 m-1 text-md text-light-foreground">
-                      <RoutineIcon
-                        name={routine.icon}
-                        className="size-4 text-foreground"
-                      />
-                      {routine.name}
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </TooltipTrigger>
+          </TooltipTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Kanbans</SelectLabel>
+              {routines.map((routine) => (
+                <SelectItem key={routine.id} value={routine.id}>
+                  <span className="flex items-center gap-2 m-1 text-md text-light-foreground">
+                    <RoutineIcon
+                      name={routine.icon}
+                      className="size-4 text-foreground"
+                    />
+                    {routine.name}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
         {helpers === "show" && (
           <TooltipContent>
             <span className="">

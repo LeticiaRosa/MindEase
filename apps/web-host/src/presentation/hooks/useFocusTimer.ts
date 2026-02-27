@@ -1,11 +1,23 @@
 import { useEffect } from "react";
 import { useToast } from "@repo/ui";
 import { useTimerContext } from "@/presentation/contexts/TimerContext";
+import { SupabaseTaskRepository } from "@/infrastructure/adapters/SupabaseTaskRepository";
+import { useQueryClient } from "@tanstack/react-query";
+
+const repository = new SupabaseTaskRepository();
 
 export function useFocusTimer(taskId: string) {
-  const { state, start, pause, reset, nextMode, getTimerState } =
-    useTimerContext();
+  const {
+    state,
+    start,
+    pause,
+    reset,
+    stop: stopTimer,
+    nextMode,
+    getTimerState,
+  } = useTimerContext();
   const toast = useToast();
+  const queryClient = useQueryClient();
 
   const timer = getTimerState(taskId);
   const isActive = !!state.timers[taskId];
@@ -39,6 +51,26 @@ export function useFocusTimer(taskId: string) {
     toast,
   ]);
 
+  const stop = async () => {
+    const elapsedSeconds = stopTimer(taskId);
+
+    if (elapsedSeconds > 0 && taskId !== "dashboard") {
+      try {
+        await repository.addTaskTimeSpent(taskId, elapsedSeconds);
+        queryClient.invalidateQueries({ queryKey: ["tasks"] });
+        toast.success(
+          `Time tracked: ${Math.floor(elapsedSeconds / 60)}m ${elapsedSeconds % 60}s`,
+          {
+            duration: 3000,
+          },
+        );
+      } catch (error) {
+        toast.error("Failed to save time tracking");
+        console.error("Error saving time:", error);
+      }
+    }
+  };
+
   return {
     isActive,
     isRunning,
@@ -51,5 +83,6 @@ export function useFocusTimer(taskId: string) {
     start: () => start(taskId),
     pause: () => pause(taskId),
     reset: () => reset(taskId),
+    stop,
   };
 }

@@ -1,11 +1,13 @@
 import { useRef, useEffect, useState } from "react";
-import { Check, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Check, X, ChevronDown, ChevronUp, Pencil } from "lucide-react";
 import {
   Checkbox,
   Progress,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
+  Input,
+  Button,
 } from "@repo/ui";
 import { cn } from "@repo/ui";
 import { useSmartChecklist } from "@/presentation/hooks/useSmartChecklist";
@@ -28,6 +30,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
     toggleStep,
     createStep,
     deleteStep,
+    updateStep,
   } = useSmartChecklist(taskId);
 
   const upcomingSteps = incompleteSteps.slice(1);
@@ -41,11 +44,41 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
   const [showAllStepsConcluded, setShowAllStepsConcluded] = useState(
     mode === "detail",
   );
+  const [editingStepId, setEditingStepId] = useState<string | null>(null);
+  const [editingStepValue, setEditingStepValue] = useState("");
 
   useEffect(() => {
     setShowAll(mode === "detail");
     setShowAllStepsConcluded(mode === "detail");
   }, [mode]);
+
+  const startEditingStep = (stepId: string, currentTitle: string) => {
+    setEditingStepId(stepId);
+    setEditingStepValue(currentTitle);
+  };
+
+  const cancelEditingStep = () => {
+    setEditingStepId(null);
+    setEditingStepValue("");
+  };
+
+  const saveEditingStep = () => {
+    if (editingStepId && editingStepValue.trim()) {
+      updateStep(editingStepId, editingStepValue.trim());
+      setEditingStepId(null);
+      setEditingStepValue("");
+    }
+  };
+
+  const handleEditKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      saveEditingStep();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      cancelEditingStep();
+    }
+  };
 
   // Auto-focus next step when current step changes (using ref to avoid cascading renders)
   useEffect(() => {
@@ -121,32 +154,79 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
             key={step.id}
             className="flex items-center gap-2 opacity-80 transition-opacity duration-300"
           >
-            <Checkbox
-              id={`step-${step.id}`}
-              checked
-              onCheckedChange={() => toggleStep(step.id, false)}
-              className="shrink-0"
-              aria-label={`Unmark: ${step.title}`}
-            />
-            <span className="text-xs line-through text-muted-foreground flex-1 min-w-0 truncate">
-              {step.title}
-            </span>
-            <Tooltip>
-              <TooltipTrigger>
-                <button
-                  onClick={() => deleteStep(step.id)}
-                  className="p-2.5 shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
-                  aria-label={`Remove step: ${step.title}`}
+            {editingStepId === step.id ? (
+              <>
+                <Input
+                  value={editingStepValue}
+                  onChange={(e) => setEditingStepValue(e.target.value)}
+                  onKeyDown={handleEditKeyDown}
+                  onBlur={saveEditingStep}
+                  autoFocus
+                  className="text-xs flex-1"
+                />
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="shrink-0 size-7"
+                  onClick={saveEditingStep}
+                >
+                  <Check className="size-3 text-green-600" />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="shrink-0 size-7"
+                  onClick={cancelEditingStep}
                 >
                   <X className="size-3" />
-                </button>
-              </TooltipTrigger>
-              {helpers === "show" && (
-                <TooltipContent>
-                  <p>Remove step</p>
-                </TooltipContent>
-              )}
-            </Tooltip>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Checkbox
+                  id={`step-${step.id}`}
+                  checked
+                  onCheckedChange={() => toggleStep(step.id, false)}
+                  className="shrink-0"
+                  aria-label={`Unmark: ${step.title}`}
+                />
+                <span className="text-xs line-through text-muted-foreground flex-1 min-w-0 truncate">
+                  {step.title}
+                </span>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => startEditingStep(step.id, step.title)}
+                      className="p-2.5 shrink-0 text-muted-foreground/50 hover:text-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+                      aria-label={`Edit step: ${step.title}`}
+                    >
+                      <Pencil className="size-3" />
+                    </button>
+                  </TooltipTrigger>
+                  {helpers === "show" && (
+                    <TooltipContent>
+                      <p>Edit step</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => deleteStep(step.id)}
+                      className="p-2.5 shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+                      aria-label={`Remove step: ${step.title}`}
+                    >
+                      <X className="size-3" />
+                    </button>
+                  </TooltipTrigger>
+                  {helpers === "show" && (
+                    <TooltipContent>
+                      <p>Remove step</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </>
+            )}
           </div>
         ))}
 
@@ -159,36 +239,85 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
               "animate-in fade-in slide-in-from-bottom-1",
           )}
         >
-          <Checkbox
-            id={`step-${currentStep.id}`}
-            ref={currentCheckboxRef}
-            checked={false}
-            onCheckedChange={() => toggleStep(currentStep.id, true)}
-            className="shrink-0 mt-0.5"
-            aria-label={`Complete: ${currentStep.title}`}
-          />
-          <label
-            htmlFor={`step-${currentStep.id}`}
-            className="text-sm font-medium flex-1 min-w-0 cursor-pointer"
-          >
-            {currentStep.title}
-          </label>
-          <Tooltip>
-            <TooltipTrigger>
-              <button
-                onClick={() => deleteStep(currentStep.id)}
-                className="p-2.5 shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
-                aria-label={`Remove step: ${currentStep.title}`}
+          {editingStepId === currentStep.id ? (
+            <>
+              <Input
+                value={editingStepValue}
+                onChange={(e) => setEditingStepValue(e.target.value)}
+                onKeyDown={handleEditKeyDown}
+                onBlur={saveEditingStep}
+                autoFocus
+                className="text-sm flex-1"
+              />
+              <Button
+                size="icon"
+                variant="ghost"
+                className="shrink-0 size-7"
+                onClick={saveEditingStep}
+              >
+                <Check className="size-3 text-green-600" />
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="shrink-0 size-7"
+                onClick={cancelEditingStep}
               >
                 <X className="size-3" />
-              </button>
-            </TooltipTrigger>
-            {helpers === "show" && (
-              <TooltipContent>
-                <p>Remove step</p>
-              </TooltipContent>
-            )}
-          </Tooltip>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Checkbox
+                id={`step-${currentStep.id}`}
+                ref={currentCheckboxRef}
+                checked={false}
+                onCheckedChange={() => toggleStep(currentStep.id, true)}
+                className="shrink-0 mt-0.5"
+                aria-label={`Complete: ${currentStep.title}`}
+              />
+              <label
+                htmlFor={`step-${currentStep.id}`}
+                className="text-sm font-medium flex-1 min-w-0 cursor-pointer"
+              >
+                {currentStep.title}
+              </label>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() =>
+                      startEditingStep(currentStep.id, currentStep.title)
+                    }
+                    className="p-2.5 shrink-0 text-muted-foreground/50 hover:text-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+                    aria-label={`Edit step: ${currentStep.title}`}
+                  >
+                    <Pencil className="size-3" />
+                  </button>
+                </TooltipTrigger>
+                {helpers === "show" && (
+                  <TooltipContent>
+                    <p>Edit step</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() => deleteStep(currentStep.id)}
+                    className="p-2.5 shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+                    aria-label={`Remove step: ${currentStep.title}`}
+                  >
+                    <X className="size-3" />
+                  </button>
+                </TooltipTrigger>
+                {helpers === "show" && (
+                  <TooltipContent>
+                    <p>Remove step</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </>
+          )}
         </div>
       )}
 
@@ -227,35 +356,84 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
             <div className="flex flex-col gap-1 pl-1 border-l border-border/40">
               {upcomingSteps.map((step) => (
                 <div key={step.id} className="flex items-center gap-2 py-0.5">
-                  <Checkbox
-                    id={`step-upcoming-${step.id}`}
-                    checked={false}
-                    onCheckedChange={() => toggleStep(step.id, true)}
-                    className="shrink-0"
-                    aria-label={`Complete: ${step.title}`}
-                  />
-                  <label
-                    htmlFor={`step-upcoming-${step.id}`}
-                    className="text-xs flex-1 min-w-0 truncate cursor-pointer text-muted-foreground"
-                  >
-                    {step.title}
-                  </label>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <button
-                        onClick={() => deleteStep(step.id)}
-                        className="p-3 shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
-                        aria-label={`Remove step: ${step.title}`}
+                  {editingStepId === step.id ? (
+                    <>
+                      <Input
+                        value={editingStepValue}
+                        onChange={(e) => setEditingStepValue(e.target.value)}
+                        onKeyDown={handleEditKeyDown}
+                        onBlur={saveEditingStep}
+                        autoFocus
+                        className="text-xs flex-1"
+                      />
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="shrink-0 size-7"
+                        onClick={saveEditingStep}
+                      >
+                        <Check className="size-3 text-green-600" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="shrink-0 size-7"
+                        onClick={cancelEditingStep}
                       >
                         <X className="size-3" />
-                      </button>
-                    </TooltipTrigger>
-                    {helpers === "show" && (
-                      <TooltipContent>
-                        <p>Remove step</p>
-                      </TooltipContent>
-                    )}
-                  </Tooltip>
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Checkbox
+                        id={`step-upcoming-${step.id}`}
+                        checked={false}
+                        onCheckedChange={() => toggleStep(step.id, true)}
+                        className="shrink-0"
+                        aria-label={`Complete: ${step.title}`}
+                      />
+                      <label
+                        htmlFor={`step-upcoming-${step.id}`}
+                        className="text-xs flex-1 min-w-0 truncate cursor-pointer text-muted-foreground"
+                      >
+                        {step.title}
+                      </label>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() =>
+                              startEditingStep(step.id, step.title)
+                            }
+                            className="p-3 shrink-0 text-muted-foreground/50 hover:text-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+                            aria-label={`Edit step: ${step.title}`}
+                          >
+                            <Pencil className="size-3" />
+                          </button>
+                        </TooltipTrigger>
+                        {helpers === "show" && (
+                          <TooltipContent>
+                            <p>Edit step</p>
+                          </TooltipContent>
+                        )}
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => deleteStep(step.id)}
+                            className="p-3 shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
+                            aria-label={`Remove step: ${step.title}`}
+                          >
+                            <X className="size-3" />
+                          </button>
+                        </TooltipTrigger>
+                        {helpers === "show" && (
+                          <TooltipContent>
+                            <p>Remove step</p>
+                          </TooltipContent>
+                        )}
+                      </Tooltip>
+                    </>
+                  )}
                 </div>
               ))}
             </div>

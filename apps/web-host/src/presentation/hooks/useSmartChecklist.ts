@@ -5,12 +5,14 @@ import { SupabaseTaskRepository } from "@/infrastructure/adapters/SupabaseTaskRe
 import { ToggleChecklistStep } from "@/application/useCases/ToggleChecklistStep";
 import { CreateChecklistStep } from "@/application/useCases/CreateChecklistStep";
 import { DeleteChecklistStep } from "@/application/useCases/DeleteChecklistStep";
+import { UpdateChecklistStep } from "@/application/useCases/UpdateChecklistStep";
 import type { ChecklistStep } from "@/domain/entities/ChecklistStep";
 
 const repository = new SupabaseTaskRepository();
 const toggleStep = new ToggleChecklistStep(repository);
 const createStep = new CreateChecklistStep(repository);
 const deleteStep = new DeleteChecklistStep(repository);
+const updateStepUseCase = new UpdateChecklistStep(repository);
 
 export function useSmartChecklist(taskId: string) {
   const queryClient = useQueryClient();
@@ -108,6 +110,27 @@ export function useSmartChecklist(taskId: string) {
     onSettled: () => queryClient.invalidateQueries({ queryKey: qKey }),
   });
 
+  const updateMutation = useMutation({
+    mutationFn: ({ id, title }: { id: string; title: string }) =>
+      updateStepUseCase.execute(id, title),
+    onMutate: async ({ id, title }) => {
+      await queryClient.cancelQueries({ queryKey: qKey });
+      const previous = queryClient.getQueryData<ChecklistStep[]>(qKey);
+      queryClient.setQueryData<ChecklistStep[]>(qKey, (old = []) =>
+        old.map((s) => (s.id === id ? { ...s, title } : s)),
+      );
+      return { previous };
+    },
+    onError: (_, __, ctx) => {
+      if (ctx?.previous) queryClient.setQueryData(qKey, ctx.previous);
+      toast.error("Failed to update step");
+    },
+    onSuccess: () => {
+      toast.success("Step updated", { duration: 2000 });
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: qKey }),
+  });
+
   return {
     steps,
     completedSteps,
@@ -121,5 +144,7 @@ export function useSmartChecklist(taskId: string) {
       toggleMutation.mutate({ id, completed }),
     createStep: createMutation.mutate,
     deleteStep: deleteMutation.mutate,
+    updateStep: (id: string, title: string) =>
+      updateMutation.mutate({ id, title }),
   };
 }

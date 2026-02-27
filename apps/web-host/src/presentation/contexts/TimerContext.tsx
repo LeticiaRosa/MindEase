@@ -19,6 +19,8 @@ export interface TaskTimerState {
   secondsRemaining: number;
   totalSeconds: number;
   currentCycle: number;
+  startTime: number | null; // Timestamp when current focus session started (Date.now())
+  elapsedSeconds: number; // Accumulated elapsed time in current session
 }
 
 export interface TimerState {
@@ -48,6 +50,8 @@ function getDefaultTaskTimer(focusDuration: number): TaskTimerState {
     secondsRemaining: focusDuration * 60,
     totalSeconds: focusDuration * 60,
     currentCycle: 1,
+    startTime: null,
+    elapsedSeconds: 0,
   };
 }
 
@@ -57,6 +61,7 @@ type TimerAction =
   | { type: "START"; taskId: string }
   | { type: "PAUSE"; taskId: string }
   | { type: "RESET"; taskId: string }
+  | { type: "STOP"; taskId: string }
   | { type: "TICK"; taskId: string }
   | { type: "NEXT_MODE"; taskId: string }
   | {
@@ -99,12 +104,16 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
             [taskId]: {
               ...getDefaultTaskTimer(state.globalPreferences.focusDuration),
               status: "running",
+              startTime: Date.now(),
+              elapsedSeconds: 0,
             },
           },
         };
       }
 
       // Resume existing timer
+      const resumeStartTime =
+        existingTimer.mode === "focus" ? Date.now() : existingTimer.startTime;
       return {
         ...state,
         timers: {
@@ -112,6 +121,7 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
           [taskId]: {
             ...existingTimer,
             status: "running",
+            startTime: resumeStartTime,
           },
         },
       };
@@ -122,6 +132,19 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
       const timer = state.timers[taskId];
       if (!timer) return state;
 
+      // Calculate elapsed time if in focus mode
+      let newElapsedSeconds = timer.elapsedSeconds;
+      if (
+        timer.mode === "focus" &&
+        timer.startTime &&
+        timer.status === "running"
+      ) {
+        const sessionDuration = Math.floor(
+          (Date.now() - timer.startTime) / 1000,
+        );
+        newElapsedSeconds += sessionDuration;
+      }
+
       return {
         ...state,
         timers: {
@@ -129,6 +152,8 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
           [taskId]: {
             ...timer,
             status: "paused",
+            startTime: null,
+            elapsedSeconds: newElapsedSeconds,
           },
         },
       };
@@ -145,6 +170,21 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
           ...state.timers,
           [taskId]: getDefaultTaskTimer(state.globalPreferences.focusDuration),
         },
+      };
+    }
+
+    case "STOP": {
+      const { taskId } = action;
+      const timer = state.timers[taskId];
+      if (!timer) return state;
+
+      // Remove timer completely after stop
+      const newTimers = { ...state.timers };
+      delete newTimers[taskId];
+
+      return {
+        ...state,
+        timers: newTimers,
       };
     }
 
@@ -193,6 +233,8 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
               status: "idle",
               secondsRemaining: state.globalPreferences.focusDuration * 60,
               totalSeconds: state.globalPreferences.focusDuration * 60,
+              startTime: null,
+              elapsedSeconds: 0,
             },
           },
         };
@@ -209,6 +251,8 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
               status: "idle",
               secondsRemaining: state.globalPreferences.longBreakDuration * 60,
               totalSeconds: state.globalPreferences.longBreakDuration * 60,
+              startTime: null,
+              elapsedSeconds: 0,
             },
           },
         };
@@ -224,6 +268,8 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
             status: "idle",
             secondsRemaining: state.globalPreferences.breakDuration * 60,
             totalSeconds: state.globalPreferences.breakDuration * 60,
+            startTime: null,
+            elapsedSeconds: 0,
           },
         },
       };
@@ -253,6 +299,7 @@ interface TimerContextValue {
   start: (taskId: string) => void;
   pause: (taskId: string) => void;
   reset: (taskId: string) => void;
+  stop: (taskId: string) => number; // Returns elapsed seconds in focus mode
   nextMode: (taskId: string) => void;
   syncPreferences: (prefs: {
     focusDuration: number;
@@ -318,6 +365,29 @@ export function TimerProvider({ children }: { children: ReactNode }) {
     (taskId: string) => dispatch({ type: "RESET", taskId }),
     [],
   );
+  const stop = useCallback(
+    (taskId: string): number => {
+      const timer = state.timers[taskId];
+      if (!timer) return 0;
+
+      // Calculate final elapsed time if in focus mode
+      let finalElapsedSeconds = timer.elapsedSeconds;
+      if (
+        timer.mode === "focus" &&
+        timer.startTime &&
+        timer.status === "running"
+      ) {
+        const sessionDuration = Math.floor(
+          (Date.now() - timer.startTime) / 1000,
+        );
+        finalElapsedSeconds += sessionDuration;
+      }
+
+      dispatch({ type: "STOP", taskId });
+      return finalElapsedSeconds;
+    },
+    [state.timers],
+  );
   const nextMode = useCallback(
     (taskId: string) => dispatch({ type: "NEXT_MODE", taskId }),
     [],
@@ -348,6 +418,7 @@ export function TimerProvider({ children }: { children: ReactNode }) {
         start,
         pause,
         reset,
+        stop,
         nextMode,
         syncPreferences,
         getTimerState,

@@ -1,6 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { SupabaseTaskRepository } from "@/infrastructure/adapters/SupabaseTaskRepository";
 import { CreateTask } from "@/application/useCases/CreateTask";
+import {
+  UpdateTask,
+  type UpdateTaskParams,
+} from "@/application/useCases/UpdateTask";
 import { UpdateTaskStatus } from "@/application/useCases/UpdateTaskStatus";
 import { ReorderTasks } from "@/application/useCases/ReorderTasks";
 import { DeleteTask } from "@/application/useCases/DeleteTask";
@@ -10,6 +14,7 @@ import { useToast } from "@repo/ui";
 
 const repository = new SupabaseTaskRepository();
 const createTask = new CreateTask(repository);
+const updateTask = new UpdateTask(repository);
 const updateTaskStatus = new UpdateTaskStatus(repository);
 const reorderTasks = new ReorderTasks(repository);
 const deleteTask = new DeleteTask(repository);
@@ -39,6 +44,7 @@ export function useTaskKanban(routineId: string) {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         statusUpdatedAt: new Date().toISOString(),
+        totalTimeSpent: 0,
       };
       queryClient.setQueryData<Task[]>(["tasks", routineId], (old = []) => [
         ...old,
@@ -79,7 +85,12 @@ export function useTaskKanban(routineId: string) {
 
   const reorderMutation = useMutation({
     mutationFn: (
-      updates: Array<{ id: string; position: number; status: TaskStatus }>,
+      updates: Array<{
+        id: string;
+        position: number;
+        status: TaskStatus;
+        previousStatus: TaskStatus;
+      }>,
     ) => reorderTasks.execute(updates),
     onMutate: async (updates) => {
       await queryClient.cancelQueries({ queryKey: ["tasks", routineId] });
@@ -141,6 +152,29 @@ export function useTaskKanban(routineId: string) {
     },
   });
 
+  const updateTaskMutation = useMutation({
+    mutationFn: ({ id, params }: { id: string; params: UpdateTaskParams }) =>
+      updateTask.execute(id, params),
+    onMutate: async ({ id, params }) => {
+      await queryClient.cancelQueries({ queryKey: ["tasks", routineId] });
+      const previous = queryClient.getQueryData<Task[]>(["tasks", routineId]);
+      queryClient.setQueryData<Task[]>(["tasks", routineId], (old = []) =>
+        old.map((t) => (t.id === id ? { ...t, ...params } : t)),
+      );
+      return { previous };
+    },
+    onError: (_, __, ctx) => {
+      if (ctx?.previous)
+        queryClient.setQueryData(["tasks", routineId], ctx.previous);
+      toast.error("Failed to update task");
+    },
+    onSuccess: () => {
+      toast.success("Task updated", { duration: 2000 });
+    },
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
+  });
+
   const tasksByStatus = (status: TaskStatus) =>
     tasks
       .filter((t) => t.status === status)
@@ -151,6 +185,8 @@ export function useTaskKanban(routineId: string) {
     isLoading,
     tasksByStatus,
     createTask: createMutation.mutate,
+    updateTask: (id: string, params: UpdateTaskParams) =>
+      updateTaskMutation.mutate({ id, params }),
     updateTaskStatus: updateStatusMutation.mutate,
     reorderTasks: reorderMutation.mutate,
     deleteTask: (id: string) => {
