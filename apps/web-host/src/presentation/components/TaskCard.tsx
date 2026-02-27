@@ -99,14 +99,23 @@ export function TaskCard({
       aria-label={`Task: ${task.title}`}
     >
       <div className="flex justify-end items-center">
-        {/* Date in Status */}
+        {/* Time spent badge with color indicator */}
         {task.totalTimeSpent > 0 && (
-          <span
-            className="mx-2 shrink-0 px-2 py-0.5 text-xs font-medium rounded-full bg-primary/10 text-primary border border-primary/20"
-            aria-label={`Total time spent: ${formatTimeSpent(task.totalTimeSpent)}`}
-          >
-            {formatTimeSpent(task.totalTimeSpent)}
-          </span>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span
+                className="mx-2 shrink-0 px-2 py-0.5 text-xs font-medium rounded-full bg-primary/10 text-primary border border-primary/20"
+                aria-label={`Total time spent: ${formatTimeSpent(task.totalTimeSpent)}`}
+              >
+                {formatTimeSpent(task.totalTimeSpent)}
+              </span>
+            </TooltipTrigger>
+            {helpers === "show" && (
+              <TooltipContent>
+                <p>Total time spent on this task</p>
+              </TooltipContent>
+            )}
+          </Tooltip>
         )}
 
         {/* Focus indicator */}
@@ -203,8 +212,8 @@ export function TaskCard({
           id="dnd"
         >
           {/* Title */}
-          <div>
-            <div className="flex items-center justify-start gap-2">
+          <div className="w-full block">
+            <div className="flex items-center justify-start gap-2 pt-2">
               <Move
                 className="size-3 text-muted-foreground"
                 aria-hidden="true"
