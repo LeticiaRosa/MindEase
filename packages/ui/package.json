@@ -9,6 +9,7 @@
     ".": "./dist/index.js",
     "./components/*": "./dist/components/*.js",
     "./hooks/*": "./dist/hooks/*",
+    "./theme": "./dist/theme/index.js",
     "./styles": "./dist/ui.css"
   },
   "files": [

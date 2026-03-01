@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
   title: {
-    fontSize: fontSizes["2xl"],
+    fontSize: fontSizes["3xl"],
     fontWeight: "bold",
     color: colors.textPrimary,
     marginBottom: spacing.sm,

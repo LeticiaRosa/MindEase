@@ -4,6 +4,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:mobile": "turbo run dev --filter=mobile",
     "dev:host": "turbo run dev --filter=web-host",
     "dev:auth": "turbo run dev --filter=web-mfe-auth",
     "dev:sequential": "pnpm dev:auth & sleep 3 && pnpm dev:host",

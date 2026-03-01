@@ -28,4 +28,7 @@ export * from "./hooks/use-auth-toast";
 // Utils
 export * from "./lib/utils";
 
+// Theme (cross-platform: web + mobile)
+export * from "./theme";
+
 export { Toaster } from "./components/ui/sonner";
