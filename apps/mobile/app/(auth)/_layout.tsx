@@ -1,14 +1,14 @@
-import { Redirect } from "expo-router";
-import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { Redirect, Stack } from "expo-router";
 import { useAuth } from "@/presentation/hooks/useAuth";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { colors } from "@repo/ui/theme";
 
-export default function IndexScreen() {
+export default function AuthLayout() {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loader}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
@@ -18,11 +18,17 @@ export default function IndexScreen() {
     return <Redirect href="/(app)/dashboard" />;
   }
 
-  return <Redirect href="/(auth)/login" />;
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="login" />
+      <Stack.Screen name="register" />
+      <Stack.Screen name="magic-link-callback" />
+    </Stack>
+  );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  loader: {
     flex: 1,
     backgroundColor: colors.background,
     alignItems: "center",

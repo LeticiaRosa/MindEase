@@ -7,6 +7,7 @@ This design introduces auth and dashboard capabilities to mobile while staying c
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Establish the Clean Architecture folder structure inside `apps/mobile/`.
 - Implement Supabase authentication (password sign-in, sign-up, sign-out, magic-link) using the same domain interfaces as `web-mfe-auth`.
 - Persist sessions across app restarts via `expo-secure-store`.
@@ -15,6 +16,7 @@ This design introduces auth and dashboard capabilities to mobile while staying c
 - Reuse `@repo/ui` theme tokens (`colors`, `fontSizes`, `spacing`) for consistent visual language.
 
 **Non-Goals:**
+
 - Module Federation does not exist on mobile; auth is not a remote micro-frontend.
 - shadcn/ui components are web-only and will NOT be ported; React Native primitives + StyleSheet are used instead.
 - The full Kanban drag-and-drop interface is out of scope — the Dashboard shows a read-only grouped task list.
@@ -45,6 +47,7 @@ This design introduces auth and dashboard capabilities to mobile while staying c
 ### 3. expo-router group routing for auth guard
 
 **Decision:** Use expo-router's file-based group convention:
+
 - `app/(auth)/_layout.tsx` — redirects authenticated users to `/(app)/dashboard`
 - `app/(auth)/login.tsx`, `app/(auth)/register.tsx`, `app/(auth)/magic-link-callback.tsx`
 - `app/(app)/_layout.tsx` — redirects unauthenticated users to `/(auth)/login`
