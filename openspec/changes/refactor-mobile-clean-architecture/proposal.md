@@ -26,10 +26,12 @@ Aligning mobile with the web patterns ensures a consistent developer experience,
 ## Capabilities
 
 ### New Capabilities
+
 - `mobile-auth-hook`: Refactored query-based `useAuth` hook for mobile, mirroring `web-mfe-auth`'s pattern with `@tanstack/react-query` mutations, cache invalidation, and centralized auth state — replacing the context-based approach.
 - `mobile-use-case-layer`: Class-based use cases for tasks and routines (GetTasks, GetRoutines) and application DTOs, aligning mobile's application layer with `web-host`'s patterns.
 
 ### Modified Capabilities
+
 _(none — no existing spec-level requirements are changing, only internal implementation alignment)_
 
 ## Impact

@@ -3,6 +3,7 @@
 The mobile app (`apps/mobile`) is an Expo 52 + React Native 0.76 application using expo-router for navigation. It already has a 4-layer structure (`domain/`, `application/`, `infrastructure/`, `presentation/`) but deviates from the patterns established in the web apps (`web-mfe-auth`, `web-host`).
 
 Current state:
+
 - **Auth** is managed by a React context (`AuthContext`) that calls `supabaseClient` directly, bypassing the repository/use-case chain.
 - **Route screens** (`login.tsx`, `register.tsx`) instantiate `SupabaseAuthRepository` at module scope and call use cases inline.
 - **`magic-link-callback.tsx`** imports `supabaseClient` directly to call `setSession`.
@@ -11,6 +12,7 @@ Current state:
 - No application DTOs exist.
 
 The web apps provide the target patterns:
+
 - `web-mfe-auth` uses a `useAuth` hook backed by `@tanstack/react-query` (query for user, mutations for auth operations, `onAuthStateChange` subscription for cache invalidation).
 - `web-host` uses class-based use cases with constructor DI for task/routine operations, plus DTOs for serialization boundaries.
 
@@ -19,6 +21,7 @@ Constraint: The mobile environment requires `AppState` listeners for token auto-
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Align the mobile auth hook with `web-mfe-auth`'s `@tanstack/react-query`-based pattern (query + mutations + auth state subscription).
 - Remove `AuthContext`/`AuthProvider` in favor of the query-based hook.
 - Eliminate all direct `supabaseClient` and repository instantiation from presentation/route layers.
@@ -28,6 +31,7 @@ Constraint: The mobile environment requires `AppState` listeners for token auto-
 - Ensure the project checklist items are addressed: _"Casos de uso implementados"_, _"Uso de interfaces/adapters"_, _"Domínio isolado da UI"_, _"Coerência cognitiva Web/Mobile"_, _"Separação de estado global"_.
 
 **Non-Goals:**
+
 - Adding new features (task CRUD, Pomodoro, checklist management) — this is purely structural refactoring.
 - Changing the Supabase client configuration or secure-store adapter.
 - Modifying domain entities, interfaces, or value objects (they are already correct).
@@ -44,6 +48,7 @@ Constraint: The mobile environment requires `AppState` listeners for token auto-
 **Rationale**: The web `useAuth` pattern provides automatic cache invalidation, deduplication of concurrent auth checks, and a clean separation — the hook owns the repository instance and wires it through use cases. The context pattern creates a global provider dependency and calls supabaseClient directly.
 
 **Alternatives considered**:
+
 - _Keep the context but wire it through use cases_ — Adds complexity without consistency gain. Both web apps use the query pattern.
 - _Use Zustand for auth state_ — Over-engineering; react-query already handles the caching and state needs.
 
@@ -56,6 +61,7 @@ Constraint: The mobile environment requires `AppState` listeners for token auto-
 **Rationale**: Direct `supabaseClient` imports in presentation layer violate the architecture boundary. The repository already abstracts all other auth operations.
 
 **Alternatives considered**:
+
 - _Keep the direct import since it's a one-off_ — Breaks the pattern; callback handling is part of the auth domain.
 - _Add a `handleMagicLinkCallback` use case_ — Appropriate since useAuth mutations should wrap use cases consistently.
 
@@ -66,18 +72,22 @@ Constraint: The mobile environment requires `AppState` listeners for token auto-
 ```typescript
 class GetTasks {
   constructor(private repository: ITaskRepository) {}
-  async execute(): Promise<Task[]> { return this.repository.getTasks(); }
+  async execute(): Promise<Task[]> {
+    return this.repository.getTasks();
+  }
 }
 ```
 
 **Rationale**: Even though these are thin wrappers now, they establish the pattern for future CRUD operations (which are on the roadmap) and satisfy the checklist requirement _"Casos de uso implementados — use cases independentes e testáveis"_.
 
 **Alternatives considered**:
+
 - _Function-based use cases (like web-mfe-auth's auth use cases)_ — The auth use cases in both web apps use functions because auth is a cross-cutting concern with a different lifecycle. Domain-specific operations (tasks, routines) follow the class pattern in web-host. We stay consistent.
 
 ### 4. DTOs mirror web-host naming and structure
 
 **Decision**: Create three DTO files:
+
 - `application/dtos/AuthInput.ts` — matches `web-mfe-auth`
 - `application/dtos/TaskDTOs.ts` — matches `web-host`
 - `application/dtos/RoutineDTOs.ts` — matches `web-host`

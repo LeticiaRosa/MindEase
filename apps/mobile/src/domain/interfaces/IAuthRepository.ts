@@ -22,6 +22,10 @@ export interface IAuthRepository {
   ): Promise<AuthResult<void>>;
   getUser(): Promise<User | null>;
   getSession(): Promise<unknown>;
+  setSession(
+    accessToken: string,
+    refreshToken: string,
+  ): Promise<AuthResult<User>>;
   trackMagicLinkRequest(email: string): Promise<void>;
   onAuthStateChange(callback: AuthStateCallback): { unsubscribe: () => void };
 }

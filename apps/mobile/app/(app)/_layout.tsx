@@ -4,9 +4,9 @@ import { useAuth } from "@/presentation/hooks/useAuth";
 import { colors } from "@repo/ui/theme";
 
 export default function AppLayout() {
-  const { user, isLoading } = useAuth();
+  const { user, loading } = useAuth();
 
-  if (isLoading) {
+  if (loading) {
     return (
       <View style={styles.loader}>
         <ActivityIndicator size="large" color={colors.primary} />

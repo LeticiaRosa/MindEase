@@ -8,12 +8,9 @@ import {
   Pressable,
 } from "react-native";
 import type { User } from "@/domain/entities/User";
-import { signOut } from "@/application/useCases/signOut";
-import { SupabaseAuthRepository } from "@/infrastructure/adapters/SupabaseAuthRepository";
+import { useAuth } from "@/presentation/hooks/useAuth";
 import { useRouter } from "expo-router";
 import { colors, fontSizes, spacing, borderRadius } from "@repo/ui/theme";
-
-const repository = new SupabaseAuthRepository();
 
 interface UserMenuProps {
   user: User;
@@ -21,13 +18,14 @@ interface UserMenuProps {
 
 export function UserMenu({ user }: UserMenuProps) {
   const router = useRouter();
+  const { signOut } = useAuth();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const displayName = user.user_metadata?.full_name ?? user.email;
 
   async function handleSignOut() {
     setIsLoading(true);
-    await signOut(repository);
+    await signOut();
     setOpen(false);
     router.replace("/(auth)/login");
   }

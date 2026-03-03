@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
-import supabaseClient from "@/infrastructure/api/clients/supabaseClient";
+import { useAuth } from "@/presentation/hooks/useAuth";
 import { colors, fontSizes, spacing } from "@repo/ui/theme";
 
 function extractTokens(url: string): {
@@ -34,6 +34,7 @@ function extractTokens(url: string): {
 
 export default function MagicLinkCallbackScreen() {
   const router = useRouter();
+  const { handleMagicLinkCallback } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
   async function handleUrl(url: string | null) {
@@ -49,13 +50,10 @@ export default function MagicLinkCallbackScreen() {
       return;
     }
 
-    const { error: sessionError } = await supabaseClient.auth.setSession({
-      access_token: accessToken,
-      refresh_token: refreshToken,
-    });
+    const result = await handleMagicLinkCallback(accessToken, refreshToken);
 
-    if (sessionError) {
-      setError(sessionError.message);
+    if (!result.success) {
+      setError(result.error.message);
       return;
     }
 

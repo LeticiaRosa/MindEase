@@ -4,9 +4,9 @@ import { useAuth } from "@/presentation/hooks/useAuth";
 import { colors } from "@repo/ui/theme";
 
 export default function IndexScreen() {
-  const { user, isLoading } = useAuth();
+  const { user, loading } = useAuth();
 
-  if (isLoading) {
+  if (loading) {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color={colors.primary} />

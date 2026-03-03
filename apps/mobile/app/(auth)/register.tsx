@@ -17,14 +17,12 @@ import {
   signUpSchema,
   type SignUpFormData,
 } from "@/domain/valueObjects/authSchemas";
-import { signUp } from "@/application/useCases/signUp";
-import { SupabaseAuthRepository } from "@/infrastructure/adapters/SupabaseAuthRepository";
+import { useAuth } from "@/presentation/hooks/useAuth";
 import { colors, fontSizes, spacing, borderRadius } from "@repo/ui/theme";
-
-const repository = new SupabaseAuthRepository();
 
 export default function RegisterScreen() {
   const router = useRouter();
+  const { signUp } = useAuth();
   const [serverError, setServerError] = useState<string | null>(null);
 
   const {
@@ -44,7 +42,6 @@ export default function RegisterScreen() {
   async function onSubmit(data: SignUpFormData) {
     setServerError(null);
     const result = await signUp(
-      repository,
       data.email,
       data.password,
       data.fullName || undefined,

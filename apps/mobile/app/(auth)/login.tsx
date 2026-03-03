@@ -19,17 +19,14 @@ import {
   type SignInFormData,
   type MagicLinkFormData,
 } from "@/domain/valueObjects/authSchemas";
-import { signIn } from "@/application/useCases/signIn";
-import { signInWithMagicLink } from "@/application/useCases/signInWithMagicLink";
-import { SupabaseAuthRepository } from "@/infrastructure/adapters/SupabaseAuthRepository";
+import { useAuth } from "@/presentation/hooks/useAuth";
 import { colors, fontSizes, spacing, borderRadius } from "@repo/ui/theme";
-
-const repository = new SupabaseAuthRepository();
 
 type Mode = "password" | "magic-link";
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { signIn, signInWithMagicLink } = useAuth();
   const [mode, setMode] = useState<Mode>("password");
   const [serverError, setServerError] = useState<string | null>(null);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
@@ -46,7 +43,7 @@ export default function LoginScreen() {
 
   async function onPasswordSubmit(data: SignInFormData) {
     setServerError(null);
-    const result = await signIn(repository, data.email, data.password);
+    const result = await signIn(data.email, data.password);
     if (result.success) {
       router.replace("/(app)/dashboard");
     } else {
@@ -56,7 +53,7 @@ export default function LoginScreen() {
 
   async function onMagicLinkSubmit(data: MagicLinkFormData) {
     setServerError(null);
-    const result = await signInWithMagicLink(repository, data.email);
+    const result = await signInWithMagicLink(data.email);
     if (result.success) {
       setMagicLinkSent(true);
     } else {

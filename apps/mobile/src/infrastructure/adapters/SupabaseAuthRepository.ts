@@ -104,6 +104,28 @@ export class SupabaseAuthRepository implements IAuthRepository {
     return data.session;
   }
 
+  async setSession(
+    accessToken: string,
+    refreshToken: string,
+  ): Promise<AuthResult<User>> {
+    const { data, error } = await supabaseClient.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    });
+
+    if (error) {
+      return {
+        success: false,
+        error: {
+          message: error.message,
+          status: error.status ?? 500,
+        },
+      };
+    }
+
+    return { success: true, data: data.user as User };
+  }
+
   /**
    * No-op on mobile — rate-limiting is delegated to Supabase's built-in OTP limits.
    */
