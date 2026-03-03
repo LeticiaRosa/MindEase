@@ -1,32 +1,10 @@
-import { View, Text, Pressable, ScrollView } from "react-native";
+import { View, Pressable } from "react-native";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
-
-const ICONS = [
-  "📋",
-  "🎯",
-  "📚",
-  "💼",
-  "🏋️",
-  "🧘",
-  "🎨",
-  "💻",
-  "🏠",
-  "🌅",
-  "🌙",
-  "☀️",
-  "📝",
-  "🧠",
-  "❤️",
-  "⭐",
-  "🔥",
-  "🎵",
-  "🌿",
-  "🐾",
-  "✈️",
-  "🎮",
-  "📱",
-  "🧪",
-];
+import {
+  getLucideIcon,
+  ROUTINE_ICON_NAMES,
+  ROUTINE_ICON_LABELS,
+} from "@/lib/routineIcons";
 
 interface IconPickerProps {
   selected?: string;
@@ -44,15 +22,16 @@ export function IconPicker({ selected, onSelect }: IconPickerProps) {
         gap: resolvedSpacing.sm,
       }}
     >
-      {ICONS.map((icon) => {
-        const isSelected = icon === selected;
+      {ROUTINE_ICON_NAMES.map((name) => {
+        const LucideIcon = getLucideIcon(name)!;
+        const isSelected = name === selected;
         return (
           <Pressable
-            key={icon}
-            onPress={() => onSelect(icon)}
+            key={name}
+            onPress={() => onSelect(name)}
             accessibilityRole="radio"
             accessibilityState={{ selected: isSelected }}
-            accessibilityLabel={`Ícone ${icon}`}
+            accessibilityLabel={ROUTINE_ICON_LABELS[name] ?? name}
             style={{
               width: 44,
               height: 44,
@@ -68,7 +47,12 @@ export function IconPicker({ selected, onSelect }: IconPickerProps) {
               justifyContent: "center",
             }}
           >
-            <Text style={{ fontSize: 22 }}>{icon}</Text>
+            <LucideIcon
+              size={22}
+              color={
+                isSelected ? resolvedColors.primary : resolvedColors.textPrimary
+              }
+            />
           </Pressable>
         );
       })}

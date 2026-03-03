@@ -273,7 +273,10 @@ export default function ManageRoutinesScreen() {
                       flex: 1,
                     }}
                   >
-                    <RoutineIcon icon={routine.icon} size={24} />
+                    <RoutineIcon
+                      name={routine.icon ?? "notebook-pen"}
+                      size={24}
+                    />
                     <Text
                       style={{
                         fontSize: resolvedFontSizes.base,

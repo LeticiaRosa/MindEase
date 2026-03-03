@@ -41,7 +41,7 @@ export function RoutineSelector({
             letterSpacing: 0.5,
           }}
         >
-          Rotinas
+          Kambans
         </Text>
         {onManage && (
           <Pressable onPress={onManage} accessibilityLabel="Gerenciar rotinas">
@@ -89,7 +89,7 @@ export function RoutineSelector({
               }}
             >
               <RoutineIcon
-                icon={routine.icon}
+                name={routine.icon ?? "notebook-pen"}
                 size={16}
                 color={
                   isActive
