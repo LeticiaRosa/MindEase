@@ -56,14 +56,14 @@ This design covers how the mobile presentation layer should be restructured to r
 
 **Decision**: Create mobile equivalents of all 6 web-host contexts:
 
-| Context | Web storage | Mobile storage | Notes |
-|---------|------------|----------------|-------|
-| `ThemePreferencesContext` | `localStorage` | `AsyncStorage` | Same 6 dimensions; applies `colors`/`spacing`/`fontSize` objects from `@repo/ui/theme` instead of CSS data-attributes |
-| `BrainTodayContext` | `sessionStorage` | `AsyncStorage` with day-key | Already partially implemented in `BrainTodayBottomSheet`; extract to context |
-| `AlertPreferencesContext` | `localStorage` per-user | `AsyncStorage` per-user | Same `AlertPreferences` interface |
-| `ActivitySignalsContext` | In-memory | In-memory | Same signal shape; tracks task switches and time-on-task |
-| `TimerContext` | In-memory (`useReducer`) | In-memory (`useReducer`) | Same state machine; same per-task timer model |
-| `ActiveRoutineContext` | `localStorage` per-user | `AsyncStorage` per-user | Same pattern |
+| Context                   | Web storage              | Mobile storage              | Notes                                                                                                                 |
+| ------------------------- | ------------------------ | --------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `ThemePreferencesContext` | `localStorage`           | `AsyncStorage`              | Same 6 dimensions; applies `colors`/`spacing`/`fontSize` objects from `@repo/ui/theme` instead of CSS data-attributes |
+| `BrainTodayContext`       | `sessionStorage`         | `AsyncStorage` with day-key | Already partially implemented in `BrainTodayBottomSheet`; extract to context                                          |
+| `AlertPreferencesContext` | `localStorage` per-user  | `AsyncStorage` per-user     | Same `AlertPreferences` interface                                                                                     |
+| `ActivitySignalsContext`  | In-memory                | In-memory                   | Same signal shape; tracks task switches and time-on-task                                                              |
+| `TimerContext`            | In-memory (`useReducer`) | In-memory (`useReducer`)    | Same state machine; same per-task timer model                                                                         |
+| `ActiveRoutineContext`    | `localStorage` per-user  | `AsyncStorage` per-user     | Same pattern                                                                                                          |
 
 **Rationale**: Exact context parity means hooks can consume the same data shape across platforms. The only difference is the storage adapter (sync `localStorage` vs async `AsyncStorage`), which is encapsulated inside each provider.
 
@@ -132,6 +132,7 @@ All protected by the existing `(app)/_layout.tsx` auth guard.
 **Decision**: Extend mobile's repository interfaces to match web-host capabilities:
 
 **`ITaskRepository`** additions:
+
 - `getTasksByRoutine(routineId: string): Promise<Task[]>`
 - `createTask(input: CreateTaskInput): Promise<Task>`
 - `updateTask(id: string, input: UpdateTaskInput): Promise<Task>`
@@ -148,6 +149,7 @@ All protected by the existing `(app)/_layout.tsx` auth guard.
 - `toggleChecklistStep(id: string): Promise<ChecklistStep>`
 
 **`IRoutineRepository`** additions:
+
 - `createRoutine(input: CreateRoutineInput): Promise<Routine>`
 - `updateRoutine(id: string, input: UpdateRoutineInput): Promise<Routine>`
 - `deleteRoutine(id: string): Promise<void>`
@@ -159,23 +161,23 @@ All protected by the existing `(app)/_layout.tsx` auth guard.
 
 **Decision**: Replace the simple interval-based engine with the full `AlertEngineService.evaluateAlerts()` logic from web-host. Channels adapted for mobile:
 
-| Channel | Web | Mobile |
-|---------|-----|--------|
-| `toast` | `sonner.toast()` | `react-native-toast-message` or `Alert.alert()` for now |
-| `icon` (banner) | `CognitiveAlertBanner` with pulsing state | Same `CognitiveAlertBanner` component (already exists) |
-| `modal` | shadcn `Dialog` | React Native `Modal` or bottom sheet |
+| Channel         | Web                                       | Mobile                                                  |
+| --------------- | ----------------------------------------- | ------------------------------------------------------- |
+| `toast`         | `sonner.toast()`                          | `react-native-toast-message` or `Alert.alert()` for now |
+| `icon` (banner) | `CognitiveAlertBanner` with pulsing state | Same `CognitiveAlertBanner` component (already exists)  |
+| `modal`         | shadcn `Dialog`                           | React Native `Modal` or bottom sheet                    |
 
 `ActivitySignalsContext` feeds the engine with the same signal shape as web. `AppState` listener pauses/resumes the 60-second tick interval.
 
 ### 14. New dependency decisions
 
-| Package | Purpose | Required? |
-|---------|---------|-----------|
-| `react-native-gesture-handler` | Swipe actions on task cards | Yes — already peer dep of expo-router |
-| `react-native-reanimated` | Smooth transitions, bottom sheet animations | Yes — already peer dep of expo-router |
-| `react-native-draggable-flatlist` | Reorder tasks within a group, reorder routines | Yes — new dependency |
-| `react-native-toast-message` | Toast channel for alert engine | Nice-to-have — can start with `Alert.alert()` |
-| `@gorhom/bottom-sheet` | Rich user menu, icon picker | Nice-to-have — can use RN `Modal` with Animated |
+| Package                           | Purpose                                        | Required?                                       |
+| --------------------------------- | ---------------------------------------------- | ----------------------------------------------- |
+| `react-native-gesture-handler`    | Swipe actions on task cards                    | Yes — already peer dep of expo-router           |
+| `react-native-reanimated`         | Smooth transitions, bottom sheet animations    | Yes — already peer dep of expo-router           |
+| `react-native-draggable-flatlist` | Reorder tasks within a group, reorder routines | Yes — new dependency                            |
+| `react-native-toast-message`      | Toast channel for alert engine                 | Nice-to-have — can start with `Alert.alert()`   |
+| `@gorhom/bottom-sheet`            | Rich user menu, icon picker                    | Nice-to-have — can use RN `Modal` with Animated |
 
 `react-native-gesture-handler` and `react-native-reanimated` are already transitive dependencies via expo-router/react-navigation; they just need explicit installation for direct import.
 

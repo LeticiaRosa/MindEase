@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, Pressable, ActivityIndicator } from "react-native";
 import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/presentation/hooks/useAuth";
-import { colors, fontSizes, spacing } from "@repo/ui/theme";
+import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 
 function extractTokens(url: string): {
   accessToken: string | null;
@@ -36,6 +30,7 @@ export default function MagicLinkCallbackScreen() {
   const router = useRouter();
   const { handleMagicLinkCallback } = useAuth();
   const [error, setError] = useState<string | null>(null);
+  const { resolvedColors, resolvedFontSizes, resolvedSpacing } = useTheme();
 
   async function handleUrl(url: string | null) {
     if (!url) {
@@ -75,48 +70,64 @@ export default function MagicLinkCallbackScreen() {
 
   if (error) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>{error}</Text>
-        <TouchableOpacity
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: resolvedColors.background,
+          alignItems: "center",
+          justifyContent: "center",
+          padding: resolvedSpacing.lg,
+          gap: resolvedSpacing.md,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: resolvedFontSizes.base,
+            color: resolvedColors.destructive,
+            textAlign: "center",
+          }}
+        >
+          {error}
+        </Text>
+        <Pressable
           onPress={() => router.replace("/(auth)/login")}
           accessibilityLabel="Voltar para a tela de login"
         >
-          <Text style={styles.linkText}>Voltar ao login</Text>
-        </TouchableOpacity>
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.base,
+              color: resolvedColors.primary,
+              marginTop: resolvedSpacing.md,
+            }}
+          >
+            Voltar ao login
+          </Text>
+        </Pressable>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <ActivityIndicator size="large" color={colors.primary} />
-      <Text style={styles.loadingText}>Validando link…</Text>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: resolvedColors.background,
+        alignItems: "center",
+        justifyContent: "center",
+        padding: resolvedSpacing.lg,
+        gap: resolvedSpacing.md,
+      }}
+    >
+      <ActivityIndicator size="large" color={resolvedColors.primary} />
+      <Text
+        style={{
+          fontSize: resolvedFontSizes.base,
+          color: resolvedColors.textSecondary,
+          marginTop: resolvedSpacing.md,
+        }}
+      >
+        Validando link…
+      </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: spacing.lg,
-    gap: spacing.md,
-  },
-  loadingText: {
-    fontSize: fontSizes.base,
-    color: colors.textSecondary,
-    marginTop: spacing.md,
-  },
-  errorText: {
-    fontSize: fontSizes.base,
-    color: colors.destructive,
-    textAlign: "center",
-  },
-  linkText: {
-    fontSize: fontSizes.base,
-    color: colors.primary,
-    marginTop: spacing.md,
-  },
-});

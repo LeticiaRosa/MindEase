@@ -6,7 +6,7 @@ export class SupabaseRoutineRepository implements IRoutineRepository {
   async getRoutines(): Promise<Routine[]> {
     const { data, error } = await supabaseClient
       .from("routines")
-      .select("*, routine_steps(*)")
+      .select("*")
       .order("position", { ascending: true });
 
     if (error) {
@@ -17,35 +17,78 @@ export class SupabaseRoutineRepository implements IRoutineRepository {
       return [];
     }
 
-    return (data ?? []).map((row) => ({
-      id: row.id,
-      userId: row.user_id,
-      name: row.name,
-      icon: row.icon ?? undefined,
-      position: row.position,
-      isActive: row.is_active ?? false,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-      steps: (row.routine_steps ?? [])
-        .sort(
-          (a: { position: number }, b: { position: number }) =>
-            a.position - b.position,
-        )
-        .map(
-          (step: {
-            id: string;
-            routine_id: string;
-            title: string;
-            position: number;
-            completed: boolean;
-          }) => ({
-            id: step.id,
-            routineId: step.routine_id,
-            title: step.title,
-            position: step.position,
-            completed: step.completed ?? false,
-          }),
-        ),
-    }));
+    return (data ?? []).map((row) => this.mapRoutine(row));
+  }
+
+  async createRoutine(name: string, icon = "notebook-pen"): Promise<Routine> {
+    const { data: existing } = await supabaseClient
+      .from("routines")
+      .select("position")
+      .order("position", { ascending: false })
+      .limit(1)
+      .single();
+
+    const nextPosition = (existing?.position ?? -1) + 1;
+
+    const { data, error } = await supabaseClient
+      .from("routines")
+      .insert({ name, icon, position: nextPosition })
+      .select("*")
+      .single();
+
+    if (error) throw new Error(error.message);
+    return this.mapRoutine(data);
+  }
+
+  async updateRoutine(
+    id: string,
+    updates: Partial<Pick<Routine, "name" | "icon">>,
+  ): Promise<Routine> {
+    const { data, error } = await supabaseClient
+      .from("routines")
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq("id", id)
+      .select("*")
+      .single();
+
+    if (error) throw new Error(error.message);
+    return this.mapRoutine(data);
+  }
+
+  async deleteRoutine(id: string): Promise<void> {
+    const { error } = await supabaseClient
+      .from("routines")
+      .delete()
+      .eq("id", id);
+    if (error) throw new Error(error.message);
+  }
+
+  async reorderRoutines(
+    updates: Array<{ id: string; position: number }>,
+  ): Promise<void> {
+    await Promise.all(
+      updates.map(({ id, position }) =>
+        supabaseClient
+          .from("routines")
+          .update({ position, updated_at: new Date().toISOString() })
+          .eq("id", id),
+      ),
+    );
+  }
+
+  // ─── Mapper ──────────────────────────────────────────────────────────
+
+  private mapRoutine(row: Record<string, unknown>): Routine {
+    return {
+      id: row.id as string,
+      userId: row.user_id as string,
+      name: row.name as string,
+      icon: (row.icon as string | undefined) ?? undefined,
+      position: row.position as number,
+      isActive: (row.is_active as boolean) ?? false,
+      createdAt: row.created_at as string,
+      updatedAt: row.updated_at as string,
+      steps: [],
+    };
   }
 }

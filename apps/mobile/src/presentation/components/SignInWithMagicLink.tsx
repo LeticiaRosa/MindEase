@@ -1,0 +1,222 @@
+import { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  magicLinkSchema,
+  type MagicLinkFormData,
+} from "@/domain/valueObjects/authSchemas";
+import { useAuth } from "@/presentation/hooks/useAuth";
+import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
+
+interface SignInWithMagicLinkProps {
+  onSwitchToPassword: () => void;
+}
+
+export function SignInWithMagicLink({
+  onSwitchToPassword,
+}: SignInWithMagicLinkProps) {
+  const { signInWithMagicLink } = useAuth();
+  const {
+    resolvedColors,
+    resolvedFontSizes,
+    resolvedSpacing,
+    resolvedBorderRadius,
+  } = useTheme();
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<MagicLinkFormData>({
+    resolver: zodResolver(magicLinkSchema),
+    defaultValues: { email: "" },
+  });
+
+  async function onSubmit(data: MagicLinkFormData) {
+    setServerError(null);
+    const result = await signInWithMagicLink(data.email);
+    if (result.success) {
+      setMagicLinkSent(true);
+    } else {
+      setServerError(result.error.message);
+    }
+  }
+
+  if (magicLinkSent) {
+    return (
+      <View
+        style={{
+          padding: resolvedSpacing.lg,
+          backgroundColor: resolvedColors.muted,
+          borderRadius: resolvedBorderRadius.lg,
+          marginBottom: resolvedSpacing.lg,
+          gap: resolvedSpacing.md,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: resolvedFontSizes.base,
+            color: resolvedColors.textPrimary,
+            textAlign: "center",
+          }}
+        >
+          ✓ Link enviado! Verifique seu email e clique no link para entrar.
+        </Text>
+        <TouchableOpacity
+          onPress={() => {
+            setMagicLinkSent(false);
+            onSwitchToPassword();
+          }}
+          accessibilityLabel="Voltar ao login com senha"
+        >
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.base,
+              color: resolvedColors.primary,
+              textAlign: "center",
+              padding: resolvedSpacing.sm,
+            }}
+          >
+            Voltar ao login
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  return (
+    <>
+      <Text
+        style={{
+          fontSize: resolvedFontSizes.base,
+          color: resolvedColors.textSecondary,
+          marginBottom: resolvedSpacing.lg,
+        }}
+      >
+        Enviaremos um link mágico para o seu email.
+      </Text>
+
+      <Controller
+        control={control}
+        name="email"
+        render={({ field, fieldState }) => (
+          <View style={{ marginBottom: resolvedSpacing.md }}>
+            <Text
+              style={{
+                fontSize: resolvedFontSizes.base,
+                color: resolvedColors.textPrimary,
+                marginBottom: resolvedSpacing.xs,
+                fontWeight: "500",
+              }}
+            >
+              Email
+            </Text>
+            <TextInput
+              style={[
+                {
+                  fontSize: resolvedFontSizes.base,
+                  borderWidth: 1,
+                  borderColor: resolvedColors.border,
+                  borderRadius: resolvedBorderRadius.md,
+                  padding: resolvedSpacing.md,
+                  color: resolvedColors.textPrimary,
+                  backgroundColor: resolvedColors.background,
+                },
+                fieldState.error && { borderColor: resolvedColors.destructive },
+              ]}
+              value={field.value}
+              onChangeText={field.onChange}
+              onBlur={field.onBlur}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoComplete="email"
+              textContentType="emailAddress"
+              placeholder="seu@email.com"
+              placeholderTextColor={resolvedColors.mutedForeground}
+              accessibilityLabel="Campo de email para link mágico"
+            />
+            {fieldState.error && (
+              <Text
+                style={{
+                  fontSize: resolvedFontSizes.sm,
+                  color: resolvedColors.destructive,
+                  marginTop: resolvedSpacing.xs,
+                }}
+              >
+                {fieldState.error.message}
+              </Text>
+            )}
+          </View>
+        )}
+      />
+
+      {serverError && (
+        <Text
+          style={{
+            fontSize: resolvedFontSizes.sm,
+            color: resolvedColors.destructive,
+            marginBottom: resolvedSpacing.md,
+          }}
+        >
+          {serverError}
+        </Text>
+      )}
+
+      <TouchableOpacity
+        style={[
+          {
+            backgroundColor: resolvedColors.primary,
+            borderRadius: resolvedBorderRadius.md,
+            padding: resolvedSpacing.md,
+            alignItems: "center" as const,
+            marginTop: resolvedSpacing.sm,
+            marginBottom: resolvedSpacing.md,
+          },
+          isSubmitting && { opacity: 0.6 },
+        ]}
+        onPress={handleSubmit(onSubmit)}
+        disabled={isSubmitting}
+        accessibilityLabel="Enviar link mágico"
+      >
+        {isSubmitting ? (
+          <ActivityIndicator color={resolvedColors.primaryForeground} />
+        ) : (
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.base,
+              fontWeight: "600",
+              color: resolvedColors.primaryForeground,
+            }}
+          >
+            Enviar link
+          </Text>
+        )}
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={onSwitchToPassword}
+        accessibilityLabel="Voltar ao login com senha"
+      >
+        <Text
+          style={{
+            fontSize: resolvedFontSizes.base,
+            color: resolvedColors.primary,
+            textAlign: "center",
+            padding: resolvedSpacing.sm,
+          }}
+        >
+          Usar senha
+        </Text>
+      </TouchableOpacity>
+    </>
+  );
+}

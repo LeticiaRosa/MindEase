@@ -1,49 +1,64 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useAlertPreferences } from "@/presentation/contexts/AlertPreferencesContext";
+import { useActivitySignals } from "@/presentation/contexts/ActivitySignalsContext";
+import { useBrainToday } from "@/presentation/contexts/BrainTodayContext";
+import { evaluateAlerts } from "@/application/services/AlertEngineService";
+import type { AlertPayload } from "@/domain/entities/AlertPayload";
+import type { AlertTrigger } from "@/domain/valueObjects/AlertTypes";
 
-const DEFAULT_INTERVAL_MINUTES = 25;
+const DEFAULT_INTERVAL_MS = 60_000; // check every minute
 
 interface AlertEngineState {
   bannerActive: boolean;
   bannerMessage: string;
+  modalPayload: AlertPayload | null;
   dismissBanner: () => void;
+  dismissModal: () => void;
 }
 
-const ALERT_MESSAGES = [
-  "Hora de uma pequena pausa. Respire fundo por 30 segundos.",
-  "Você está trabalhando há um tempinho. Que tal levantar e se alongar?",
-  "Lembrete gentil: hidrate-se! Beba um copo d'água.",
-  "Pausa rápida: olhe para longe por 20 segundos para descansar os olhos.",
-];
-
-function getRandomMessage(): string {
-  const index = Math.floor(Math.random() * ALERT_MESSAGES.length);
-  return ALERT_MESSAGES[index]!;
-}
-
-export function useAlertEngine(
-  intervalMinutes = DEFAULT_INTERVAL_MINUTES,
-): AlertEngineState {
+export function useAlertEngine(): AlertEngineState {
+  const { preferences } = useAlertPreferences();
+  const { signals } = useActivitySignals();
+  const { brainState } = useBrainToday();
   const [bannerActive, setBannerActive] = useState(false);
   const [bannerMessage, setBannerMessage] = useState("");
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [modalPayload, setModalPayload] = useState<AlertPayload | null>(null);
+  const cooldownMapRef = useRef<Partial<Record<AlertTrigger, number>>>({});
 
-  useEffect(() => {
-    intervalRef.current = setInterval(
-      () => {
-        setBannerMessage(getRandomMessage());
-        setBannerActive(true);
-      },
-      intervalMinutes * 60 * 1000,
+  const evaluate = useCallback(() => {
+    if (!preferences || !signals) return;
+
+    const payload = evaluateAlerts(
+      signals,
+      preferences,
+      brainState ?? null,
+      cooldownMapRef.current,
     );
 
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [intervalMinutes]);
+    if (payload) {
+      if (payload.channel === "modal") {
+        setModalPayload(payload);
+      } else {
+        setBannerMessage(payload.message);
+        setBannerActive(true);
+      }
+      cooldownMapRef.current[payload.trigger] = Date.now();
+    }
+  }, [preferences, signals, brainState]);
 
-  function dismissBanner() {
-    setBannerActive(false);
-  }
+  useEffect(() => {
+    const id = setInterval(evaluate, DEFAULT_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, [evaluate]);
 
-  return { bannerActive, bannerMessage, dismissBanner };
+  const dismissBanner = useCallback(() => setBannerActive(false), []);
+  const dismissModal = useCallback(() => setModalPayload(null), []);
+
+  return {
+    bannerActive,
+    bannerMessage,
+    modalPayload,
+    dismissBanner,
+    dismissModal,
+  };
 }

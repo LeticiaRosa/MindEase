@@ -7,6 +7,10 @@ export const colors = {
   // Light theme
   background: "#FFFFFF",
   foreground: "#18181B",
+  card: "#FFFFFF",
+  cardForeground: "#18181B",
+  popover: "#FFFFFF",
+  popoverForeground: "#18181B",
   primary: "#F59E0B",
   primaryForeground: "#FEFCE8",
   secondary: "#EAB308",
@@ -16,6 +20,7 @@ export const colors = {
   accent: "#F4F4F5",
   accentForeground: "#27272A",
   destructive: "#EF4444",
+  destructiveForeground: "#FEFCE8",
   border: "#E4E4E7",
   input: "#E4E4E7",
   ring: "#A1A1AA",
@@ -26,6 +31,10 @@ export const colors = {
 export const darkColors = {
   background: "#18181B",
   foreground: "#FAFAFA",
+  card: "#27272A",
+  cardForeground: "#FAFAFA",
+  popover: "#27272A",
+  popoverForeground: "#FAFAFA",
   primary: "#EAB308",
   primaryForeground: "#27272A",
   secondary: "#EAB308",
@@ -35,6 +44,7 @@ export const darkColors = {
   accent: "#3F3F46",
   accentForeground: "#FAFAFA",
   destructive: "#F87171",
+  destructiveForeground: "#27272A",
   border: "rgba(255, 255, 255, 0.1)",
   input: "rgba(255, 255, 255, 0.15)",
   ring: "#71717A",
@@ -59,6 +69,7 @@ export const softColors = {
   accent: "#EDEDF2", // inherits --muted
   accentForeground: "#3B3D4E", // inherits --foreground
   destructive: "#EF4444", // inherited from root
+  destructiveForeground: "#F9FAFB",
   border: "#E1E1E8", // oklch(0.9 0.006 264.531)
   input: "#E1E1E8", // oklch(0.9 0.006 264.531)
   ring: "#A1A1AA", // inherited from root
@@ -83,6 +94,7 @@ export const highContrastColors = {
   accent: "#EFEFEF", // inherits --muted
   accentForeground: "#090909", // inherits --foreground
   destructive: "#EF4444", // inherited (WCAG AA on white)
+  destructiveForeground: "#FFFFFF",
   border: "#303030", // oklch(0.2 0 0)
   input: "#303030", // oklch(0.2 0 0)
   ring: "#090909", // oklch(0.04 0 0)

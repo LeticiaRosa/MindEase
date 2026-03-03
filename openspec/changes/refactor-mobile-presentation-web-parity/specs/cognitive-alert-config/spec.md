@@ -31,6 +31,7 @@ The system SHALL implement platform-specific storage adapters for alert preferen
 The cognitive alert configuration screen SHALL render a form (via `react-hook-form` + `zod`) with controls for triggers, tone, and intensity. On **web**, this is at `/settings/cognitive-alerts`. On **mobile**, this is the `(app)/cognitive-alert-config.tsx` route.
 
 Controls:
+
 - Which triggers are active (set of switches, at least five trigger types)
 - Preferred tone (radio group or segmented control: Direto, Acolhedor, Reflexivo, Sugestão)
 - Intensity (radio group or segmented control: Discreto, Moderado, Ativo)

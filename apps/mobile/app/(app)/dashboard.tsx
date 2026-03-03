@@ -1,39 +1,77 @@
-import { ScrollView, View, StyleSheet, RefreshControl } from "react-native";
+import { useState } from "react";
+import { ScrollView, View, RefreshControl } from "react-native";
+import { useRouter } from "expo-router";
 import { useAuth } from "@/presentation/hooks/useAuth";
-import { useTasks } from "@/presentation/hooks/useTasks";
+import { useTaskKanban } from "@/presentation/hooks/useTaskKanban";
 import { useRoutines } from "@/presentation/hooks/useRoutines";
 import { useAlertEngine } from "@/presentation/hooks/useAlertEngine";
+import { useActiveRoutine } from "@/presentation/contexts/ActiveRoutineContext";
+import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 import { DashboardHeader } from "@/presentation/components/DashboardHeader";
 import { BrainTodayBottomSheet } from "@/presentation/components/BrainTodayBottomSheet";
-import { ActiveRoutineStrip } from "@/presentation/components/ActiveRoutineStrip";
-import { TaskStatusSection } from "@/presentation/components/TaskStatusSection";
+import { RoutineSelector } from "@/presentation/components/RoutineSelector";
+import { TaskGroup } from "@/presentation/components/TaskGroup";
+import { TaskEditForm } from "@/presentation/components/TaskEditForm";
+import { CognitiveAlertModal } from "@/presentation/components/CognitiveAlertModal";
+import type { Task } from "@/domain/entities/Task";
 import { TaskStatus } from "@/domain/valueObjects/TaskStatus";
-import { colors, spacing } from "@repo/ui/theme";
+
+const STATUS_ADVANCE: Record<string, string> = {
+  todo: "in_progress",
+  in_progress: "done",
+};
+const STATUS_REGRESS: Record<string, string> = {
+  in_progress: "todo",
+  done: "in_progress",
+};
 
 export default function DashboardScreen() {
+  const router = useRouter();
   const { user } = useAuth();
+  const { routines, isLoading: routinesLoading } = useRoutines();
+  const { activeRoutineId, setActiveRoutineId } = useActiveRoutine();
+  const { resolvedColors, resolvedSpacing } = useTheme();
+
+  // Default to first routine if none selected
+  const effectiveRoutineId = activeRoutineId ?? routines[0]?.id ?? "";
+
   const {
-    data: tasks = [],
+    tasks,
     isLoading: tasksLoading,
-    refetch: refetchTasks,
-  } = useTasks();
-  const { data: routines = [], refetch: refetchRoutines } = useRoutines();
-  const { bannerActive, bannerMessage, dismissBanner } = useAlertEngine();
+    tasksByStatus,
+    createTask,
+    updateTask,
+    updateTaskStatus,
+    deleteTask,
+    archiveTask,
+  } = useTaskKanban(effectiveRoutineId);
 
-  const activeRoutine = routines.find((r) => r.isActive) ?? null;
+  const {
+    bannerActive,
+    bannerMessage,
+    modalPayload,
+    dismissBanner,
+    dismissModal,
+  } = useAlertEngine();
 
-  const todoTasks = tasks.filter((t) => t.status === TaskStatus.TODO);
-  const inProgressTasks = tasks.filter(
-    (t) => t.status === TaskStatus.IN_PROGRESS,
-  );
-  const doneTasks = tasks.filter((t) => t.status === TaskStatus.DONE);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
-  async function onRefresh() {
-    await Promise.all([refetchTasks(), refetchRoutines()]);
-  }
+  const todoTasks = tasksByStatus("todo");
+  const inProgressTasks = tasksByStatus("in_progress");
+  const doneTasks = tasksByStatus("done");
+
+  const handleSwipeRight = (task: Task) => {
+    const next = STATUS_ADVANCE[task.status];
+    if (next) updateTaskStatus({ id: task.id, status: next as Task["status"] });
+  };
+
+  const handleSwipeLeft = (task: Task) => {
+    const prev = STATUS_REGRESS[task.status];
+    if (prev) updateTaskStatus({ id: task.id, status: prev as Task["status"] });
+  };
 
   return (
-    <View style={styles.root}>
+    <View style={{ flex: 1, backgroundColor: resolvedColors.background }}>
       {user && (
         <DashboardHeader
           user={user}
@@ -43,39 +81,80 @@ export default function DashboardScreen() {
       )}
 
       <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          padding: resolvedSpacing.lg,
+          paddingBottom: resolvedSpacing["3xl"],
+        }}
         refreshControl={
           <RefreshControl
             refreshing={tasksLoading}
-            onRefresh={onRefresh}
-            tintColor={colors.primary}
+            onRefresh={() => {}}
+            tintColor={resolvedColors.primary}
           />
         }
       >
-        {activeRoutine && <ActiveRoutineStrip routine={activeRoutine} />}
+        {/* Routine selector */}
+        {routines.length > 0 && (
+          <View style={{ marginBottom: resolvedSpacing.xl }}>
+            <RoutineSelector
+              routines={routines}
+              activeRoutineId={effectiveRoutineId}
+              onSelect={setActiveRoutineId}
+              onManage={() => router.push("/(app)/manage-routines")}
+            />
+          </View>
+        )}
 
-        {/* Task sections in order: A fazer → Em andamento → Concluído */}
-        <TaskStatusSection title="A fazer" tasks={todoTasks} />
-        <TaskStatusSection title="Em andamento" tasks={inProgressTasks} />
-        <TaskStatusSection title="Concluído" tasks={doneTasks} />
+        {/* Kanban columns */}
+        <TaskGroup
+          title="A fazer"
+          tasks={todoTasks}
+          showCreate
+          onCreateTask={createTask}
+          onPressTask={setEditingTask}
+          onSwipeRight={handleSwipeRight}
+          onLongPress={setEditingTask}
+          emptyMessage="Nenhuma tarefa pendente"
+        />
+        <TaskGroup
+          title="Em andamento"
+          tasks={inProgressTasks}
+          onPressTask={setEditingTask}
+          onSwipeRight={handleSwipeRight}
+          onSwipeLeft={handleSwipeLeft}
+          onLongPress={setEditingTask}
+          emptyMessage="Nenhuma tarefa em andamento"
+        />
+        <TaskGroup
+          title="Concluído"
+          tasks={doneTasks}
+          onPressTask={setEditingTask}
+          onSwipeLeft={handleSwipeLeft}
+          onLongPress={setEditingTask}
+          emptyMessage="Nenhuma tarefa concluída"
+        />
       </ScrollView>
 
-      <BrainTodayBottomSheet onDismiss={() => {}} />
+      {/* Brain Today check-in */}
+      <BrainTodayBottomSheet />
+
+      {/* Task edit modal */}
+      {editingTask && (
+        <TaskEditForm
+          task={editingTask}
+          visible
+          onClose={() => setEditingTask(null)}
+          onSave={updateTask}
+          onDelete={deleteTask}
+          onArchive={archiveTask}
+        />
+      )}
+
+      {/* Alert modal */}
+      {modalPayload && (
+        <CognitiveAlertModal payload={modalPayload} onDismiss={dismissModal} />
+      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  scroll: {
-    flex: 1,
-  },
-  content: {
-    padding: spacing.lg,
-    paddingBottom: spacing["3xl"],
-  },
-});

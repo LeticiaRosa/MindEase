@@ -1,184 +1,123 @@
-import { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { colors, fontSizes, spacing, borderRadius } from "@repo/ui/theme";
+import { View, Text, Pressable, Modal } from "react-native";
+import { useBrainToday } from "@/presentation/contexts/BrainTodayContext";
+import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
+import {
+  BRAIN_STATE_OPTIONS,
+  type BrainStateValue,
+} from "@/domain/entities/BrainState";
 
-const STORAGE_KEY = "mindease:brain-state";
+export function BrainTodayBottomSheet() {
+  const { brainState, hasAnsweredToday, setBrainState, skip } = useBrainToday();
+  const {
+    resolvedColors,
+    resolvedFontSizes,
+    resolvedSpacing,
+    resolvedBorderRadius,
+  } = useTheme();
 
-type BrainState =
-  | "focado"
-  | "cansado"
-  | "sobrecarregado"
-  | "ansioso"
-  | "disperso";
-
-const BRAIN_STATE_OPTIONS: {
-  value: BrainState;
-  label: string;
-  color: string;
-  description: string;
-}[] = [
-  {
-    value: "focado",
-    label: "Focado",
-    color: "#22c55e",
-    description: "Energia e clareza",
-  },
-  {
-    value: "cansado",
-    label: "Cansado",
-    color: "#eab308",
-    description: "Precisando de ritmo lento",
-  },
-  {
-    value: "sobrecarregado",
-    label: "Sobrecarregado",
-    color: "#ef4444",
-    description: "Muita coisa de uma vez",
-  },
-  {
-    value: "ansioso",
-    label: "Ansioso",
-    color: "#3b82f6",
-    description: "Difícil de parar os pensamentos",
-  },
-  {
-    value: "disperso",
-    label: "Disperso",
-    color: "#a855f7",
-    description: "Difícil de manter o foco",
-  },
-];
-
-function getTodayKey(): string {
-  return new Date().toISOString().split("T")[0]!;
-}
-
-interface BrainTodayBottomSheetProps {
-  onDismiss: (state: BrainState | null) => void;
-}
-
-export function BrainTodayBottomSheet({
-  onDismiss,
-}: BrainTodayBottomSheetProps) {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const todayKey = getTodayKey();
-    AsyncStorage.getItem(STORAGE_KEY).then((value) => {
-      if (value === todayKey) {
-        // Already answered today
-        return;
-      }
-      setVisible(true);
-    });
-  }, []);
-
-  async function selectState(state: BrainState) {
-    await AsyncStorage.setItem(STORAGE_KEY, getTodayKey());
-    setVisible(false);
-    onDismiss(state);
-  }
-
-  async function skip() {
-    setVisible(false);
-    onDismiss(null);
-  }
-
-  if (!visible) return null;
+  if (hasAnsweredToday) return null;
 
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      transparent
-      statusBarTranslucent
-    >
-      <View style={styles.overlay}>
-        <View style={styles.sheet}>
-          <Text style={styles.title}>Como está seu cérebro hoje?</Text>
-          <Text style={styles.subtitle}>
+    <Modal visible animationType="slide" transparent statusBarTranslucent>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "flex-end",
+          backgroundColor: "rgba(0,0,0,0.35)",
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: resolvedColors.background,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            padding: resolvedSpacing.xl,
+            paddingBottom: resolvedSpacing["3xl"],
+          }}
+        >
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.xl,
+              fontWeight: "700",
+              color: resolvedColors.textPrimary,
+              marginBottom: resolvedSpacing.sm,
+            }}
+          >
+            Como está seu cérebro hoje?
+          </Text>
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.base,
+              color: resolvedColors.textSecondary,
+              marginBottom: resolvedSpacing.xl,
+            }}
+          >
             Escolha o estado que mais se parece com o seu momento agora.
           </Text>
 
-          <View style={styles.options}>
+          <View
+            style={{
+              gap: resolvedSpacing.sm,
+              marginBottom: resolvedSpacing.xl,
+            }}
+          >
             {BRAIN_STATE_OPTIONS.map((opt) => (
-              <TouchableOpacity
+              <Pressable
                 key={opt.value}
-                style={[styles.option, { borderLeftColor: opt.color }]}
-                onPress={() => selectState(opt.value)}
+                onPress={() => setBrainState(opt.value)}
                 accessibilityLabel={`${opt.label}: ${opt.description}`}
+                style={{
+                  padding: resolvedSpacing.md,
+                  backgroundColor: resolvedColors.muted,
+                  borderRadius: resolvedBorderRadius.md,
+                  borderLeftWidth: 4,
+                  borderLeftColor: opt.color,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: resolvedSpacing.sm,
+                }}
               >
-                <Text style={[styles.optionLabel, { color: opt.color }]}>
-                  {opt.label}
-                </Text>
-                <Text style={styles.optionDescription}>{opt.description}</Text>
-              </TouchableOpacity>
+                <Text style={{ fontSize: 22 }}>{opt.emoji}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{
+                      fontSize: resolvedFontSizes.base,
+                      fontWeight: "600",
+                      color: opt.color,
+                      marginBottom: 2,
+                    }}
+                  >
+                    {opt.label}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: resolvedFontSizes.sm,
+                      color: resolvedColors.textSecondary,
+                    }}
+                  >
+                    {opt.description}
+                  </Text>
+                </View>
+              </Pressable>
             ))}
           </View>
 
-          <TouchableOpacity
+          <Pressable
             onPress={skip}
-            style={styles.skipButton}
             accessibilityLabel="Pular por hoje"
+            style={{ alignItems: "center", padding: resolvedSpacing.md }}
           >
-            <Text style={styles.skipText}>Pular por hoje</Text>
-          </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: resolvedFontSizes.base,
+                color: resolvedColors.mutedForeground,
+              }}
+            >
+              Pular por hoje
+            </Text>
+          </Pressable>
         </View>
       </View>
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-    backgroundColor: "rgba(0,0,0,0.35)",
-  },
-  sheet: {
-    backgroundColor: colors.background,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: spacing.xl,
-    paddingBottom: spacing["3xl"],
-  },
-  title: {
-    fontSize: fontSizes.xl,
-    fontWeight: "700",
-    color: colors.textPrimary,
-    marginBottom: spacing.sm,
-  },
-  subtitle: {
-    fontSize: fontSizes.base,
-    color: colors.textSecondary,
-    marginBottom: spacing.xl,
-  },
-  options: {
-    gap: spacing.sm,
-    marginBottom: spacing.xl,
-  },
-  option: {
-    padding: spacing.md,
-    backgroundColor: colors.muted,
-    borderRadius: borderRadius.md,
-    borderLeftWidth: 4,
-  },
-  optionLabel: {
-    fontSize: fontSizes.base,
-    fontWeight: "600",
-    marginBottom: 2,
-  },
-  optionDescription: {
-    fontSize: fontSizes.sm,
-    color: colors.textSecondary,
-  },
-  skipButton: {
-    alignItems: "center",
-    padding: spacing.md,
-  },
-  skipText: {
-    fontSize: fontSizes.base,
-    color: colors.mutedForeground,
-  },
-});

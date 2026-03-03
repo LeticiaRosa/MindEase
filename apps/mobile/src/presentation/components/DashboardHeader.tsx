@@ -1,8 +1,9 @@
-import { View, Text, StyleSheet } from "react-native";
+import { useState } from "react";
+import { View, Text, Pressable } from "react-native";
 import type { User } from "@/domain/entities/User";
-import { UserMenu } from "./UserMenu";
+import { UserMenuBottomSheet } from "./UserMenuBottomSheet";
 import { CognitiveAlertBanner } from "./CognitiveAlertBanner";
-import { colors, fontSizes, spacing } from "@repo/ui/theme";
+import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface DashboardHeaderProps {
@@ -17,12 +18,62 @@ export function DashboardHeader({
   onDismissAlert,
 }: DashboardHeaderProps) {
   const insets = useSafeAreaInsets();
+  const { resolvedColors, resolvedFontSizes, resolvedSpacing } = useTheme();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const displayName = user.user_metadata?.full_name ?? user.email;
+  const initials = displayName ? displayName.slice(0, 2).toUpperCase() : "ME";
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + spacing.md }]}>
-      <View style={styles.row}>
-        <Text style={styles.logo}>🧠 MindEase</Text>
-        <UserMenu user={user} />
+    <View
+      style={{
+        backgroundColor: resolvedColors.background,
+        borderBottomWidth: 1,
+        borderBottomColor: resolvedColors.border,
+        paddingHorizontal: resolvedSpacing.lg,
+        paddingBottom: resolvedSpacing.md,
+        paddingTop: insets.top + resolvedSpacing.md,
+      }}
+    >
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: resolvedSpacing.sm,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: resolvedFontSizes.xl,
+            fontWeight: "700",
+            color: resolvedColors.textPrimary,
+          }}
+        >
+          🧠 MindEase
+        </Text>
+        <Pressable
+          onPress={() => setMenuOpen(true)}
+          accessibilityLabel={`Menu do usuário ${displayName}`}
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            backgroundColor: resolvedColors.primary,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.sm,
+              fontWeight: "700",
+              color: resolvedColors.primaryForeground,
+            }}
+          >
+            {initials}
+          </Text>
+        </Pressable>
       </View>
 
       {alertMessage && onDismissAlert && (
@@ -31,27 +82,12 @@ export function DashboardHeader({
           onDismiss={onDismissAlert}
         />
       )}
+
+      <UserMenuBottomSheet
+        user={user}
+        visible={menuOpen}
+        onClose={() => setMenuOpen(false)}
+      />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.background,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.md,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: spacing.sm,
-  },
-  logo: {
-    fontSize: fontSizes.xl,
-    fontWeight: "700",
-    color: colors.textPrimary,
-  },
-});
