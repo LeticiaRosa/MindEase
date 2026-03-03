@@ -29,6 +29,7 @@ import {
   type SpacingDensity,
   type ThemeMode,
 } from "@/presentation/contexts/ThemePreferencesContext";
+import { AppearanceMenuPanel } from "@/presentation/components/AppearanceMenuPanel";
 import { TimerPreferencesPanel } from "@/presentation/components/TimerPreferencesPanel";
 import { cn } from "@repo/ui";
 import { useToast } from "@repo/ui";
@@ -96,15 +97,8 @@ export function SegmentedControl<T extends string>({
 
 export function UserMenuDropdown() {
   const { user, loading, signOut } = useAuth();
-  const {
-    theme,
-    fontSize,
-    spacing,
-    updatePreferences,
-    mode,
-    helpers,
-    complexity,
-  } = useThemePreferences();
+  const { updatePreferences, mode, helpers, complexity } =
+    useThemePreferences();
   const toast = useToast();
   const navigate = useNavigate();
   const displayName = getDisplayName(user);
@@ -232,67 +226,42 @@ export function UserMenuDropdown() {
             </button>
 
             {showConfigAppearance && (
-              <div className="[&>div]:border-0 [&>div]:shadow-none [&>div]:p-0 [&>div]:w-full [&>div]:bg-transparent gap-2 flex flex-col pt-2">
-                <SegmentedControl<ColourTheme>
-                  label="Colour theme"
-                  value={theme}
-                  options={[
-                    { value: "default", label: "Default" },
-                    { value: "dark", label: "Dark" },
-                    { value: "soft", label: "Soft" },
-                    { value: "high-contrast", label: "High contrast" },
-                  ]}
-                  onChange={(value) => updatePreferences({ theme: value })}
-                />
+              <div className="pt-2">
+                {/* Core appearance (Colour / Font / Spacing) reused from shared panel */}
+                <AppearanceMenuPanel alwaysOpen />
 
-                <SegmentedControl<FontSize>
-                  label="Font size"
-                  value={fontSize}
-                  options={[
-                    { value: "sm", label: "S" },
-                    { value: "md", label: "M" },
-                    { value: "lg", label: "L" },
-                  ]}
-                  onChange={(value) => updatePreferences({ fontSize: value })}
-                />
-
-                <SegmentedControl<SpacingDensity>
-                  label="Spacing"
-                  value={spacing}
-                  options={[
-                    { value: "compact", label: "Compact" },
-                    { value: "default", label: "Default" },
-                    { value: "relaxed", label: "Relaxed" },
-                  ]}
-                  onChange={(value) => updatePreferences({ spacing: value })}
-                />
-                <SegmentedControl<ThemeMode>
-                  label="Mode"
-                  value={mode}
-                  options={[
-                    { value: "resume", label: "Resume" },
-                    { value: "detail", label: "Detail" },
-                  ]}
-                  onChange={(value) => updatePreferences({ mode: value })}
-                />
-                <SegmentedControl<HelpersVisibility>
-                  label="Helpers"
-                  value={helpers}
-                  options={[
-                    { value: "show", label: "Show" },
-                    { value: "hide", label: "Hide" },
-                  ]}
-                  onChange={(value) => updatePreferences({ helpers: value })}
-                />
-                <SegmentedControl<ComplexityMode>
-                  label="Complexity"
-                  value={complexity}
-                  options={[
-                    { value: "simple", label: "Simple" },
-                    { value: "complex", label: "Complex" },
-                  ]}
-                  onChange={(value) => updatePreferences({ complexity: value })}
-                />
+                {/* Extra controls only in main menu */}
+                <div className="flex flex-col gap-3 mt-3">
+                  <SegmentedControl<ThemeMode>
+                    label="Mode"
+                    value={mode}
+                    options={[
+                      { value: "resume", label: "Resume" },
+                      { value: "detail", label: "Detail" },
+                    ]}
+                    onChange={(value) => updatePreferences({ mode: value })}
+                  />
+                  <SegmentedControl<HelpersVisibility>
+                    label="Helpers"
+                    value={helpers}
+                    options={[
+                      { value: "show", label: "Show" },
+                      { value: "hide", label: "Hide" },
+                    ]}
+                    onChange={(value) => updatePreferences({ helpers: value })}
+                  />
+                  <SegmentedControl<ComplexityMode>
+                    label="Complexity"
+                    value={complexity}
+                    options={[
+                      { value: "simple", label: "Simple" },
+                      { value: "complex", label: "Complex" },
+                    ]}
+                    onChange={(value) =>
+                      updatePreferences({ complexity: value })
+                    }
+                  />
+                </div>
               </div>
             )}
           </div>

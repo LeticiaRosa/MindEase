@@ -64,14 +64,27 @@ export function SignUp() {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto ">
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold">Começe agora</CardTitle>
-        <CardDescription>
+    <Card
+      className="w-full max-w-md mx-auto "
+      role="main"
+      aria-label="Formulário de cadastro"
+    >
+      <CardHeader
+        className="text-center"
+        role="banner"
+        aria-label="Cabeçalho do formulário de cadastro"
+      >
+        <CardTitle className="text-2xl font-bold" role="heading" aria-level={1}>
+          Começe agora
+        </CardTitle>
+        <CardDescription
+          role="contentinfo"
+          aria-label="Descrição do formulário de cadastro"
+        >
           Preencha os dados para criar sua conta
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent role="form" aria-label="Conteúdo do formulário de cadastro">
         {error && (
           <div className="bg-destructive/10 border border-destructive/20 text-destructive text-sm p-3 rounded-md mb-4">
             {error.message}
@@ -154,7 +167,11 @@ export function SignUp() {
           </form>
         </Form>
 
-        <div className="mt-4 text-center">
+        <div
+          className="mt-4 text-center"
+          role="group"
+          aria-label="Opção para fazer login"
+        >
           <Button
             variant="link"
             onClick={() => navigate("/login")}

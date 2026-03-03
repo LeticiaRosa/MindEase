@@ -130,12 +130,20 @@ export function SignInWithMagicLink() {
                 )}
               />
 
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button
+                type="submit"
+                className="w-full bg-primary hover:bg-primary-dark text-white font-medium rounded-md transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+                disabled={loading}
+              >
                 <Sparkles className="w-4 h-4 mr-2" />{" "}
                 {loading ? "Enviando..." : "Enviar Magic Link"}
               </Button>
 
-              <div className="text-sm text-muted-foreground space-y-2">
+              <div
+                className="text-sm text-muted-foreground space-y-2"
+                role="group"
+                aria-label="Instruções para uso do magic link"
+              >
                 <p className="font-medium">Como funciona:</p>
                 <ol className="list-decimal list-inside space-y-1 ml-2">
                   <li>Digite seu email acima</li>

@@ -3,6 +3,7 @@ import "../index.css";
 import { TooltipProvider } from "./components/ui/tooltip";
 
 // Components
+export * from "./components/Logo";
 export * from "./components/ui/button";
 export * from "./components/ui/input";
 export * from "./components/ui/label";

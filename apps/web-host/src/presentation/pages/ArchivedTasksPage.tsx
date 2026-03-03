@@ -14,7 +14,7 @@ import {
   RESTORABLE_STATUSES,
   type RestorableStatus,
 } from "@/domain/valueObjects/TaskStatus";
-import { Logo } from "../components/Logo";
+import { Logo } from "@repo/ui";
 
 function ArchivedTaskItem({
   task,

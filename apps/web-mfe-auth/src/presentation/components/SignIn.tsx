@@ -28,26 +28,42 @@ export function SignIn() {
   }, [user]);
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold">Bem-vindo de volta</CardTitle>
-        <CardDescription>
+    <Card
+      className="w-full max-w-md mx-auto"
+      role="main"
+      aria-label="Formulário de login"
+    >
+      <CardHeader
+        className="text-center"
+        role="banner"
+        aria-label="Cabeçalho do formulário de login"
+      >
+        <CardTitle className="text-2xl font-bold" role="heading" aria-level={1}>
+          Bem-vindo de volta
+        </CardTitle>
+        <CardDescription
+          className="text-gray-700"
+          role="contentinfo"
+          aria-label="Descrição do formulário de login"
+        >
           Acesse com senha ou link seguro para continuar
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent role="form" aria-label="Conteúdo do formulário de login">
         <Tabs defaultValue="password" className="w-full">
           <TabsList className="w-full mb-4 grid grid-cols-2">
             <TabsTrigger
               value="password"
-              className="data-[state=active]:bg-amber-400 data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-gray-200 data-[state=active]:hover:text-white"
+              className=" data-[state=active]:border 
+              data-[state=active]:border-primary data-[state=active]:shadow-md cursor-pointer"
             >
               <Mail className="w-4 h-4 mr-2" />
               E-mail e Senha
             </TabsTrigger>
             <TabsTrigger
               value="magiclink"
-              className="data-[state=active]:bg-amber-400 data-[state=active]:text-white data-[state=active]:shadow-md hover:bg-gray-200 data-[state=active]:hover:text-white"
+              className="data-[state=active]:border 
+              data-[state=active]:border-primary data-[state=active]:shadow-md cursor-pointer"
             >
               <Sparkles className="w-4 h-4 mr-2" />
               Magic Link
@@ -58,7 +74,11 @@ export function SignIn() {
           <SignInWithMagicLink />
         </Tabs>
 
-        <div className="mt-4 text-center">
+        <div
+          className="mt-4 text-center"
+          role="group"
+          aria-label="Opção para criar conta"
+        >
           <Button
             variant="link"
             onClick={() => navigate("/register")}

@@ -107,3 +107,101 @@ my-turborepo/
 │ ├── ui/ ← componentes compartilhados entre os micro frontends
 │ ├── ├── src/ ← código-fonte dos componentes
 │ ├── ├── hooks/ ← hooks compartilhados de UI ( ex.: use-toast )
+
+## CheckList de Requisitos do Projeto - Critério Objetivo de Avaliação
+
+[] Redução real de estímulos visuais
+Existe modo que reduz elementos simultâneos, cores vibrantes, sombras, excesso de cards e distrações (não apenas troca de tema)
+
+[] Controle de complexidade funcional
+Níveis alteram densidade informacional, fluxo e quantidade de decisões na tela
+
+[] Modo foco efetivo
+Modo foco isola tarefa ativa e reduz navegação paralela
+
+[] Ritmo guiado
+Interface conduz por etapas (progressão controlada, onboarding ou sequência orientada)
+
+[] Controle de animações
+Permite reduzir/desativar animações e respeita prefers-reduced-motion (Web)
+
+[] Dashboard global funcional
+Alterações no painel afetam toda a aplicação e não apenas a página atual
+
+[] Resumo vs detalhado implementado corretamente
+Mudança altera estrutura visual (não apenas esconder texto)
+
+[] Contraste, fonte e espaçamento aplicados globalmente
+Implementação via tokens, theme ou CSS variables coerentes
+
+[] Alertas cognitivos inteligentes
+Alertas possuem regra clara (tempo, troca de contexto) e não são invasivos
+
+[] Kanban simplificado funcional
+Estados claros e persistidos, sem lógica acoplada à UI
+
+[] Pomodoro adaptado
+Timer configurável com pausa controlada e feedback suave
+
+[] Checklist com lógica
+Checklist possui comportamento adicional (dependência, sugestão ou agrupamento)
+
+[] Transição suave entre tarefas
+Aviso prévio, salvamento de estado ou resumo antes de trocar
+
+[] Persistência real
+Preferências armazenadas (localStorage, banco ou API) e restauradas após reload
+
+[] Separação de estado global
+Gerenciamento adequado (Context, Redux, Bloc, Provider etc.), sem prop drilling excessivo
+
+[] Separação por domínio/feature
+Estrutura organizada por responsabilidade e não apenas por tipo de arquivo
+
+[] Domínio isolado da UI
+Regras de negócio não dependem de framework ou componentes
+
+[] Casos de uso implementados
+Use cases independentes e testáveis
+
+[] Uso de interfaces/adapters
+Dependências externas desacopladas via abstrações
+
+[] TypeScript avançado
+Uso correto de tipos, generics, enums, sem abuso de any
+
+[] Componentização adequada
+Componentes reutilizáveis, coesos e sem lógica excessiva
+
+[] Tratamento de erros e estados
+Loading, error e empty states tratados explicitamente
+
+[] Mobile funcional real
+Aplicação roda em Flutter/RN com navegação própria
+
+[] Coerência cognitiva Web/Mobile
+Mesma lógica de foco e complexidade mantida entre plataformas
+
+[] Acessibilidade estrutural
+Semântica correta, aria quando necessário, navegação por teclado funcional
+
+[] Contraste validado
+Cores respeitam WCAG mínimo (AA)
+
+[] Testes relevantes
+Testes unitários cobrindo regras de negócio (não apenas snapshot)
+
+[] CI/CD funcional
+Pipeline executa build + testes automaticamente
+
+[] Padrões e lint
+ESLint, Prettier ou equivalente configurados corretamente
+
+[] Repositório organizado
+Estrutura clara, histórico coerente, sem código morto
+
+[] README técnico completo
+Setup, arquitetura, decisões técnicas e instruções claras
+
+[] Vídeo técnico (<=15min)
+Explica decisões arquiteturais e cognitivas, não apenas demonstração visual

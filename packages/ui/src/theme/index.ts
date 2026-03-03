@@ -42,6 +42,54 @@ export const darkColors = {
   textSecondary: "#A1A1AA",
 } as const;
 
+// Approx. hex conversions from oklch — mirrors :root[data-theme="soft"] in index.css
+export const softColors = {
+  background: "#F9FAFB", // oklch(0.98 0.005 247.839) — near-white, cool-tinted
+  foreground: "#3B3D4E", // oklch(0.28 0.02 261.692)  — dark, blue-gray
+  card: "#F5F7FA", // oklch(0.97 0.005 247.839)
+  cardForeground: "#3B3D4E", // oklch(0.28 0.02 261.692)
+  popover: "#F5F7FA", // oklch(0.97 0.005 247.839)
+  popoverForeground: "#3B3D4E", // oklch(0.28 0.02 261.692)
+  primary: "#b45309", // oklch(0.28 0.02 261.692) — uses foreground as primary
+  primaryForeground: "#F9FAFB", // inherited from root oklch(0.985 0.002 247.839)
+  secondary: "#3B3D4E", // oklch(0.28 0.02 261.692)
+  secondaryForeground: "#F9FAFB",
+  muted: "#EDEDF2", // oklch(0.94 0.006 264.542)
+  mutedForeground: "#737487", // oklch(0.55 0.018 264.364)
+  accent: "#EDEDF2", // inherits --muted
+  accentForeground: "#3B3D4E", // inherits --foreground
+  destructive: "#EF4444", // inherited from root
+  border: "#E1E1E8", // oklch(0.9 0.006 264.531)
+  input: "#E1E1E8", // oklch(0.9 0.006 264.531)
+  ring: "#A1A1AA", // inherited from root
+  textPrimary: "#3B3D4E", // = foreground
+  textSecondary: "#737487", // = mutedForeground
+} as const;
+
+// Approx. hex conversions from oklch — mirrors :root[data-theme="high-contrast"] in index.css
+export const highContrastColors = {
+  background: "#FFFFFF", // oklch(1 0 0)
+  foreground: "#090909", // oklch(0.04 0 0) — near-black
+  card: "#FFFFFF", // oklch(1 0 0)
+  cardForeground: "#090909", // oklch(0.04 0 0)
+  popover: "#FFFFFF", // oklch(1 0 0)
+  popoverForeground: "#090909", // oklch(0.04 0 0)
+  primary: "#3D4200", // oklch(0.3 0.18 84.429) — dark olive-amber
+  primaryForeground: "#FFFFFF", // oklch(1 0 0)
+  secondary: "#090909", // inherits --foreground
+  secondaryForeground: "#FFFFFF",
+  muted: "#EFEFEF", // oklch(0.94 0 0)
+  mutedForeground: "#303030", // oklch(0.2 0 0)
+  accent: "#EFEFEF", // inherits --muted
+  accentForeground: "#090909", // inherits --foreground
+  destructive: "#EF4444", // inherited (WCAG AA on white)
+  border: "#303030", // oklch(0.2 0 0)
+  input: "#303030", // oklch(0.2 0 0)
+  ring: "#090909", // oklch(0.04 0 0)
+  textPrimary: "#090909", // = foreground
+  textSecondary: "#303030", // = mutedForeground
+} as const;
+
 export const spacing = {
   xs: 4,
   sm: 8,

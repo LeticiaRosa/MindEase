@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useToast } from "@repo/ui";
+import { useToast, Logo } from "@repo/ui";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { Button, Checkbox, RadioGroup, RadioGroupItem } from "@repo/ui";
@@ -18,7 +18,6 @@ import {
   type AlertTone,
   type AlertIntensity,
 } from "@/domain/valueObjects/AlertTypes";
-import { Logo } from "../components/Logo";
 const TRIGGERS = Object.keys(ALERT_TRIGGER_LABELS) as AlertTrigger[];
 const TONES = Object.keys(ALERT_TONE_LABELS) as AlertTone[];
 const INTENSITIES = Object.keys(ALERT_INTENSITY_LABELS) as AlertIntensity[];

@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useToast } from "@repo/ui";
+import { useToast, Logo } from "@repo/ui";
 import { useNavigate } from "react-router-dom";
 import {
   ChevronLeft,
@@ -26,7 +26,6 @@ import {
 import { useRoutines } from "@/presentation/hooks/useRoutines";
 import { IconPicker } from "@/presentation/components/IconPicker";
 import { RoutineIcon } from "@/presentation/components/RoutineIcon";
-import { Logo } from "@/presentation/components/Logo";
 import { DEFAULT_ROUTINE_ICON } from "@/presentation/components/RoutineIcon";
 import type { Routine } from "@/domain/entities/Routine";
 

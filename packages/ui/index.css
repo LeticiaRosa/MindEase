@@ -11,9 +11,9 @@
   --card-foreground: oklch(0.13 0.028 261.692);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.13 0.028 261.692);
-  --primary: oklch(0.828 0.189 84.429);
+  --primary: oklch(0.5553 0.1455 49);
   --primary-foreground: oklch(0.985 0.002 247.839);
-  --secondary: oklch(0.769 0.188 70.08);
+  --secondary: oklch(0.5553 0.1455 49);
   --secondary-foreground: oklch(0.21 0.034 264.665);
   --muted: oklch(0.967 0.003 264.542);
   --muted-foreground: oklch(0.551 0.027 264.364);
@@ -27,7 +27,7 @@
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  --chart-5: oklch(0.5553 0.1455 49);
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0.002 247.839);
   --sidebar-foreground: oklch(0.13 0.028 261.692);
@@ -46,9 +46,9 @@
   --card-foreground: oklch(0.985 0.002 247.839);
   --popover: oklch(0.21 0.034 264.665);
   --popover-foreground: oklch(0.985 0.002 247.839);
-  --primary: oklch(0.769 0.188 70.08);
+  --primary: oklch(0.5553 0.1455 49);
   --primary-foreground: oklch(0.21 0.034 264.665);
-  --secondary: oklch(0.769 0.188 70.08);
+  --secondary: oklch(0.5553 0.1455 49);
   --secondary-foreground: oklch(0.985 0.002 247.839);
   --muted: oklch(0.278 0.033 256.848);
   --muted-foreground: oklch(0.707 0.022 261.325);
@@ -60,7 +60,7 @@
   --ring: oklch(0.551 0.027 264.364);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-3: oklch(0.5553 0.1455 49);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
   --sidebar: oklch(0.21 0.034 264.665);
@@ -132,4 +132,103 @@
   .toaster [data-description] {
     color: color-mix(in oklch, var(--foreground) 82%, transparent);
   }
+}
+
+/* ── Font size overrides ─────────────────────────────────────────────────── */
+:root[data-font-size="sm"] {
+  font-size: 0.875rem;
+}
+
+:root[data-font-size="md"] {
+  font-size: 1rem;
+}
+
+:root[data-font-size="lg"] {
+  font-size: 1.125rem;
+}
+
+:root[data-font-size="xl"] {
+  font-size: 1.25rem;
+}
+
+/* ── Spacing scale overrides ─────────────────────────────────────────────── */
+/*
+ * --spacing-scale  → semantic multiplier (used for non-Tailwind spacing needs)
+ * --spacing        → Tailwind CSS v4 base unit; utilities like p-4 resolve to
+ *                    calc(4 * var(--spacing)), so overriding this scales the
+ *                    entire Tailwind spacing system at runtime.
+ */
+:root {
+  --spacing-scale: 1;
+  --spacing: 0.25rem; /* Tailwind v4 default */
+}
+
+:root[data-spacing="compact"] {
+  --spacing-scale: 0.8;
+  --spacing: 0.2rem; /* 0.25rem × 0.8 */
+}
+
+:root[data-spacing="relaxed"] {
+  --spacing-scale: 1.25;
+  --spacing: 0.3125rem; /* 0.25rem × 1.25 */
+}
+
+/* ── Soft theme ──────────────────────────────────────────────────────────── */
+:root[data-theme="soft"] {
+  --foreground: oklch(0.28 0.02 261.692);
+  --background: oklch(0.98 0.005 247.839);
+  --card: oklch(0.97 0.005 247.839);
+  --card-foreground: oklch(0.28 0.02 261.692);
+  --popover: oklch(0.97 0.005 247.839);
+  --popover-foreground: oklch(0.28 0.02 261.692);
+  --muted: oklch(0.94 0.006 264.542);
+  --muted-foreground: oklch(0.55 0.018 264.364);
+  --border: oklch(0.9 0.006 264.531);
+  --input: oklch(0.9 0.006 264.531);
+  --primary: oklch(0.28 0.02 261.692);
+  --secondary: oklch(0.28 0.02 261.692);
+}
+
+/* ── Dark theme ─────────────────────────────────────────────────────────── */
+:root[data-theme="dark"] {
+  --background: oklch(0.13 0.028 261.692);
+  --foreground: oklch(0.985 0.002 247.839);
+  --card: oklch(0.21 0.034 264.665);
+  --card-foreground: oklch(0.985 0.002 247.839);
+  --popover: oklch(0.21 0.034 264.665);
+  --popover-foreground: oklch(0.985 0.002 247.839);
+  --primary: oklch(0.5553 0.1455 49);
+  --primary-foreground: oklch(0.21 0.034 264.665);
+  --secondary: oklch(0.5553 0.1455 49);
+  --secondary-foreground: oklch(0.985 0.002 247.839);
+  --muted: oklch(0.278 0.033 256.848);
+  --muted-foreground: oklch(0.707 0.022 261.325);
+  --accent: oklch(0.278 0.033 256.848);
+  --accent-foreground: oklch(0.985 0.002 247.839);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.551 0.027 264.364);
+  --sidebar: oklch(0.21 0.034 264.665);
+  --sidebar-foreground: oklch(0.985 0.002 247.839);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.551 0.027 264.364);
+  color-scheme: dark;
+}
+
+/* ── High-contrast theme (WCAG AAA ≥ 7:1) ────────────────────────────────── */
+:root[data-theme="high-contrast"] {
+  --foreground: oklch(0.04 0 0);
+  --background: oklch(1 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.04 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.04 0 0);
+  --muted: oklch(0.94 0 0);
+  --muted-foreground: oklch(0.2 0 0);
+  --border: oklch(0.2 0 0);
+  --input: oklch(0.2 0 0);
+  --ring: oklch(0.04 0 0);
+  --primary: oklch(0.3 0.18 84.429);
+  --primary-foreground: oklch(1 0 0);
 }

@@ -29,7 +29,7 @@ export function CognitiveAlertModal({
   const stateOption = BRAIN_STATE_OPTIONS.find((o) => o.value === brainState);
   const borderColour = stateOption
     ? stateOption.colour.split(" ")[1] // extract border-{color} class
-    : "border-amber-400";
+    : "border-amber-700";
 
   return (
     <Dialog
