@@ -61,14 +61,21 @@ export function FocusTimer({ taskId, onExpand }: FocusTimerProps) {
             color: resolvedColors.mutedForeground,
           }}
         >
-          ▶ Foco
+          ▶ Timer
         </Text>
       </Pressable>
     );
   }
 
   return (
-    <View style={{ gap: resolvedSpacing.sm, alignItems: "flex-start" }}>
+    <View
+      style={{
+        flexDirection: "row",
+        gap: resolvedSpacing["2xl"],
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       {/* Ring with time centered — tapping expands to focus mode */}
       <Pressable
         onPress={onExpand}
