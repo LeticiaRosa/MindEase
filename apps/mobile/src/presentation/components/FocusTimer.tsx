@@ -2,6 +2,7 @@ import { View, Text, Pressable } from "react-native";
 import { useFocusTimer } from "@/presentation/hooks/useFocusTimer";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 import { CircularProgress } from "./CircularProgress";
+import { Timer } from "lucide-react-native";
 
 interface FocusTimerProps {
   taskId: string;
@@ -55,13 +56,22 @@ export function FocusTimer({ taskId, onExpand }: FocusTimerProps) {
           alignSelf: "flex-start",
         }}
       >
+        <Timer
+          size={18}
+          color={resolvedColors.mutedForeground}
+          accessibilityElementsHidden
+        />
         <Text
           style={{
             fontSize: resolvedFontSizes.sm,
             color: resolvedColors.mutedForeground,
+            gap: resolvedSpacing.xs,
+            alignContent: "center",
+            flexDirection: "row",
+            alignItems: "center",
           }}
         >
-          ▶ Timer
+          Timer
         </Text>
       </Pressable>
     );
