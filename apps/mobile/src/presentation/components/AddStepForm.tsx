@@ -7,6 +7,7 @@ interface AddStepFormProps {
 }
 
 export function AddStepForm({ onSubmit }: AddStepFormProps) {
+  const [expanded, setExpanded] = useState(false);
   const [title, setTitle] = useState("");
   const {
     resolvedColors,
@@ -20,28 +21,49 @@ export function AddStepForm({ onSubmit }: AddStepFormProps) {
     if (!trimmed) return;
     onSubmit(trimmed);
     setTitle("");
+    setExpanded(false);
   };
 
+  const handleCancel = () => {
+    setTitle("");
+    setExpanded(false);
+  };
+
+  if (!expanded) {
+    return (
+      <Pressable
+        onPress={() => setExpanded(true)}
+        accessibilityRole="button"
+        accessibilityLabel="Adicionar etapa"
+        style={{
+          paddingVertical: resolvedSpacing.xs,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: resolvedFontSizes.sm,
+            color: resolvedColors.mutedForeground,
+          }}
+        >
+          + Adicionar etapa
+        </Text>
+      </Pressable>
+    );
+  }
+
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        gap: resolvedSpacing.xs,
-        alignItems: "center",
-        marginTop: resolvedSpacing.xs,
-      }}
-    >
+    <View style={{ gap: resolvedSpacing.xs }}>
       <TextInput
         value={title}
         onChangeText={setTitle}
-        placeholder="Nova etapa…"
+        placeholder="Descrição da etapa…"
         placeholderTextColor={resolvedColors.mutedForeground}
         returnKeyType="done"
         onSubmitEditing={handleSubmit}
+        autoFocus
         style={{
-          flex: 1,
           borderWidth: 1,
-          borderColor: resolvedColors.border,
+          borderColor: resolvedColors.ring,
           borderRadius: resolvedBorderRadius.sm,
           paddingHorizontal: resolvedSpacing.sm,
           paddingVertical: resolvedSpacing.xs,
@@ -50,30 +72,57 @@ export function AddStepForm({ onSubmit }: AddStepFormProps) {
           backgroundColor: resolvedColors.background,
         }}
       />
-      <Pressable
-        onPress={handleSubmit}
-        disabled={!title.trim()}
-        style={{
-          paddingHorizontal: resolvedSpacing.sm,
-          paddingVertical: resolvedSpacing.xs,
-          borderRadius: resolvedBorderRadius.sm,
-          backgroundColor: title.trim()
-            ? resolvedColors.primary
-            : resolvedColors.muted,
-        }}
-      >
-        <Text
+      <View style={{ flexDirection: "row", gap: resolvedSpacing.sm }}>
+        <Pressable
+          onPress={handleSubmit}
+          disabled={!title.trim()}
+          accessibilityRole="button"
+          accessibilityLabel="Adicionar etapa"
           style={{
-            fontSize: resolvedFontSizes.sm,
-            color: title.trim()
-              ? resolvedColors.primaryForeground
-              : resolvedColors.mutedForeground,
-            fontWeight: "600",
+            flex: 1,
+            alignItems: "center",
+            paddingVertical: resolvedSpacing.sm,
+            borderRadius: resolvedBorderRadius.sm,
+            backgroundColor: title.trim()
+              ? resolvedColors.primary
+              : resolvedColors.muted,
           }}
         >
-          +
-        </Text>
-      </Pressable>
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.sm,
+              color: title.trim()
+                ? resolvedColors.primaryForeground
+                : resolvedColors.mutedForeground,
+              fontWeight: "600",
+            }}
+          >
+            Adicionar
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={handleCancel}
+          accessibilityRole="button"
+          accessibilityLabel="Cancelar"
+          style={{
+            flex: 1,
+            alignItems: "center",
+            paddingVertical: resolvedSpacing.sm,
+            borderRadius: resolvedBorderRadius.sm,
+            backgroundColor: resolvedColors.muted,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.sm,
+              color: resolvedColors.mutedForeground,
+              fontWeight: "600",
+            }}
+          >
+            Cancelar
+          </Text>
+        </Pressable>
+      </View>
     </View>
   );
 }

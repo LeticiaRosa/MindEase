@@ -29,6 +29,7 @@ interface TaskGroupProps {
   onSwipeRight?: (task: Task) => void;
   onSwipeLeft?: (task: Task) => void;
   onLongPress?: (task: Task) => void;
+  onExpandFocus?: (task: Task) => void;
   emptyMessage?: string;
 }
 
@@ -41,6 +42,7 @@ export function TaskGroup({
   onSwipeRight,
   onSwipeLeft,
   onLongPress,
+  onExpandFocus,
   emptyMessage = "Nenhuma tarefa aqui ainda",
 }: TaskGroupProps) {
   const [collapsed, setCollapsed] = useState(false);
@@ -139,6 +141,7 @@ export function TaskGroup({
                   onSwipeRight={() => onSwipeRight?.(item)}
                   onSwipeLeft={() => onSwipeLeft?.(item)}
                   onLongPress={() => onLongPress?.(item)}
+                  onExpandFocus={() => onExpandFocus?.(item)}
                 />
               )}
             />

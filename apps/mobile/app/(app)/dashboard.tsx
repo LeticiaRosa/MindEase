@@ -13,6 +13,7 @@ import { RoutineSelector } from "@/presentation/components/RoutineSelector";
 import { TaskGroup } from "@/presentation/components/TaskGroup";
 import { TaskEditForm } from "@/presentation/components/TaskEditForm";
 import { CognitiveAlertModal } from "@/presentation/components/CognitiveAlertModal";
+import { FocusTimerFocus } from "@/presentation/components/FocusTimerFocus";
 import type { Task } from "@/domain/entities/Task";
 import { TaskStatus } from "@/domain/valueObjects/TaskStatus";
 
@@ -55,6 +56,11 @@ export default function DashboardScreen() {
   } = useAlertEngine();
 
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [focusTaskId, setFocusTaskId] = useState<string | null>(null);
+
+  const focusedTask = focusTaskId
+    ? (tasks.find((t) => t.id === focusTaskId) ?? null)
+    : null;
 
   const todoTasks = tasksByStatus("todo");
   const inProgressTasks = tasksByStatus("in_progress");
@@ -115,6 +121,7 @@ export default function DashboardScreen() {
           onPressTask={setEditingTask}
           onSwipeRight={handleSwipeRight}
           onLongPress={setEditingTask}
+          onExpandFocus={(task) => setFocusTaskId(task.id)}
           emptyMessage="Nenhuma tarefa pendente"
         />
         <TaskGroup
@@ -124,6 +131,7 @@ export default function DashboardScreen() {
           onSwipeRight={handleSwipeRight}
           onSwipeLeft={handleSwipeLeft}
           onLongPress={setEditingTask}
+          onExpandFocus={(task) => setFocusTaskId(task.id)}
           emptyMessage="Nenhuma tarefa em andamento"
         />
         <TaskGroup
@@ -132,6 +140,7 @@ export default function DashboardScreen() {
           onPressTask={setEditingTask}
           onSwipeLeft={handleSwipeLeft}
           onLongPress={setEditingTask}
+          onExpandFocus={(task) => setFocusTaskId(task.id)}
           emptyMessage="Nenhuma tarefa concluída"
         />
       </ScrollView>
@@ -154,6 +163,16 @@ export default function DashboardScreen() {
       {/* Alert modal */}
       {modalPayload && (
         <CognitiveAlertModal payload={modalPayload} onDismiss={dismissModal} />
+      )}
+
+      {/* Focus mode overlay */}
+      {focusTaskId && (
+        <FocusTimerFocus
+          taskId={focusTaskId}
+          taskTitle={focusedTask?.title ?? ""}
+          visible
+          onClose={() => setFocusTaskId(null)}
+        />
       )}
     </View>
   );

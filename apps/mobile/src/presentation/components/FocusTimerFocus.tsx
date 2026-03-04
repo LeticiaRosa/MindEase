@@ -1,6 +1,26 @@
-import { View, Text, Pressable, Modal } from "react-native";
+import { useState } from "react";
+import {
+  View,
+  Text,
+  Pressable,
+  Modal,
+  ScrollView,
+  LayoutAnimation,
+  Platform,
+  UIManager,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusTimer } from "@/presentation/hooks/useFocusTimer";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
+import { CircularProgress } from "./CircularProgress";
+import { SmartChecklist } from "./SmartChecklist";
+
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 interface FocusTimerFocusProps {
   taskId: string;
@@ -8,6 +28,17 @@ interface FocusTimerFocusProps {
   visible: boolean;
   onClose: () => void;
 }
+
+const RING_SIZE = 192;
+const RING_STROKE = 8;
+const CONTROL_SIZE = 56;
+const PRIMARY_CONTROL_SIZE = 80;
+
+const MODE_DESCRIPTIONS: Record<string, string> = {
+  focus: "Mantenha o foco. Um passo de cada vez.",
+  break: "Descanse a mente. Você mereceu.",
+  long_break: "Faça uma pausa mais longa antes da próxima sessão.",
+};
 
 export function FocusTimerFocus({
   taskId,
@@ -17,7 +48,6 @@ export function FocusTimerFocus({
 }: FocusTimerFocusProps) {
   const {
     isRunning,
-    isPaused,
     mode,
     formattedTime,
     progress,
@@ -35,15 +65,22 @@ export function FocusTimerFocus({
     resolvedBorderRadius,
   } = useTheme();
 
+  const [showChecklist, setShowChecklist] = useState(false);
+
   const modeLabel =
     mode === "focus" ? "Foco" : mode === "long_break" ? "Pausa Longa" : "Pausa";
-
+  const modeDescription = MODE_DESCRIPTIONS[mode] ?? "";
   const modeColor =
     mode === "focus" ? resolvedColors.primary : resolvedColors.ring;
 
   const handleStop = async () => {
     await stop();
     onClose();
+  };
+
+  const toggleChecklist = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setShowChecklist((prev) => !prev);
   };
 
   return (
@@ -53,177 +90,243 @@ export function FocusTimerFocus({
       presentationStyle="fullScreen"
       onRequestClose={onClose}
     >
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: resolvedColors.background,
-          justifyContent: "center",
-          alignItems: "center",
-          padding: resolvedSpacing.xl,
-        }}
+      <SafeAreaView
+        style={{ flex: 1, backgroundColor: resolvedColors.background }}
       >
-        {/* Close button */}
-        <Pressable
-          onPress={onClose}
-          style={{
-            position: "absolute",
-            top: resolvedSpacing.xl * 2,
-            right: resolvedSpacing.lg,
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            padding: resolvedSpacing.xl,
+            alignItems: "center",
           }}
-          accessibilityLabel="Minimizar timer"
+          keyboardShouldPersistTaps="handled"
         >
+          {/* Close button */}
+          <Pressable
+            onPress={onClose}
+            accessibilityRole="button"
+            accessibilityLabel="Sair do foco"
+            style={{
+              alignSelf: "flex-end",
+              paddingVertical: resolvedSpacing.xs,
+              paddingHorizontal: resolvedSpacing.sm,
+              marginBottom: resolvedSpacing.lg,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: resolvedFontSizes.base,
+                color: resolvedColors.mutedForeground,
+              }}
+            >
+              ✕ Sair do foco
+            </Text>
+          </Pressable>
+
+          {/* Task title */}
+          <Text
+            numberOfLines={2}
+            style={{
+              fontSize: resolvedFontSizes.lg,
+              color: resolvedColors.mutedForeground,
+              textAlign: "center",
+              marginBottom: resolvedSpacing.lg,
+            }}
+          >
+            {taskTitle}
+          </Text>
+
+          {/* Mode label */}
           <Text
             style={{
               fontSize: resolvedFontSizes.xl,
-              color: resolvedColors.mutedForeground,
+              fontWeight: "600",
+              color: modeColor,
+              marginBottom: resolvedSpacing.sm,
             }}
           >
-            ✕
+            {modeLabel}
           </Text>
-        </Pressable>
 
-        {/* Task name */}
-        <Text
-          numberOfLines={2}
-          style={{
-            fontSize: resolvedFontSizes.lg,
-            color: resolvedColors.mutedForeground,
-            textAlign: "center",
-            marginBottom: resolvedSpacing.lg,
-          }}
-        >
-          {taskTitle}
-        </Text>
+          {/* Mode description */}
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.sm,
+              color: resolvedColors.mutedForeground,
+              textAlign: "center",
+              marginBottom: resolvedSpacing.xl,
+              paddingHorizontal: resolvedSpacing.xl,
+            }}
+          >
+            {modeDescription}
+          </Text>
 
-        {/* Mode label */}
-        <Text
-          style={{
-            fontSize: resolvedFontSizes.xl,
-            fontWeight: "600",
-            color: modeColor,
-            marginBottom: resolvedSpacing.md,
-          }}
-        >
-          {modeLabel}
-        </Text>
-
-        {/* Timer display */}
-        <Text
-          style={{
-            fontSize: 64,
-            fontWeight: "300",
-            fontVariant: ["tabular-nums"],
-            color: resolvedColors.textPrimary,
-            marginBottom: resolvedSpacing.sm,
-          }}
-        >
-          {formattedTime}
-        </Text>
-
-        {/* Progress bar */}
-        <View
-          style={{
-            width: "80%",
-            height: 8,
-            backgroundColor: resolvedColors.muted,
-            borderRadius: 4,
-            overflow: "hidden",
-            marginBottom: resolvedSpacing.md,
-          }}
-        >
+          {/* Large circular progress ring with time and cycle centered */}
           <View
             style={{
-              width: `${progress * 100}%`,
-              height: "100%",
-              backgroundColor: modeColor,
-              borderRadius: 4,
-            }}
-          />
-        </View>
-
-        {/* Cycle indicator */}
-        <Text
-          style={{
-            fontSize: resolvedFontSizes.sm,
-            color: resolvedColors.mutedForeground,
-            marginBottom: resolvedSpacing.xl,
-          }}
-        >
-          Ciclo {currentCycle} de {cyclesBeforeLongBreak}
-        </Text>
-
-        {/* Controls */}
-        <View
-          style={{
-            flexDirection: "row",
-            gap: resolvedSpacing.md,
-            alignItems: "center",
-          }}
-        >
-          <Pressable
-            onPress={reset}
-            accessibilityLabel="Reiniciar timer"
-            style={{
-              backgroundColor: resolvedColors.muted,
-              borderRadius: resolvedBorderRadius.full,
-              width: 56,
-              height: 56,
+              width: RING_SIZE,
+              height: RING_SIZE,
               alignItems: "center",
               justifyContent: "center",
+              marginBottom: resolvedSpacing.xl,
             }}
           >
-            <Text
-              style={{ fontSize: 24, color: resolvedColors.mutedForeground }}
-            >
-              ↺
-            </Text>
-          </Pressable>
+            <View style={{ position: "absolute" }}>
+              <CircularProgress
+                size={RING_SIZE}
+                strokeWidth={RING_STROKE}
+                progress={progress}
+                trackColor={resolvedColors.muted}
+                progressColor={modeColor}
+              />
+            </View>
+            <View style={{ alignItems: "center" }}>
+              <Text
+                style={{
+                  fontSize: 48,
+                  fontWeight: "300",
+                  color: resolvedColors.textPrimary,
+                  fontVariant: ["tabular-nums"],
+                }}
+              >
+                {formattedTime}
+              </Text>
+              <Text
+                style={{
+                  fontSize: resolvedFontSizes.sm,
+                  color: resolvedColors.mutedForeground,
+                  marginTop: 2,
+                }}
+              >
+                {currentCycle} / {cyclesBeforeLongBreak}
+              </Text>
+            </View>
+          </View>
 
-          <Pressable
-            onPress={isRunning ? pause : start}
-            accessibilityLabel={isRunning ? "Pausar" : "Iniciar"}
+          {/* Controls */}
+          <View
             style={{
-              backgroundColor: modeColor,
-              borderRadius: resolvedBorderRadius.full,
-              width: 80,
-              height: 80,
+              flexDirection: "row",
+              gap: resolvedSpacing.md,
               alignItems: "center",
-              justifyContent: "center",
+              marginBottom: resolvedSpacing.xl,
             }}
           >
-            <Text
+            {/* Reset */}
+            <Pressable
+              onPress={reset}
+              accessibilityRole="button"
+              accessibilityLabel="Reiniciar timer"
               style={{
-                fontSize: 32,
-                color: resolvedColors.primaryForeground,
+                backgroundColor: resolvedColors.muted,
+                borderRadius: resolvedBorderRadius.full,
+                width: CONTROL_SIZE,
+                height: CONTROL_SIZE,
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              {isRunning ? "⏸" : "▶"}
-            </Text>
-          </Pressable>
+              <Text
+                style={{
+                  fontSize: 24,
+                  color: resolvedColors.mutedForeground,
+                }}
+              >
+                ↺
+              </Text>
+            </Pressable>
 
-          <Pressable
-            onPress={handleStop}
-            accessibilityLabel="Parar e salvar tempo"
-            style={{
-              backgroundColor: resolvedColors.destructive,
-              borderRadius: resolvedBorderRadius.full,
-              width: 56,
-              height: 56,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Text
+            {/* Play / Pause */}
+            <Pressable
+              onPress={isRunning ? pause : start}
+              accessibilityRole="button"
+              accessibilityLabel={isRunning ? "Pausar" : "Iniciar"}
               style={{
-                fontSize: 24,
-                color: resolvedColors.destructiveForeground,
+                backgroundColor: modeColor,
+                borderRadius: resolvedBorderRadius.full,
+                width: PRIMARY_CONTROL_SIZE,
+                height: PRIMARY_CONTROL_SIZE,
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              ■
-            </Text>
-          </Pressable>
-        </View>
-      </View>
+              <Text
+                style={{
+                  fontSize: 32,
+                  color: resolvedColors.primaryForeground,
+                }}
+              >
+                {isRunning ? "⏸" : "▶"}
+              </Text>
+            </Pressable>
+
+            {/* Stop */}
+            <Pressable
+              onPress={handleStop}
+              accessibilityRole="button"
+              accessibilityLabel="Parar e salvar tempo"
+              style={{
+                backgroundColor: resolvedColors.destructive,
+                borderRadius: resolvedBorderRadius.full,
+                width: CONTROL_SIZE,
+                height: CONTROL_SIZE,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 24,
+                  color: resolvedColors.destructiveForeground,
+                }}
+              >
+                ■
+              </Text>
+            </Pressable>
+          </View>
+
+          {/* Collapsible checklist — hidden for dashboard timer */}
+          {taskId !== "dashboard" && (
+            <View style={{ width: "100%" }}>
+              <Pressable
+                onPress={toggleChecklist}
+                accessibilityRole="button"
+                accessibilityLabel={
+                  showChecklist ? "Ocultar etapas" : "Mostrar etapas"
+                }
+                style={{
+                  alignItems: "center",
+                  paddingVertical: resolvedSpacing.sm,
+                  backgroundColor: resolvedColors.muted,
+                  borderRadius: resolvedBorderRadius.md,
+                  marginBottom: showChecklist ? resolvedSpacing.md : 0,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: resolvedFontSizes.sm,
+                    color: resolvedColors.mutedForeground,
+                    fontWeight: "600",
+                  }}
+                >
+                  {showChecklist ? "Ocultar etapas" : "Mostrar etapas"}
+                </Text>
+              </Pressable>
+              {showChecklist && (
+                <View
+                  style={{
+                    backgroundColor: resolvedColors.card,
+                    borderRadius: resolvedBorderRadius.md,
+                    padding: resolvedSpacing.md,
+                  }}
+                >
+                  <SmartChecklist taskId={taskId} />
+                </View>
+              )}
+            </View>
+          )}
+        </ScrollView>
+      </SafeAreaView>
     </Modal>
   );
 }

@@ -3,6 +3,7 @@ import { View, Text, Pressable, Animated } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import type { Task } from "@/domain/entities/Task";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
+import { FocusTimer } from "./FocusTimer";
 
 interface TaskCardProps {
   task: Task;
@@ -10,6 +11,7 @@ interface TaskCardProps {
   onSwipeRight?: () => void;
   onSwipeLeft?: () => void;
   onLongPress?: () => void;
+  onExpandFocus?: () => void;
 }
 
 export function TaskCard({
@@ -18,6 +20,7 @@ export function TaskCard({
   onSwipeRight,
   onSwipeLeft,
   onLongPress,
+  onExpandFocus,
 }: TaskCardProps) {
   const {
     resolvedColors,
@@ -184,6 +187,11 @@ export function TaskCard({
               ⏱ {formatTime(task.totalTimeSpent)}
             </Text>
           )}
+        </View>
+
+        {/* Inline focus timer */}
+        <View style={{ marginTop: resolvedSpacing.sm }}>
+          <FocusTimer taskId={task.id} onExpand={onExpandFocus} />
         </View>
       </Pressable>
     </Swipeable>

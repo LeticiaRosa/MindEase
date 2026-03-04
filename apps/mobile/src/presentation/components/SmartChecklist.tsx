@@ -3,6 +3,7 @@ import {
   View,
   Text,
   Pressable,
+  TextInput,
   LayoutAnimation,
   Platform,
   UIManager,
@@ -25,7 +26,7 @@ interface SmartChecklistProps {
 export function SmartChecklist({ taskId }: SmartChecklistProps) {
   const {
     currentStep,
-    remainingCount,
+    incompleteSteps,
     completedSteps,
     allDone,
     totalSteps,
@@ -33,14 +34,41 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
     toggleStep,
     createStep,
     deleteStep,
+    updateStep,
   } = useSmartChecklist(taskId);
-  const [showCompleted, setShowCompleted] = useState(false);
   const {
+    mode,
     resolvedColors,
     resolvedFontSizes,
     resolvedSpacing,
     resolvedBorderRadius,
   } = useTheme();
+
+  const defaultExpanded = mode === "detail";
+  const [showCompleted, setShowCompleted] = useState(false);
+  const [showUpcoming, setShowUpcoming] = useState(defaultExpanded);
+  const [editingStepId, setEditingStepId] = useState<string | null>(null);
+  const [editingStepValue, setEditingStepValue] = useState("");
+
+  const upcomingSteps = incompleteSteps.slice(1);
+
+  const startEditing = (id: string, currentTitle: string) => {
+    setEditingStepId(id);
+    setEditingStepValue(currentTitle);
+  };
+
+  const saveEditing = () => {
+    if (editingStepId && editingStepValue.trim()) {
+      updateStep(editingStepId, editingStepValue.trim());
+    }
+    setEditingStepId(null);
+    setEditingStepValue("");
+  };
+
+  const cancelEditing = () => {
+    setEditingStepId(null);
+    setEditingStepValue("");
+  };
 
   if (totalSteps === 0) {
     return (
@@ -51,7 +79,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
             color: resolvedColors.mutedForeground,
           }}
         >
-          Nenhuma etapa ainda
+          Divida esta tarefa em etapas menores.
         </Text>
         <AddStepForm onSubmit={createStep} />
       </View>
@@ -60,7 +88,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
 
   return (
     <View style={{ gap: resolvedSpacing.sm }}>
-      {/* Progress */}
+      {/* Progress bar */}
       <View
         style={{
           flexDirection: "row",
@@ -98,76 +126,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
         </Text>
       </View>
 
-      {/* Current step (focus) */}
-      {currentStep && (
-        <Pressable
-          onPress={() => toggleStep(currentStep.id, true)}
-          accessibilityRole="checkbox"
-          accessibilityState={{ checked: false }}
-          accessibilityLabel={`Etapa atual: ${currentStep.title}`}
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: resolvedSpacing.sm,
-            backgroundColor: resolvedColors.card,
-            borderWidth: 2,
-            borderColor: resolvedColors.ring,
-            borderRadius: resolvedBorderRadius.md,
-            padding: resolvedSpacing.md,
-          }}
-        >
-          <View
-            style={{
-              width: 22,
-              height: 22,
-              borderRadius: 11,
-              borderWidth: 2,
-              borderColor: resolvedColors.ring,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          />
-          <Text
-            style={{
-              flex: 1,
-              fontSize: resolvedFontSizes.base,
-              color: resolvedColors.textPrimary,
-              fontWeight: "500",
-            }}
-          >
-            {currentStep.title}
-          </Text>
-          <Pressable
-            onPress={() => deleteStep(currentStep.id)}
-            hitSlop={8}
-            accessibilityLabel="Remover etapa"
-          >
-            <Text
-              style={{
-                color: resolvedColors.mutedForeground,
-                fontSize: resolvedFontSizes.base,
-              }}
-            >
-              ✕
-            </Text>
-          </Pressable>
-        </Pressable>
-      )}
-
-      {/* Remaining count */}
-      {remainingCount > 0 && (
-        <Text
-          style={{
-            fontSize: resolvedFontSizes.sm,
-            color: resolvedColors.mutedForeground,
-          }}
-        >
-          +{remainingCount} etapa{remainingCount > 1 ? "s" : ""} restante
-          {remainingCount > 1 ? "s" : ""}
-        </Text>
-      )}
-
-      {/* All done state */}
+      {/* All done */}
       {allDone && (
         <Text
           style={{
@@ -180,8 +139,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
           ✓ Todas as etapas concluídas!
         </Text>
       )}
-
-      {/* Completed steps toggle */}
+      {/* Completed steps section */}
       {completedSteps.length > 0 && (
         <View>
           <Pressable
@@ -191,6 +149,9 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
               );
               setShowCompleted((prev) => !prev);
             }}
+            accessibilityRole="button"
+            accessibilityLabel={`${showCompleted ? "Ocultar" : "Mostrar"} ${completedSteps.length} etapa${completedSteps.length > 1 ? "s" : ""} concluída${completedSteps.length > 1 ? "s" : ""}`}
+            style={{ paddingVertical: resolvedSpacing.xs }}
           >
             <Text
               style={{
@@ -204,11 +165,8 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
           </Pressable>
           {showCompleted &&
             completedSteps.map((step) => (
-              <Pressable
+              <View
                 key={step.id}
-                onPress={() => toggleStep(step.id, false)}
-                accessibilityRole="checkbox"
-                accessibilityState={{ checked: true }}
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
@@ -218,10 +176,17 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                   opacity: 0.6,
                 }}
               >
-                <View
+                <Pressable
+                  onPress={() => toggleStep(step.id, false)}
+                  accessibilityRole="checkbox"
+                  accessibilityState={{ checked: true }}
+                  accessibilityLabel={`Desmarcar etapa: ${step.title}`}
+                  hitSlop={8}
                   style={{
                     width: 22,
                     height: 22,
+                    minWidth: 44,
+                    minHeight: 44,
                     borderRadius: 11,
                     backgroundColor: resolvedColors.primary,
                     alignItems: "center",
@@ -236,18 +201,462 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                   >
                     ✓
                   </Text>
-                </View>
-                <Text
+                </Pressable>
+                {editingStepId === step.id ? (
+                  <View style={{ flex: 1, gap: resolvedSpacing.xs }}>
+                    <TextInput
+                      value={editingStepValue}
+                      onChangeText={setEditingStepValue}
+                      onSubmitEditing={saveEditing}
+                      returnKeyType="done"
+                      autoFocus
+                      style={{
+                        fontSize: resolvedFontSizes.sm,
+                        color: resolvedColors.textPrimary,
+                        borderBottomWidth: 1,
+                        borderBottomColor: resolvedColors.ring,
+                        paddingVertical: resolvedSpacing.xs,
+                      }}
+                    />
+                    <View
+                      style={{ flexDirection: "row", gap: resolvedSpacing.sm }}
+                    >
+                      <Pressable
+                        onPress={saveEditing}
+                        accessibilityRole="button"
+                        accessibilityLabel="Salvar edição"
+                        style={{
+                          paddingHorizontal: resolvedSpacing.sm,
+                          paddingVertical: resolvedSpacing.xs,
+                          backgroundColor: resolvedColors.primary,
+                          borderRadius: resolvedBorderRadius.sm,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: resolvedFontSizes.xs,
+                            color: resolvedColors.primaryForeground,
+                            fontWeight: "600",
+                          }}
+                        >
+                          Salvar
+                        </Text>
+                      </Pressable>
+                      <Pressable
+                        onPress={cancelEditing}
+                        accessibilityRole="button"
+                        accessibilityLabel="Cancelar edição"
+                        style={{
+                          paddingHorizontal: resolvedSpacing.sm,
+                          paddingVertical: resolvedSpacing.xs,
+                          backgroundColor: resolvedColors.muted,
+                          borderRadius: resolvedBorderRadius.sm,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: resolvedFontSizes.xs,
+                            color: resolvedColors.mutedForeground,
+                            fontWeight: "600",
+                          }}
+                        >
+                          Cancelar
+                        </Text>
+                      </Pressable>
+                    </View>
+                  </View>
+                ) : (
+                  <Text
+                    style={{
+                      flex: 1,
+                      fontSize: resolvedFontSizes.sm,
+                      color: resolvedColors.mutedForeground,
+                      textDecorationLine: "line-through",
+                    }}
+                  >
+                    {step.title}
+                  </Text>
+                )}
+                {editingStepId !== step.id && (
+                  <>
+                    <Pressable
+                      onPress={() => startEditing(step.id, step.title)}
+                      hitSlop={8}
+                      accessibilityRole="button"
+                      accessibilityLabel="Editar etapa"
+                      style={{
+                        minWidth: 44,
+                        minHeight: 44,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: resolvedColors.mutedForeground,
+                          fontSize: resolvedFontSizes.sm,
+                        }}
+                      >
+                        ✎
+                      </Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => deleteStep(step.id)}
+                      hitSlop={8}
+                      accessibilityRole="button"
+                      accessibilityLabel="Remover etapa"
+                      style={{
+                        minWidth: 44,
+                        minHeight: 44,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: resolvedColors.mutedForeground,
+                          fontSize: resolvedFontSizes.sm,
+                        }}
+                      >
+                        ✕
+                      </Text>
+                    </Pressable>
+                  </>
+                )}
+              </View>
+            ))}
+        </View>
+      )}
+      {/* Current step */}
+      {currentStep && (
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: resolvedSpacing.sm,
+            backgroundColor: resolvedColors.card,
+            borderWidth: 2,
+            borderColor: resolvedColors.ring,
+            borderRadius: resolvedBorderRadius.md,
+            padding: resolvedSpacing.md,
+          }}
+        >
+          <Pressable
+            onPress={() => toggleStep(currentStep.id, true)}
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: false }}
+            accessibilityLabel={`Marcar etapa como concluída: ${currentStep.title}`}
+            hitSlop={8}
+            style={{
+              width: 22,
+              height: 22,
+              minWidth: 44,
+              minHeight: 44,
+              borderRadius: 11,
+              borderWidth: 2,
+              borderColor: resolvedColors.ring,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          />
+          {editingStepId === currentStep.id ? (
+            <View style={{ flex: 1, gap: resolvedSpacing.xs }}>
+              <TextInput
+                value={editingStepValue}
+                onChangeText={setEditingStepValue}
+                onSubmitEditing={saveEditing}
+                returnKeyType="done"
+                autoFocus
+                style={{
+                  fontSize: resolvedFontSizes.base,
+                  color: resolvedColors.textPrimary,
+                  borderBottomWidth: 1,
+                  borderBottomColor: resolvedColors.ring,
+                  paddingVertical: resolvedSpacing.xs,
+                }}
+              />
+              <View style={{ flexDirection: "row", gap: resolvedSpacing.sm }}>
+                <Pressable
+                  onPress={saveEditing}
+                  accessibilityRole="button"
+                  accessibilityLabel="Salvar edição"
                   style={{
-                    fontSize: resolvedFontSizes.sm,
-                    color: resolvedColors.mutedForeground,
-                    textDecorationLine: "line-through",
-                    flex: 1,
+                    paddingHorizontal: resolvedSpacing.sm,
+                    paddingVertical: resolvedSpacing.xs,
+                    backgroundColor: resolvedColors.primary,
+                    borderRadius: resolvedBorderRadius.sm,
                   }}
                 >
-                  {step.title}
+                  <Text
+                    style={{
+                      fontSize: resolvedFontSizes.xs,
+                      color: resolvedColors.primaryForeground,
+                      fontWeight: "600",
+                    }}
+                  >
+                    Salvar
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={cancelEditing}
+                  accessibilityRole="button"
+                  accessibilityLabel="Cancelar edição"
+                  style={{
+                    paddingHorizontal: resolvedSpacing.sm,
+                    paddingVertical: resolvedSpacing.xs,
+                    backgroundColor: resolvedColors.muted,
+                    borderRadius: resolvedBorderRadius.sm,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: resolvedFontSizes.xs,
+                      color: resolvedColors.mutedForeground,
+                      fontWeight: "600",
+                    }}
+                  >
+                    Cancelar
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          ) : (
+            <Text
+              style={{
+                flex: 1,
+                fontSize: resolvedFontSizes.base,
+                color: resolvedColors.textPrimary,
+                fontWeight: "500",
+              }}
+            >
+              {currentStep.title}
+            </Text>
+          )}
+          {editingStepId !== currentStep.id && (
+            <>
+              <Pressable
+                onPress={() => startEditing(currentStep.id, currentStep.title)}
+                hitSlop={8}
+                accessibilityRole="button"
+                accessibilityLabel="Editar etapa"
+                style={{
+                  minWidth: 44,
+                  minHeight: 44,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    color: resolvedColors.mutedForeground,
+                    fontSize: resolvedFontSizes.base,
+                  }}
+                >
+                  ✎
                 </Text>
               </Pressable>
+              <Pressable
+                onPress={() => deleteStep(currentStep.id)}
+                hitSlop={8}
+                accessibilityRole="button"
+                accessibilityLabel="Remover etapa"
+                style={{
+                  minWidth: 44,
+                  minHeight: 44,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    color: resolvedColors.mutedForeground,
+                    fontSize: resolvedFontSizes.base,
+                  }}
+                >
+                  ✕
+                </Text>
+              </Pressable>
+            </>
+          )}
+        </View>
+      )}
+
+      {/* Upcoming steps section */}
+      {upcomingSteps.length > 0 && (
+        <View>
+          <Pressable
+            onPress={() => {
+              LayoutAnimation.configureNext(
+                LayoutAnimation.Presets.easeInEaseOut,
+              );
+              setShowUpcoming((prev) => !prev);
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={`${showUpcoming ? "Ocultar" : "Mostrar"} ${upcomingSteps.length} etapa${upcomingSteps.length > 1 ? "s" : ""} restante${upcomingSteps.length > 1 ? "s" : ""}`}
+            style={{ paddingVertical: resolvedSpacing.xs }}
+          >
+            <Text
+              style={{
+                fontSize: resolvedFontSizes.sm,
+                color: resolvedColors.mutedForeground,
+              }}
+            >
+              {showUpcoming ? "▼" : "▶"} +{upcomingSteps.length} etapa
+              {upcomingSteps.length > 1 ? "s" : ""} restante
+              {upcomingSteps.length > 1 ? "s" : ""}
+            </Text>
+          </Pressable>
+          {showUpcoming &&
+            upcomingSteps.map((step) => (
+              <View
+                key={step.id}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: resolvedSpacing.sm,
+                  paddingVertical: resolvedSpacing.xs,
+                  paddingHorizontal: resolvedSpacing.sm,
+                }}
+              >
+                <Pressable
+                  onPress={() => toggleStep(step.id, true)}
+                  accessibilityRole="checkbox"
+                  accessibilityState={{ checked: false }}
+                  accessibilityLabel={`Marcar etapa como concluída: ${step.title}`}
+                  hitSlop={8}
+                  style={{
+                    width: 22,
+                    height: 22,
+                    minWidth: 44,
+                    minHeight: 44,
+                    borderRadius: 11,
+                    borderWidth: 2,
+                    borderColor: resolvedColors.muted,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                />
+                {editingStepId === step.id ? (
+                  <View style={{ flex: 1, gap: resolvedSpacing.xs }}>
+                    <TextInput
+                      value={editingStepValue}
+                      onChangeText={setEditingStepValue}
+                      onSubmitEditing={saveEditing}
+                      returnKeyType="done"
+                      autoFocus
+                      style={{
+                        fontSize: resolvedFontSizes.sm,
+                        color: resolvedColors.textPrimary,
+                        borderBottomWidth: 1,
+                        borderBottomColor: resolvedColors.ring,
+                        paddingVertical: resolvedSpacing.xs,
+                      }}
+                    />
+                    <View
+                      style={{ flexDirection: "row", gap: resolvedSpacing.sm }}
+                    >
+                      <Pressable
+                        onPress={saveEditing}
+                        accessibilityRole="button"
+                        accessibilityLabel="Salvar edição"
+                        style={{
+                          paddingHorizontal: resolvedSpacing.sm,
+                          paddingVertical: resolvedSpacing.xs,
+                          backgroundColor: resolvedColors.primary,
+                          borderRadius: resolvedBorderRadius.sm,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: resolvedFontSizes.xs,
+                            color: resolvedColors.primaryForeground,
+                            fontWeight: "600",
+                          }}
+                        >
+                          Salvar
+                        </Text>
+                      </Pressable>
+                      <Pressable
+                        onPress={cancelEditing}
+                        accessibilityRole="button"
+                        accessibilityLabel="Cancelar edição"
+                        style={{
+                          paddingHorizontal: resolvedSpacing.sm,
+                          paddingVertical: resolvedSpacing.xs,
+                          backgroundColor: resolvedColors.muted,
+                          borderRadius: resolvedBorderRadius.sm,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: resolvedFontSizes.xs,
+                            color: resolvedColors.mutedForeground,
+                            fontWeight: "600",
+                          }}
+                        >
+                          Cancelar
+                        </Text>
+                      </Pressable>
+                    </View>
+                  </View>
+                ) : (
+                  <Text
+                    style={{
+                      flex: 1,
+                      fontSize: resolvedFontSizes.sm,
+                      color: resolvedColors.mutedForeground,
+                    }}
+                  >
+                    {step.title}
+                  </Text>
+                )}
+                {editingStepId !== step.id && (
+                  <>
+                    <Pressable
+                      onPress={() => startEditing(step.id, step.title)}
+                      hitSlop={8}
+                      accessibilityRole="button"
+                      accessibilityLabel="Editar etapa"
+                      style={{
+                        minWidth: 44,
+                        minHeight: 44,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: resolvedColors.mutedForeground,
+                          fontSize: resolvedFontSizes.sm,
+                        }}
+                      >
+                        ✎
+                      </Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => deleteStep(step.id)}
+                      hitSlop={8}
+                      accessibilityRole="button"
+                      accessibilityLabel="Remover etapa"
+                      style={{
+                        minWidth: 44,
+                        minHeight: 44,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: resolvedColors.mutedForeground,
+                          fontSize: resolvedFontSizes.sm,
+                        }}
+                      >
+                        ✕
+                      </Text>
+                    </Pressable>
+                  </>
+                )}
+              </View>
             ))}
         </View>
       )}
