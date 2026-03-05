@@ -44,7 +44,6 @@ export function TaskGroup({
   onUpdateTask,
   emptyMessage = "Nenhuma tarefa aqui ainda",
 }: TaskGroupProps) {
-  const [collapsed, setCollapsed] = useState(false);
   const {
     resolvedColors,
     resolvedFontSizes,
@@ -52,48 +51,15 @@ export function TaskGroup({
     resolvedBorderRadius,
   } = useTheme();
 
-  const toggleCollapse = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setCollapsed((prev) => !prev);
-  };
-
   return (
     <View style={{ marginBottom: resolvedSpacing.xl }}>
-      {/* Header */}
-      <Pressable
-        onPress={toggleCollapse}
-        accessibilityRole="button"
-        accessibilityLabel={`${title}, ${tasks.length} tarefas${collapsed ? ", recolhido" : ""}`}
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: resolvedSpacing.sm,
-        }}
-      >
+      {tasks.length === 0 ? (
         <View
           style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: resolvedSpacing.sm,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: resolvedFontSizes.lg,
-              fontWeight: "600",
-              color: resolvedColors.textPrimary,
-            }}
-          >
-            {collapsed ? "▶" : "▼"} {title}
-          </Text>
-        </View>
-        <View
-          style={{
+            padding: resolvedSpacing.md,
             backgroundColor: resolvedColors.muted,
-            paddingHorizontal: resolvedSpacing.sm,
-            paddingVertical: 2,
-            borderRadius: 999,
+            borderRadius: resolvedBorderRadius.md,
+            alignItems: "center",
           }}
         >
           <Text
@@ -102,54 +68,29 @@ export function TaskGroup({
               color: resolvedColors.mutedForeground,
             }}
           >
-            {tasks.length}
+            {emptyMessage}
           </Text>
         </View>
-      </Pressable>
-
-      {/* Content */}
-      {!collapsed && (
-        <>
-          {tasks.length === 0 ? (
-            <View
-              style={{
-                padding: resolvedSpacing.md,
-                backgroundColor: resolvedColors.muted,
-                borderRadius: resolvedBorderRadius.md,
-                alignItems: "center",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: resolvedFontSizes.sm,
-                  color: resolvedColors.mutedForeground,
-                }}
-              >
-                {emptyMessage}
-              </Text>
-            </View>
-          ) : (
-            <FlatList
-              data={tasks}
-              keyExtractor={(item) => item.id}
-              scrollEnabled={false}
-              renderItem={({ item }) => (
-                <TaskCard
-                  task={item}
-                  onDelete={onDeleteTask}
-                  onArchive={onArchiveTask}
-                  onUpdate={onUpdateTask}
-                />
-              )}
+      ) : (
+        <FlatList
+          data={tasks}
+          keyExtractor={(item) => item.id}
+          scrollEnabled={false}
+          renderItem={({ item }) => (
+            <TaskCard
+              task={item}
+              onDelete={onDeleteTask}
+              onArchive={onArchiveTask}
+              onUpdate={onUpdateTask}
             />
           )}
+        />
+      )}
 
-          {showCreate && onCreateTask && (
-            <View style={{ marginTop: resolvedSpacing.sm }}>
-              <TaskCreateForm onSubmit={onCreateTask} />
-            </View>
-          )}
-        </>
+      {showCreate && onCreateTask && (
+        <View style={{ marginTop: resolvedSpacing.sm }}>
+          <TaskCreateForm onSubmit={onCreateTask} />
+        </View>
       )}
     </View>
   );

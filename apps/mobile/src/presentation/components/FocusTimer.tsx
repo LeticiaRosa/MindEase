@@ -37,7 +37,7 @@ export function FocusTimer({ taskId, onExpand }: FocusTimerProps) {
     <View
       style={{
         flexDirection: "row",
-        gap: resolvedSpacing["2xl"],
+        gap: resolvedSpacing.md,
         alignItems: "center",
         justifyContent: "center",
       }}

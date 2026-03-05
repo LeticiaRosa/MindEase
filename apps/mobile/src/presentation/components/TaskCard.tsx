@@ -99,8 +99,8 @@ export function TaskCard({
           flexDirection: "row",
           justifyContent: "flex-end",
           alignItems: "center",
-          gap: resolvedSpacing.md,
-          padding: resolvedSpacing.sm,
+          gap: resolvedSpacing.xs,
+          paddingVertical: resolvedSpacing.sm,
         }}
       >
         {/* Time spent badge */}
@@ -108,7 +108,6 @@ export function TaskCard({
           <View
             accessibilityLabel={`Total time spent: ${formatTimeSpent(task.totalTimeSpent)}`}
             style={{
-              marginHorizontal: resolvedSpacing.xs,
               paddingHorizontal: resolvedSpacing.sm,
               paddingVertical: 2,
               backgroundColor: resolvedColors.primary + "1A",
@@ -151,12 +150,12 @@ export function TaskCard({
             accessibilityLabel={`Edit task: ${task.title}`}
             hitSlop={8}
             style={{
-              padding: resolvedSpacing.md,
+              padding: resolvedSpacing.md - 2,
               backgroundColor: resolvedColors.muted,
               borderRadius: 9999,
             }}
           >
-            <Pencil size={20} color={iconColor} />
+            <Pencil size={18} color={iconColor} />
           </Pressable>
         )}
 
@@ -167,12 +166,12 @@ export function TaskCard({
           accessibilityLabel={`Delete task: ${task.title}`}
           hitSlop={8}
           style={{
-            padding: resolvedSpacing.md,
+            padding: resolvedSpacing.md - 2,
             backgroundColor: resolvedColors.muted,
             borderRadius: 9999,
           }}
         >
-          <Trash2 size={20} color={iconColor} />
+          <Trash2 size={18} color={iconColor} />
         </Pressable>
 
         {/* Archive button */}
@@ -183,12 +182,12 @@ export function TaskCard({
             accessibilityLabel={`Archive task: ${task.title}`}
             hitSlop={8}
             style={{
-              padding: resolvedSpacing.md,
+              padding: resolvedSpacing.md - 2,
               backgroundColor: resolvedColors.muted,
               borderRadius: 9999,
             }}
           >
-            <Archive size={20} color={iconColor} />
+            <Archive size={18} color={iconColor} />
           </Pressable>
         )}
       </View>
@@ -203,13 +202,13 @@ export function TaskCard({
             paddingTop: resolvedSpacing.xs,
           }}
         >
-          <Move size={20} color={iconColor} />
           <Text
             style={{
               flex: 1,
               fontSize: resolvedFontSizes.base,
               fontWeight: "500",
               color: resolvedColors.textPrimary,
+              paddingHorizontal: resolvedSpacing.sm,
             }}
           >
             {task.title}
@@ -237,7 +236,7 @@ export function TaskCard({
           flexDirection: "row",
           alignItems: "center",
           padding: resolvedSpacing.md,
-          gap: resolvedSpacing.md,
+          gap: resolvedSpacing.xs,
         }}
       >
         {/* Steps toggle */}
