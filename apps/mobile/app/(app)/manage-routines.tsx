@@ -9,6 +9,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { router } from "expo-router";
+import { Pencil, Trash2 } from "lucide-react-native";
 import { useRoutines } from "@/presentation/hooks/useRoutines";
 import { RoutineIcon } from "@/presentation/components/RoutineIcon";
 import { IconPicker } from "@/presentation/components/IconPicker";
@@ -76,121 +77,128 @@ export default function ManageRoutinesScreen() {
     <SafeAreaView
       style={{ flex: 1, backgroundColor: resolvedColors.background }}
     >
-      <ScrollView
-        contentContainerStyle={{
+      {/* Header */}
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
           padding: resolvedSpacing.lg,
-          gap: resolvedSpacing.xl,
+          borderBottomWidth: 1,
+          borderBottomColor: resolvedColors.border,
         }}
       >
-        {/* Header */}
-        <View
+        <Text
           style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
+            fontSize: resolvedFontSizes.xl,
+            fontWeight: "700",
+            color: resolvedColors.textPrimary,
+          }}
+        >
+          Gerenciar Rotinas
+        </Text>
+        <Pressable onPress={() => router.back()} accessibilityLabel="Voltar">
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.base,
+              color: resolvedColors.primary,
+            }}
+          >
+            ← Voltar
+          </Text>
+        </Pressable>
+      </View>
+
+      {/* Create form */}
+      <View
+        style={{
+          backgroundColor: resolvedColors.card,
+          borderRadius: resolvedBorderRadius.lg,
+          padding: resolvedSpacing.md,
+          gap: resolvedSpacing.md,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: resolvedFontSizes.lg,
+            fontWeight: "600",
+            color: resolvedColors.textPrimary,
+          }}
+        >
+          Nova Rotina
+        </Text>
+        <TextInput
+          value={newName}
+          onChangeText={setNewName}
+          placeholder="Nome da rotina"
+          placeholderTextColor={resolvedColors.mutedForeground}
+          style={{
+            backgroundColor: resolvedColors.background,
+            borderWidth: 1,
+            borderColor: resolvedColors.border,
+            borderRadius: resolvedBorderRadius.md,
+            paddingHorizontal: resolvedSpacing.md,
+            paddingVertical: resolvedSpacing.sm,
+            fontSize: resolvedFontSizes.base,
+            color: resolvedColors.textPrimary,
+          }}
+        />
+        <IconPicker selected={newIcon} onSelect={setNewIcon} />
+        <Pressable
+          onPress={handleCreate}
+          disabled={!newName.trim()}
+          style={{
+            backgroundColor: newName.trim()
+              ? resolvedColors.primary
+              : resolvedColors.muted,
+            borderRadius: resolvedBorderRadius.md,
+            paddingVertical: resolvedSpacing.md,
             alignItems: "center",
           }}
         >
           <Text
             style={{
-              fontSize: resolvedFontSizes.xl,
-              fontWeight: "700",
-              color: resolvedColors.textPrimary,
+              fontSize: resolvedFontSizes.base,
+              fontWeight: "600",
+              color: newName.trim()
+                ? resolvedColors.primaryForeground
+                : resolvedColors.mutedForeground,
             }}
           >
-            Gerenciar Rotinas
+            Criar Rotina
           </Text>
-          <Pressable onPress={() => router.back()} accessibilityLabel="Voltar">
-            <Text
-              style={{
-                fontSize: resolvedFontSizes.base,
-                color: resolvedColors.primary,
-              }}
-            >
-              ← Voltar
-            </Text>
-          </Pressable>
-        </View>
+        </Pressable>
+      </View>
 
-        {/* Create form */}
-        <View
+      {/* Existing routines */}
+
+      <View
+        style={{
+          gap: resolvedSpacing.xs,
+          paddingHorizontal: resolvedSpacing.md,
+        }}
+      >
+        <Text
           style={{
-            backgroundColor: resolvedColors.card,
-            borderRadius: resolvedBorderRadius.lg,
-            padding: resolvedSpacing.lg,
+            fontSize: resolvedFontSizes.lg,
+            fontWeight: "600",
+            color: resolvedColors.textPrimary,
+          }}
+        >
+          Suas Rotinas ({routines.length})
+        </Text>
+        <ScrollView
+          contentContainerStyle={{
+            padding: resolvedSpacing.md,
             gap: resolvedSpacing.md,
           }}
         >
-          <Text
-            style={{
-              fontSize: resolvedFontSizes.lg,
-              fontWeight: "600",
-              color: resolvedColors.textPrimary,
-            }}
-          >
-            Nova Rotina
-          </Text>
-          <TextInput
-            value={newName}
-            onChangeText={setNewName}
-            placeholder="Nome da rotina"
-            placeholderTextColor={resolvedColors.mutedForeground}
-            style={{
-              backgroundColor: resolvedColors.background,
-              borderWidth: 1,
-              borderColor: resolvedColors.border,
-              borderRadius: resolvedBorderRadius.md,
-              paddingHorizontal: resolvedSpacing.md,
-              paddingVertical: resolvedSpacing.sm,
-              fontSize: resolvedFontSizes.base,
-              color: resolvedColors.textPrimary,
-            }}
-          />
-          <IconPicker selected={newIcon} onSelect={setNewIcon} />
-          <Pressable
-            onPress={handleCreate}
-            disabled={!newName.trim()}
-            style={{
-              backgroundColor: newName.trim()
-                ? resolvedColors.primary
-                : resolvedColors.muted,
-              borderRadius: resolvedBorderRadius.md,
-              paddingVertical: resolvedSpacing.md,
-              alignItems: "center",
-            }}
-          >
-            <Text
-              style={{
-                fontSize: resolvedFontSizes.base,
-                fontWeight: "600",
-                color: newName.trim()
-                  ? resolvedColors.primaryForeground
-                  : resolvedColors.mutedForeground,
-              }}
-            >
-              Criar Rotina
-            </Text>
-          </Pressable>
-        </View>
-
-        {/* Existing routines */}
-        <View style={{ gap: resolvedSpacing.md }}>
-          <Text
-            style={{
-              fontSize: resolvedFontSizes.lg,
-              fontWeight: "600",
-              color: resolvedColors.textPrimary,
-            }}
-          >
-            Suas Rotinas ({routines.length})
-          </Text>
-
           {routines.map((routine) => (
             <View
               key={routine.id}
               style={{
                 backgroundColor: resolvedColors.card,
                 borderRadius: resolvedBorderRadius.lg,
-                padding: resolvedSpacing.md,
                 gap: resolvedSpacing.sm,
               }}
             >
@@ -295,22 +303,35 @@ export default function ManageRoutinesScreen() {
                     <Pressable
                       onPress={() => handleStartEdit(routine)}
                       accessibilityLabel={`Editar ${routine.name}`}
+                      style={{
+                        padding: resolvedSpacing.md - 2,
+                        backgroundColor: resolvedColors.muted,
+                        borderRadius: 9999,
+                      }}
                     >
-                      <Text style={{ fontSize: 18 }}>✏️</Text>
+                      <Pencil
+                        size={18}
+                        color={resolvedColors.mutedForeground}
+                      />
                     </Pressable>
                     <Pressable
                       onPress={() => handleDelete(routine.id, routine.name)}
                       accessibilityLabel={`Excluir ${routine.name}`}
+                      style={{
+                        padding: resolvedSpacing.md - 2,
+                        backgroundColor: resolvedColors.muted,
+                        borderRadius: 9999,
+                      }}
                     >
-                      <Text style={{ fontSize: 18 }}>🗑</Text>
+                      <Trash2 size={18} color={resolvedColors.destructive} />
                     </Pressable>
                   </View>
                 </View>
               )}
             </View>
           ))}
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }

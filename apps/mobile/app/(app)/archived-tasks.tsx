@@ -107,7 +107,7 @@ export default function ArchivedTasksScreen() {
               style={{
                 backgroundColor: resolvedColors.card,
                 borderRadius: resolvedBorderRadius.md,
-                padding: resolvedSpacing.md,
+                paddingVertical: resolvedSpacing.md,
                 flexDirection: "row",
                 justifyContent: "space-between",
                 alignItems: "center",

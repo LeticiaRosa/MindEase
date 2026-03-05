@@ -160,21 +160,6 @@ export function TaskCard({
           </Pressable>
         )}
 
-        {/* Delete button */}
-        <Pressable
-          onPress={() => onDelete(task.id)}
-          accessibilityRole="button"
-          accessibilityLabel={`Delete task: ${task.title}`}
-          hitSlop={8}
-          style={{
-            padding: resolvedSpacing.md - 2,
-            backgroundColor: resolvedColors.muted,
-            borderRadius: 9999,
-          }}
-        >
-          <Trash2 size={18} color={iconColor} />
-        </Pressable>
-
         {/* Archive button */}
         {onArchive && (
           <Pressable
@@ -191,6 +176,21 @@ export function TaskCard({
             <Archive size={18} color={iconColor} />
           </Pressable>
         )}
+
+        {/* Delete button */}
+        <Pressable
+          onPress={() => onDelete(task.id)}
+          accessibilityRole="button"
+          accessibilityLabel={`Delete task: ${task.title}`}
+          hitSlop={8}
+          style={{
+            padding: resolvedSpacing.md - 2,
+            backgroundColor: resolvedColors.muted,
+            borderRadius: 9999,
+          }}
+        >
+          <Trash2 size={18} color={resolvedColors.destructive} />
+        </Pressable>
       </View>
 
       {/* Title row */}

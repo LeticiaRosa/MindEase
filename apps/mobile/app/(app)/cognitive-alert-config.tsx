@@ -52,42 +52,45 @@ export default function CognitiveAlertConfigScreen() {
     <SafeAreaView
       style={{ flex: 1, backgroundColor: resolvedColors.background }}
     >
+      {/* Header */}
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: resolvedSpacing.lg,
+          borderBottomWidth: 1,
+          borderBottomColor: resolvedColors.border,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: resolvedFontSizes.xl,
+            fontWeight: "700",
+            color: resolvedColors.textPrimary,
+          }}
+        >
+          Alertas Cognitivos
+        </Text>
+        <Pressable onPress={() => router.back()} accessibilityLabel="Voltar">
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.base,
+              color: resolvedColors.primary,
+            }}
+          >
+            ← Voltar
+          </Text>
+        </Pressable>
+      </View>
+
+      {/* Tone */}
       <ScrollView
         contentContainerStyle={{
           padding: resolvedSpacing.lg,
           gap: resolvedSpacing.xl,
         }}
       >
-        {/* Header */}
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Text
-            style={{
-              fontSize: resolvedFontSizes.xl,
-              fontWeight: "700",
-              color: resolvedColors.textPrimary,
-            }}
-          >
-            Alertas Cognitivos
-          </Text>
-          <Pressable onPress={() => router.back()} accessibilityLabel="Voltar">
-            <Text
-              style={{
-                fontSize: resolvedFontSizes.base,
-                color: resolvedColors.primary,
-              }}
-            >
-              ← Voltar
-            </Text>
-          </Pressable>
-        </View>
-
-        {/* Tone */}
         <View style={{ gap: resolvedSpacing.sm }}>
           <Text
             style={{
