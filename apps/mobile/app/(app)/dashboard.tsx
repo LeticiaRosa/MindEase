@@ -25,6 +25,7 @@ import { BrainTodayBottomSheet } from "@/presentation/components/BrainTodayBotto
 import { RoutineSelector } from "@/presentation/components/RoutineSelector";
 import { TaskGroup } from "@/presentation/components/TaskGroup";
 import { CognitiveAlertModal } from "@/presentation/components/CognitiveAlertModal";
+import { TaskCreateForm } from "@/presentation/components/TaskCreateForm";
 
 type TabId = "todo" | "in_progress" | "done" | "settings";
 
@@ -179,32 +180,45 @@ export default function DashboardScreen() {
           ))}
         </ScrollView>
       ) : (
-        <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={{
-            padding: resolvedSpacing.md,
-            paddingBottom: resolvedSpacing["3xl"],
-          }}
-          refreshControl={
-            <RefreshControl
-              refreshing={tasksLoading}
-              onRefresh={() => {}}
-              tintColor={resolvedColors.primary}
-            />
-          }
-        >
+        <>
+          {/* TaskCreateForm pinned — only shown on todo tab */}
           {activeTab === "todo" && (
-            <TaskGroup
-              title="A Fazer"
-              tasks={todoTasks}
-              showCreate
-              onCreateTask={createTask}
-              onDeleteTask={deleteTask}
-              onArchiveTask={archiveTask}
-              onUpdateTask={updateTask}
-              emptyMessage="Nenhuma tarefa pendente"
-            />
+            <View
+              style={{
+                paddingHorizontal: resolvedSpacing.md,
+                paddingTop: resolvedSpacing.md,
+                paddingBottom: resolvedSpacing.sm,
+                backgroundColor: resolvedColors.background,
+              }}
+            >
+              <TaskCreateForm onSubmit={createTask} />
+            </View>
           )}
+
+          <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={{
+              padding: resolvedSpacing.md,
+              paddingBottom: resolvedSpacing["3xl"],
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={tasksLoading}
+                onRefresh={() => {}}
+                tintColor={resolvedColors.primary}
+              />
+            }
+          >
+            {activeTab === "todo" && (
+              <TaskGroup
+                title="A Fazer"
+                tasks={todoTasks}
+                onDeleteTask={deleteTask}
+                onArchiveTask={archiveTask}
+                onUpdateTask={updateTask}
+                emptyMessage="Nenhuma tarefa pendente"
+              />
+            )}
           {activeTab === "in_progress" && (
             <TaskGroup
               title="Fazendo"
@@ -226,6 +240,7 @@ export default function DashboardScreen() {
             />
           )}
         </ScrollView>
+        </>
       )}
 
       {/* Bottom tab bar */}

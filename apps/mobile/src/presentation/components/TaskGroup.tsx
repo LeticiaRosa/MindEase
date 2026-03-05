@@ -53,6 +53,11 @@ export function TaskGroup({
 
   return (
     <View style={{ marginBottom: resolvedSpacing.xl }}>
+      {showCreate && onCreateTask && (
+        <View style={{ marginVertical: resolvedSpacing.sm }}>
+          <TaskCreateForm onSubmit={onCreateTask} />
+        </View>
+      )}
       {tasks.length === 0 ? (
         <View
           style={{
@@ -85,12 +90,6 @@ export function TaskGroup({
             />
           )}
         />
-      )}
-
-      {showCreate && onCreateTask && (
-        <View style={{ marginTop: resolvedSpacing.sm }}>
-          <TaskCreateForm onSubmit={onCreateTask} />
-        </View>
       )}
     </View>
   );

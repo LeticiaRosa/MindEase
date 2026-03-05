@@ -91,6 +91,7 @@ export function TaskCard({
         shadowOpacity: 0.05,
         shadowRadius: 2,
         elevation: 1,
+        marginBottom: resolvedSpacing.sm,
       }}
     >
       {/* Top action row */}
