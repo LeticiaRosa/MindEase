@@ -59,7 +59,7 @@ export default function DashboardScreen() {
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{
-          padding: resolvedSpacing.lg,
+          padding: resolvedSpacing.md,
           paddingBottom: resolvedSpacing["3xl"],
         }}
         refreshControl={

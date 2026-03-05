@@ -40,15 +40,12 @@ export function DashboardHeader({
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
-          marginBottom: resolvedSpacing.sm,
         }}
       >
         <View
           style={{
             flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "start",
-            marginBottom: resolvedSpacing.sm,
+            alignItems: "flex-start",
           }}
         >
           <Text
@@ -63,7 +60,7 @@ export function DashboardHeader({
           <Text
             style={{
               fontSize: resolvedFontSizes.xs,
-              color: resolvedColors.primaryForeground,
+              color: resolvedColors.mutedForeground,
             }}
           >
             Focus on what matters next
