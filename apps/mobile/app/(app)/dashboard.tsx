@@ -95,7 +95,7 @@ export default function DashboardScreen() {
         <View
           style={{
             paddingHorizontal: resolvedSpacing.md,
-            paddingTop: resolvedSpacing.md,
+            paddingTop: resolvedSpacing.xs,
           }}
         >
           <RoutineSelector

@@ -24,7 +24,12 @@ export function RoutineSelector({
   } = useTheme();
 
   return (
-    <View style={{ gap: resolvedSpacing.sm }}>
+    <View
+      style={{
+        gap: resolvedSpacing.sm,
+        paddingVertical: resolvedSpacing.sm,
+      }}
+    >
       <View
         style={{
           flexDirection: "row",
