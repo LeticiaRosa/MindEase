@@ -219,27 +219,27 @@ export default function DashboardScreen() {
                 emptyMessage="Nenhuma tarefa pendente"
               />
             )}
-          {activeTab === "in_progress" && (
-            <TaskGroup
-              title="Fazendo"
-              tasks={inProgressTasks}
-              onDeleteTask={deleteTask}
-              onArchiveTask={archiveTask}
-              onUpdateTask={updateTask}
-              emptyMessage="Nenhuma tarefa em andamento"
-            />
-          )}
-          {activeTab === "done" && (
-            <TaskGroup
-              title="Concluído"
-              tasks={doneTasks}
-              onDeleteTask={deleteTask}
-              onArchiveTask={archiveTask}
-              onUpdateTask={updateTask}
-              emptyMessage="Nenhuma tarefa concluída"
-            />
-          )}
-        </ScrollView>
+            {activeTab === "in_progress" && (
+              <TaskGroup
+                title="Fazendo"
+                tasks={inProgressTasks}
+                onDeleteTask={deleteTask}
+                onArchiveTask={archiveTask}
+                onUpdateTask={updateTask}
+                emptyMessage="Nenhuma tarefa em andamento"
+              />
+            )}
+            {activeTab === "done" && (
+              <TaskGroup
+                title="Concluído"
+                tasks={doneTasks}
+                onDeleteTask={deleteTask}
+                onArchiveTask={archiveTask}
+                onUpdateTask={updateTask}
+                emptyMessage="Nenhuma tarefa concluída"
+              />
+            )}
+          </ScrollView>
         </>
       )}
 

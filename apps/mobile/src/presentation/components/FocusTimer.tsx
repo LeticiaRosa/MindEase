@@ -2,7 +2,7 @@ import { View, Text, Pressable } from "react-native";
 import { useFocusTimer } from "@/presentation/hooks/useFocusTimer";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 import { CircularProgress } from "./CircularProgress";
-import { Timer } from "lucide-react-native";
+import { Play, Pause, RotateCcw, Square } from "lucide-react-native";
 
 interface FocusTimerProps {
   taskId: string;
@@ -111,14 +111,11 @@ export function FocusTimer({ taskId, onExpand }: FocusTimerProps) {
             justifyContent: "center",
           }}
         >
-          <Text
-            style={{
-              fontSize: resolvedFontSizes.base,
-              color: resolvedColors.primaryForeground,
-            }}
-          >
-            {isRunning ? "⏸" : "▶"}
-          </Text>
+          {isRunning ? (
+            <Pause size={20} color={resolvedColors.primaryForeground} />
+          ) : (
+            <Play size={20} color={resolvedColors.primaryForeground} />
+          )}
         </Pressable>
 
         {/* Reset */}
@@ -135,14 +132,7 @@ export function FocusTimer({ taskId, onExpand }: FocusTimerProps) {
             justifyContent: "center",
           }}
         >
-          <Text
-            style={{
-              fontSize: resolvedFontSizes.base,
-              color: resolvedColors.mutedForeground,
-            }}
-          >
-            ↺
-          </Text>
+          <RotateCcw size={20} color={resolvedColors.mutedForeground} />
         </Pressable>
 
         {/* Stop */}
@@ -159,14 +149,7 @@ export function FocusTimer({ taskId, onExpand }: FocusTimerProps) {
             justifyContent: "center",
           }}
         >
-          <Text
-            style={{
-              fontSize: resolvedFontSizes.base,
-              color: resolvedColors.destructiveForeground,
-            }}
-          >
-            ■
-          </Text>
+          <Square size={20} color={resolvedColors.destructiveForeground} />
         </Pressable>
       </View>
     </View>

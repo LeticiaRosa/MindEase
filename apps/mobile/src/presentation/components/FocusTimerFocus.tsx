@@ -14,6 +14,7 @@ import { useFocusTimer } from "@/presentation/hooks/useFocusTimer";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 import { CircularProgress } from "./CircularProgress";
 import { SmartChecklist } from "./SmartChecklist";
+import { Play, Pause, RotateCcw, Square, X } from "lucide-react-native";
 
 if (
   Platform.OS === "android" &&
@@ -108,58 +109,24 @@ export function FocusTimerFocus({
             accessibilityLabel="Sair do foco"
             style={{
               alignSelf: "flex-end",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: resolvedSpacing.xs,
               paddingVertical: resolvedSpacing.xs,
               paddingHorizontal: resolvedSpacing.sm,
               marginBottom: resolvedSpacing.lg,
             }}
           >
+            <X size={18} color={resolvedColors.mutedForeground} />
             <Text
               style={{
                 fontSize: resolvedFontSizes.base,
                 color: resolvedColors.mutedForeground,
               }}
             >
-              ✕ Sair do foco
+              Sair do Foco
             </Text>
           </Pressable>
-
-          {/* Task title */}
-          <Text
-            numberOfLines={2}
-            style={{
-              fontSize: resolvedFontSizes.lg,
-              color: resolvedColors.mutedForeground,
-              textAlign: "center",
-              marginBottom: resolvedSpacing.lg,
-            }}
-          >
-            {taskTitle}
-          </Text>
-
-          {/* Mode label */}
-          <Text
-            style={{
-              fontSize: resolvedFontSizes.xl,
-              fontWeight: "600",
-              color: modeColor,
-              marginBottom: resolvedSpacing.sm,
-            }}
-          >
-            {modeLabel}
-          </Text>
-
-          {/* Mode description */}
-          <Text
-            style={{
-              fontSize: resolvedFontSizes.sm,
-              color: resolvedColors.mutedForeground,
-              textAlign: "center",
-              marginBottom: resolvedSpacing.xl,
-              paddingHorizontal: resolvedSpacing.xl,
-            }}
-          >
-            {modeDescription}
-          </Text>
 
           {/* Large circular progress ring with time and cycle centered */}
           <View
@@ -202,7 +169,32 @@ export function FocusTimerFocus({
               </Text>
             </View>
           </View>
+          {/* Task title */}
+          <Text
+            numberOfLines={2}
+            style={{
+              fontSize: resolvedFontSizes.lg,
+              color: resolvedColors.mutedForeground,
+              textAlign: "center",
+              marginBottom: resolvedSpacing.lg,
+              fontWeight: "700",
+            }}
+          >
+            {taskTitle}
+          </Text>
 
+          {/* Mode description */}
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.sm,
+              color: resolvedColors.mutedForeground,
+              textAlign: "center",
+              marginBottom: resolvedSpacing.xl,
+              paddingHorizontal: resolvedSpacing.xl,
+            }}
+          >
+            {modeDescription}
+          </Text>
           {/* Controls */}
           <View
             style={{
@@ -226,14 +218,7 @@ export function FocusTimerFocus({
                 justifyContent: "center",
               }}
             >
-              <Text
-                style={{
-                  fontSize: 24,
-                  color: resolvedColors.mutedForeground,
-                }}
-              >
-                ↺
-              </Text>
+              <RotateCcw size={24} color={resolvedColors.mutedForeground} />
             </Pressable>
 
             {/* Play / Pause */}
@@ -250,14 +235,11 @@ export function FocusTimerFocus({
                 justifyContent: "center",
               }}
             >
-              <Text
-                style={{
-                  fontSize: 32,
-                  color: resolvedColors.primaryForeground,
-                }}
-              >
-                {isRunning ? "⏸" : "▶"}
-              </Text>
+              {isRunning ? (
+                <Pause size={32} color={resolvedColors.primaryForeground} />
+              ) : (
+                <Play size={32} color={resolvedColors.primaryForeground} />
+              )}
             </Pressable>
 
             {/* Stop */}
@@ -274,14 +256,7 @@ export function FocusTimerFocus({
                 justifyContent: "center",
               }}
             >
-              <Text
-                style={{
-                  fontSize: 24,
-                  color: resolvedColors.destructiveForeground,
-                }}
-              >
-                ■
-              </Text>
+              <Square size={24} color={resolvedColors.destructiveForeground} />
             </Pressable>
           </View>
 
