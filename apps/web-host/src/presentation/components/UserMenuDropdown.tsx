@@ -22,11 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "auth/auth";
 import {
   useThemePreferences,
-  type ColourTheme,
   type ComplexityMode,
-  type FontSize,
-  type HelpersVisibility,
-  type SpacingDensity,
   type ThemeMode,
 } from "@/presentation/contexts/ThemePreferencesContext";
 import { AppearanceMenuPanel } from "@/presentation/components/AppearanceMenuPanel";
@@ -97,8 +93,7 @@ export function SegmentedControl<T extends string>({
 
 export function UserMenuDropdown() {
   const { user, loading, signOut } = useAuth();
-  const { updatePreferences, mode, helpers, complexity } =
-    useThemePreferences();
+  const { updatePreferences, mode, complexity } = useThemePreferences();
   const toast = useToast();
   const navigate = useNavigate();
   const displayName = getDisplayName(user);
@@ -241,7 +236,7 @@ export function UserMenuDropdown() {
                     ]}
                     onChange={(value) => updatePreferences({ mode: value })}
                   />
-                  <SegmentedControl<HelpersVisibility>
+                  {/* <SegmentedControl<HelpersVisibility>
                     label="Helpers"
                     value={helpers}
                     options={[
@@ -249,7 +244,7 @@ export function UserMenuDropdown() {
                       { value: "hide", label: "Hide" },
                     ]}
                     onChange={(value) => updatePreferences({ helpers: value })}
-                  />
+                  /> */}
                   <SegmentedControl<ComplexityMode>
                     label="Complexity"
                     value={complexity}

@@ -1,105 +1,137 @@
 /**
- * Design tokens compartilhados entre web e mobile
- * Compatível com React Native
+ * Design tokens compartilhados entre web e mobile.
+ * Compatível com React Native.
+ *
+ * Todos os valores hex são convertidos diretamente dos CSS custom properties
+ * em packages/ui/index.css usando oklch → sRGB via a fórmula OKLab.
  */
 
+// ─── Default (light) — mirrors :root in index.css ─────────────────────────────
 export const colors = {
-  // Light theme
-  background: "#FFFFFF",
-  foreground: "#18181B",
-  card: "#FFFFFF",
-  cardForeground: "#18181B",
-  popover: "#FFFFFF",
-  popoverForeground: "#18181B",
-  primary: "#F59E0B",
-  primaryForeground: "#FEFCE8",
-  secondary: "#EAB308",
-  secondaryForeground: "#27272A",
-  muted: "#F4F4F5",
-  mutedForeground: "#71717A",
-  accent: "#F4F4F5",
-  accentForeground: "#27272A",
-  destructive: "#EF4444",
-  destructiveForeground: "#FEFCE8",
-  border: "#E4E4E7",
-  input: "#E4E4E7",
-  ring: "#A1A1AA",
-  textPrimary: "#18181B",
-  textSecondary: "#71717A",
+  background: "#FFFFFF", // oklch(1 0 0)
+  foreground: "#030712", // oklch(0.13 0.028 261.692)
+  card: "#FFFFFF", // oklch(1 0 0)
+  cardForeground: "#030712", // oklch(0.13 0.028 261.692)
+  popover: "#FFFFFF", // oklch(1 0 0)
+  popoverForeground: "#030712", // oklch(0.13 0.028 261.692)
+  primary: "#B45309", // oklch(0.5553 0.1455 49)
+  primaryForeground: "#F9FAFB", // oklch(0.985 0.002 247.839)
+  secondary: "#B45309", // oklch(0.5553 0.1455 49) — same as primary
+  secondaryForeground: "#101828", // oklch(0.21 0.034 264.665)
+  muted: "#F3F4F6", // oklch(0.967 0.003 264.542)
+  mutedForeground: "#6A7282", // oklch(0.551 0.027 264.364)
+  accent: "#F3F4F6", // oklch(0.967 0.003 264.542)
+  accentForeground: "#101828", // oklch(0.21 0.034 264.665)
+  destructive: "#E7000B", // oklch(0.577 0.245 27.325)
+  destructiveForeground: "#F9FAFB", // oklch(0.985 0.002 247.839)
+  border: "#E5E7EB", // oklch(0.928 0.006 264.531)
+  input: "#E5E7EB", // oklch(0.928 0.006 264.531)
+  ring: "#99A1AF", // oklch(0.707 0.022 261.325)
+  textPrimary: "#030712", // = foreground
+  textSecondary: "#6A7282", // = mutedForeground
+  // Semantic state colors (brain-today / cognitive alerts)
+  success: "#22C55E",
+  successForeground: "#F9FAFB",
+  info: "#3B82F6",
+  infoForeground: "#EFF6FF",
+  creative: "#A855F7",
+  creativeForeground: "#FAF5FF",
 } as const;
 
+// ─── Dark — mirrors .dark / :root[data-theme="dark"] in index.css ─────────────
 export const darkColors = {
-  background: "#18181B",
-  foreground: "#FAFAFA",
-  card: "#27272A",
-  cardForeground: "#FAFAFA",
-  popover: "#27272A",
-  popoverForeground: "#FAFAFA",
-  primary: "#EAB308",
-  primaryForeground: "#27272A",
-  secondary: "#EAB308",
-  secondaryForeground: "#FAFAFA",
-  muted: "#3F3F46",
-  mutedForeground: "#A1A1AA",
-  accent: "#3F3F46",
-  accentForeground: "#FAFAFA",
-  destructive: "#F87171",
-  destructiveForeground: "#27272A",
-  border: "rgba(255, 255, 255, 0.1)",
-  input: "rgba(255, 255, 255, 0.15)",
-  ring: "#71717A",
-  textPrimary: "#FAFAFA",
-  textSecondary: "#A1A1AA",
+  background: "#030712", // oklch(0.13 0.028 261.692)
+  foreground: "#F9FAFB", // oklch(0.985 0.002 247.839)
+  card: "#101828", // oklch(0.21 0.034 264.665)
+  cardForeground: "#F9FAFB", // oklch(0.985 0.002 247.839)
+  popover: "#101828", // oklch(0.21 0.034 264.665)
+  popoverForeground: "#F9FAFB", // oklch(0.985 0.002 247.839)
+  primary: "#B45309", // oklch(0.5553 0.1455 49) — unchanged in dark
+  primaryForeground: "#101828", // oklch(0.21 0.034 264.665)
+  secondary: "#B45309", // oklch(0.5553 0.1455 49)
+  secondaryForeground: "#F9FAFB", // oklch(0.985 0.002 247.839)
+  muted: "#1E2939", // oklch(0.278 0.033 256.848)
+  mutedForeground: "#99A1AF", // oklch(0.707 0.022 261.325)
+  accent: "#1E2939", // oklch(0.278 0.033 256.848)
+  accentForeground: "#F9FAFB", // oklch(0.985 0.002 247.839)
+  destructive: "#FF6467", // oklch(0.704 0.191 22.216)
+  destructiveForeground: "#101828", // oklch(0.21 0.034 264.665)
+  border: "rgba(255, 255, 255, 0.1)", // oklch(1 0 0 / 10%)
+  input: "rgba(255, 255, 255, 0.15)", // oklch(1 0 0 / 15%)
+  ring: "#6A7282", // oklch(0.551 0.027 264.364)
+  textPrimary: "#F9FAFB", // = foreground
+  textSecondary: "#99A1AF", // = mutedForeground
+  // Semantic state colors
+  success: "#4ADE80",
+  successForeground: "#101828",
+  info: "#60A5FA",
+  infoForeground: "#101828",
+  creative: "#C084FC",
+  creativeForeground: "#101828",
 } as const;
 
-// Approx. hex conversions from oklch — mirrors :root[data-theme="soft"] in index.css
+// ─── Soft — mirrors :root[data-theme="soft"] in index.css ─────────────────────
 export const softColors = {
-  background: "#F9FAFB", // oklch(0.98 0.005 247.839) — near-white, cool-tinted
-  foreground: "#3B3D4E", // oklch(0.28 0.02 261.692)  — dark, blue-gray
-  card: "#F5F7FA", // oklch(0.97 0.005 247.839)
-  cardForeground: "#3B3D4E", // oklch(0.28 0.02 261.692)
-  popover: "#F5F7FA", // oklch(0.97 0.005 247.839)
-  popoverForeground: "#3B3D4E", // oklch(0.28 0.02 261.692)
-  primary: "#b45309", // oklch(0.28 0.02 261.692) — uses foreground as primary
-  primaryForeground: "#F9FAFB", // inherited from root oklch(0.985 0.002 247.839)
-  secondary: "#3B3D4E", // oklch(0.28 0.02 261.692)
-  secondaryForeground: "#F9FAFB",
-  muted: "#EDEDF2", // oklch(0.94 0.006 264.542)
-  mutedForeground: "#737487", // oklch(0.55 0.018 264.364)
-  accent: "#EDEDF2", // inherits --muted
-  accentForeground: "#3B3D4E", // inherits --foreground
-  destructive: "#EF4444", // inherited from root
-  destructiveForeground: "#F9FAFB",
-  border: "#E1E1E8", // oklch(0.9 0.006 264.531)
-  input: "#E1E1E8", // oklch(0.9 0.006 264.531)
-  ring: "#A1A1AA", // inherited from root
-  textPrimary: "#3B3D4E", // = foreground
-  textSecondary: "#737487", // = mutedForeground
+  background: "#F6F9FC", // oklch(0.98 0.005 247.839)
+  foreground: "#232933", // oklch(0.28 0.02 261.692)
+  card: "#F2F5F8", // oklch(0.97 0.005 247.839)
+  cardForeground: "#232933", // oklch(0.28 0.02 261.692)
+  popover: "#F2F5F8", // oklch(0.97 0.005 247.839)
+  popoverForeground: "#232933", // oklch(0.28 0.02 261.692)
+  primary: "#232933", // oklch(0.28 0.02 261.692) — uses foreground as primary
+  primaryForeground: "#F6F9FC", // oklch(0.98 0.005 247.839) — background as contrast
+  secondary: "#232933", // oklch(0.28 0.02 261.692)
+  secondaryForeground: "#F6F9FC", // background for contrast
+  muted: "#E9EBEF", // oklch(0.94 0.006 264.542)
+  mutedForeground: "#6C727C", // oklch(0.55 0.018 264.364)
+  accent: "#E9EBEF", // oklch(0.94 0.006 264.542)
+  accentForeground: "#232933", // = foreground
+  destructive: "#E7000B", // oklch(0.577 0.245 27.325) — inherited from root
+  destructiveForeground: "#F6F9FC",
+  border: "#DCDEE2", // oklch(0.9 0.006 264.531)
+  input: "#DCDEE2", // oklch(0.9 0.006 264.531)
+  ring: "#99A1AF", // inherited from root
+  textPrimary: "#232933", // = foreground
+  textSecondary: "#6C727C", // = mutedForeground
+  // Semantic state colors
+  success: "#16A34A",
+  successForeground: "#F6F9FC",
+  info: "#2563EB",
+  infoForeground: "#F6F9FC",
+  creative: "#9333EA",
+  creativeForeground: "#F6F9FC",
 } as const;
 
-// Approx. hex conversions from oklch — mirrors :root[data-theme="high-contrast"] in index.css
+// ─── High contrast — mirrors :root[data-theme="high-contrast"] in index.css ───
 export const highContrastColors = {
   background: "#FFFFFF", // oklch(1 0 0)
-  foreground: "#090909", // oklch(0.04 0 0) — near-black
+  foreground: "#000000", // oklch(0.04 0 0)
   card: "#FFFFFF", // oklch(1 0 0)
-  cardForeground: "#090909", // oklch(0.04 0 0)
+  cardForeground: "#000000", // oklch(0.04 0 0)
   popover: "#FFFFFF", // oklch(1 0 0)
-  popoverForeground: "#090909", // oklch(0.04 0 0)
-  primary: "#3D4200", // oklch(0.3 0.18 84.429) — dark olive-amber
+  popoverForeground: "#000000", // oklch(0.04 0 0)
+  primary: "#551800", // oklch(0.3 0.18 84.429)
   primaryForeground: "#FFFFFF", // oklch(1 0 0)
-  secondary: "#090909", // inherits --foreground
+  secondary: "#000000", // inherits foreground
   secondaryForeground: "#FFFFFF",
-  muted: "#EFEFEF", // oklch(0.94 0 0)
-  mutedForeground: "#303030", // oklch(0.2 0 0)
-  accent: "#EFEFEF", // inherits --muted
-  accentForeground: "#090909", // inherits --foreground
-  destructive: "#EF4444", // inherited (WCAG AA on white)
+  muted: "#EBEBEB", // oklch(0.94 0 0)
+  mutedForeground: "#161616", // oklch(0.2 0 0)
+  accent: "#EBEBEB", // = muted
+  accentForeground: "#000000", // = foreground
+  destructive: "#E7000B", // oklch(0.577 0.245 27.325) — inherited from root
   destructiveForeground: "#FFFFFF",
-  border: "#303030", // oklch(0.2 0 0)
-  input: "#303030", // oklch(0.2 0 0)
-  ring: "#090909", // oklch(0.04 0 0)
-  textPrimary: "#090909", // = foreground
-  textSecondary: "#303030", // = mutedForeground
+  border: "#161616", // oklch(0.2 0 0)
+  input: "#161616", // oklch(0.2 0 0)
+  ring: "#000000", // oklch(0.04 0 0)
+  textPrimary: "#000000", // = foreground
+  textSecondary: "#161616", // = mutedForeground
+  // Semantic state colors (darkened for WCAG AAA contrast on white)
+  success: "#166534",
+  successForeground: "#FFFFFF",
+  info: "#1D4ED8",
+  infoForeground: "#FFFFFF",
+  creative: "#7E22CE",
+  creativeForeground: "#FFFFFF",
 } as const;
 
 export const spacing = {

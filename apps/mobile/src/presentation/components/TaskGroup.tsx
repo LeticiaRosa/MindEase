@@ -25,11 +25,12 @@ interface TaskGroupProps {
   tasks: Task[];
   showCreate?: boolean;
   onCreateTask?: (title: string) => void;
-  onPressTask?: (task: Task) => void;
-  onSwipeRight?: (task: Task) => void;
-  onSwipeLeft?: (task: Task) => void;
-  onLongPress?: (task: Task) => void;
-  onExpandFocus?: (task: Task) => void;
+  onDeleteTask: (id: string) => void;
+  onArchiveTask?: (id: string) => void;
+  onUpdateTask?: (
+    id: string,
+    params: { title?: string; description?: string },
+  ) => void;
   emptyMessage?: string;
 }
 
@@ -38,11 +39,9 @@ export function TaskGroup({
   tasks,
   showCreate = false,
   onCreateTask,
-  onPressTask,
-  onSwipeRight,
-  onSwipeLeft,
-  onLongPress,
-  onExpandFocus,
+  onDeleteTask,
+  onArchiveTask,
+  onUpdateTask,
   emptyMessage = "Nenhuma tarefa aqui ainda",
 }: TaskGroupProps) {
   const [collapsed, setCollapsed] = useState(false);
@@ -137,11 +136,9 @@ export function TaskGroup({
               renderItem={({ item }) => (
                 <TaskCard
                   task={item}
-                  onPress={() => onPressTask?.(item)}
-                  onSwipeRight={() => onSwipeRight?.(item)}
-                  onSwipeLeft={() => onSwipeLeft?.(item)}
-                  onLongPress={() => onLongPress?.(item)}
-                  onExpandFocus={() => onExpandFocus?.(item)}
+                  onDelete={onDeleteTask}
+                  onArchive={onArchiveTask}
+                  onUpdate={onUpdateTask}
                 />
               )}
             />

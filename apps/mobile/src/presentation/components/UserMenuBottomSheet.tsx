@@ -86,8 +86,8 @@ export function UserMenuBottomSheet({
       >
         <ScrollView
           contentContainerStyle={{
-            padding: resolvedSpacing.lg,
-            gap: resolvedSpacing.xl,
+            padding: resolvedSpacing.md,
+            gap: resolvedSpacing.md,
           }}
         >
           {/* Header */}
@@ -128,7 +128,7 @@ export function UserMenuBottomSheet({
               <View>
                 <Text
                   style={{
-                    fontSize: resolvedFontSizes.lg,
+                    fontSize: resolvedFontSizes.sm,
                     fontWeight: "600",
                     color: resolvedColors.textPrimary,
                   }}
@@ -138,7 +138,7 @@ export function UserMenuBottomSheet({
                 </Text>
                 <Text
                   style={{
-                    fontSize: resolvedFontSizes.sm,
+                    fontSize: resolvedFontSizes.xs,
                     color: resolvedColors.mutedForeground,
                   }}
                   numberOfLines={1}

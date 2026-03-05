@@ -71,7 +71,7 @@ export function BrainTodayBottomSheet() {
                   backgroundColor: resolvedColors.muted,
                   borderRadius: resolvedBorderRadius.md,
                   borderLeftWidth: 4,
-                  borderLeftColor: opt.color,
+                  borderLeftColor: resolvedColors[opt.color],
                   flexDirection: "row",
                   alignItems: "center",
                   gap: resolvedSpacing.sm,
@@ -83,7 +83,7 @@ export function BrainTodayBottomSheet() {
                     style={{
                       fontSize: resolvedFontSizes.base,
                       fontWeight: "600",
-                      color: opt.color,
+                      color: resolvedColors[opt.color],
                       marginBottom: 2,
                     }}
                   >

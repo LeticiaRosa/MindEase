@@ -77,6 +77,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
           style={{
             fontSize: resolvedFontSizes.sm,
             color: resolvedColors.mutedForeground,
+            fontStyle: "italic",
           }}
         >
           Divida esta tarefa em etapas menores.
@@ -109,9 +110,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
             style={{
               width: `${(completedCount / totalSteps) * 100}%`,
               height: "100%",
-              backgroundColor: allDone
-                ? resolvedColors.primary
-                : resolvedColors.ring,
+              backgroundColor: resolvedColors.primary,
               borderRadius: 3,
             }}
           />
@@ -170,7 +169,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  gap: resolvedSpacing.sm,
+                  gap: resolvedSpacing.md,
                   paddingVertical: resolvedSpacing.xs,
                   paddingHorizontal: resolvedSpacing.sm,
                   opacity: 0.6,
@@ -185,8 +184,8 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                   style={{
                     width: 22,
                     height: 22,
-                    minWidth: 44,
-                    minHeight: 44,
+                    minWidth: 30,
+                    minHeight: 30,
                     borderRadius: 11,
                     backgroundColor: resolvedColors.primary,
                     alignItems: "center",
@@ -350,8 +349,8 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
             style={{
               width: 22,
               height: 22,
-              minWidth: 44,
-              minHeight: 44,
+              minWidth: 30,
+              minHeight: 30,
               borderRadius: 11,
               borderWidth: 2,
               borderColor: resolvedColors.ring,
@@ -527,8 +526,8 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                   style={{
                     width: 22,
                     height: 22,
-                    minWidth: 44,
-                    minHeight: 44,
+                    minWidth: 30,
+                    minHeight: 30,
                     borderRadius: 11,
                     borderWidth: 2,
                     borderColor: resolvedColors.muted,

@@ -30,7 +30,7 @@ export function DashboardHeader({
         backgroundColor: resolvedColors.background,
         borderBottomWidth: 1,
         borderBottomColor: resolvedColors.border,
-        paddingHorizontal: resolvedSpacing.lg,
+        paddingHorizontal: resolvedSpacing.md,
         paddingBottom: resolvedSpacing.md,
         paddingTop: insets.top + resolvedSpacing.md,
       }}
@@ -43,15 +43,32 @@ export function DashboardHeader({
           marginBottom: resolvedSpacing.sm,
         }}
       >
-        <Text
+        <View
           style={{
-            fontSize: resolvedFontSizes.xl,
-            fontWeight: "700",
-            color: resolvedColors.textPrimary,
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "start",
+            marginBottom: resolvedSpacing.sm,
           }}
         >
-          🧠 MindEase
-        </Text>
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.xl,
+              fontWeight: "700",
+              color: resolvedColors.primary,
+            }}
+          >
+            MindEase
+          </Text>
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.xs,
+              color: resolvedColors.primaryForeground,
+            }}
+          >
+            Focus on what matters next
+          </Text>
+        </View>
         <Pressable
           onPress={() => setMenuOpen(true)}
           accessibilityLabel={`Menu do usuário ${displayName}`}

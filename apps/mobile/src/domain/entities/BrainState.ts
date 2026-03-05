@@ -5,11 +5,18 @@ export type BrainStateValue =
   | "ansioso"
   | "disperso";
 
+export type BrainStateColorToken =
+  | "success"
+  | "secondary"
+  | "destructive"
+  | "info"
+  | "creative";
+
 export interface BrainStateOption {
   value: BrainStateValue;
   label: string;
   emoji: string;
-  color: string;
+  color: BrainStateColorToken;
   description: string;
 }
 
@@ -18,35 +25,35 @@ export const BRAIN_STATE_OPTIONS: BrainStateOption[] = [
     value: "focado",
     label: "Focado",
     emoji: "🎯",
-    color: "#22c55e",
+    color: "success",
     description: "Energia e clareza",
   },
   {
     value: "cansado",
     label: "Cansado",
     emoji: "😴",
-    color: "#eab308",
+    color: "secondary",
     description: "Precisando de ritmo lento",
   },
   {
     value: "sobrecarregado",
     label: "Sobrecarregado",
     emoji: "🤯",
-    color: "#ef4444",
+    color: "destructive",
     description: "Muita coisa de uma vez",
   },
   {
     value: "ansioso",
     label: "Ansioso",
     emoji: "😰",
-    color: "#3b82f6",
+    color: "info",
     description: "Difícil de parar os pensamentos",
   },
   {
     value: "disperso",
     label: "Disperso",
     emoji: "🌀",
-    color: "#a855f7",
+    color: "creative",
     description: "Difícil de manter o foco",
   },
 ];

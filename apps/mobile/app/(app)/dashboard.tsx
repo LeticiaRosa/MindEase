@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ScrollView, View, RefreshControl } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/presentation/hooks/useAuth";
@@ -11,20 +10,9 @@ import { DashboardHeader } from "@/presentation/components/DashboardHeader";
 import { BrainTodayBottomSheet } from "@/presentation/components/BrainTodayBottomSheet";
 import { RoutineSelector } from "@/presentation/components/RoutineSelector";
 import { TaskGroup } from "@/presentation/components/TaskGroup";
-import { TaskEditForm } from "@/presentation/components/TaskEditForm";
 import { CognitiveAlertModal } from "@/presentation/components/CognitiveAlertModal";
-import { FocusTimerFocus } from "@/presentation/components/FocusTimerFocus";
 import type { Task } from "@/domain/entities/Task";
 import { TaskStatus } from "@/domain/valueObjects/TaskStatus";
-
-const STATUS_ADVANCE: Record<string, string> = {
-  todo: "in_progress",
-  in_progress: "done",
-};
-const STATUS_REGRESS: Record<string, string> = {
-  in_progress: "todo",
-  done: "in_progress",
-};
 
 export default function DashboardScreen() {
   const router = useRouter();
@@ -37,12 +25,11 @@ export default function DashboardScreen() {
   const effectiveRoutineId = activeRoutineId ?? routines[0]?.id ?? "";
 
   const {
-    tasks,
+    tasks: _tasks,
     isLoading: tasksLoading,
     tasksByStatus,
     createTask,
     updateTask,
-    updateTaskStatus,
     deleteTask,
     archiveTask,
   } = useTaskKanban(effectiveRoutineId);
@@ -55,26 +42,9 @@ export default function DashboardScreen() {
     dismissModal,
   } = useAlertEngine();
 
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [focusTaskId, setFocusTaskId] = useState<string | null>(null);
-
-  const focusedTask = focusTaskId
-    ? (tasks.find((t) => t.id === focusTaskId) ?? null)
-    : null;
-
   const todoTasks = tasksByStatus("todo");
   const inProgressTasks = tasksByStatus("in_progress");
   const doneTasks = tasksByStatus("done");
-
-  const handleSwipeRight = (task: Task) => {
-    const next = STATUS_ADVANCE[task.status];
-    if (next) updateTaskStatus({ id: task.id, status: next as Task["status"] });
-  };
-
-  const handleSwipeLeft = (task: Task) => {
-    const prev = STATUS_REGRESS[task.status];
-    if (prev) updateTaskStatus({ id: task.id, status: prev as Task["status"] });
-  };
 
   return (
     <View style={{ flex: 1, backgroundColor: resolvedColors.background }}>
@@ -118,29 +88,25 @@ export default function DashboardScreen() {
           tasks={todoTasks}
           showCreate
           onCreateTask={createTask}
-          onPressTask={setEditingTask}
-          onSwipeRight={handleSwipeRight}
-          onLongPress={setEditingTask}
-          onExpandFocus={(task) => setFocusTaskId(task.id)}
+          onDeleteTask={deleteTask}
+          onArchiveTask={archiveTask}
+          onUpdateTask={updateTask}
           emptyMessage="Nenhuma tarefa pendente"
         />
         <TaskGroup
           title="Em andamento"
           tasks={inProgressTasks}
-          onPressTask={setEditingTask}
-          onSwipeRight={handleSwipeRight}
-          onSwipeLeft={handleSwipeLeft}
-          onLongPress={setEditingTask}
-          onExpandFocus={(task) => setFocusTaskId(task.id)}
+          onDeleteTask={deleteTask}
+          onArchiveTask={archiveTask}
+          onUpdateTask={updateTask}
           emptyMessage="Nenhuma tarefa em andamento"
         />
         <TaskGroup
           title="Concluído"
           tasks={doneTasks}
-          onPressTask={setEditingTask}
-          onSwipeLeft={handleSwipeLeft}
-          onLongPress={setEditingTask}
-          onExpandFocus={(task) => setFocusTaskId(task.id)}
+          onDeleteTask={deleteTask}
+          onArchiveTask={archiveTask}
+          onUpdateTask={updateTask}
           emptyMessage="Nenhuma tarefa concluída"
         />
       </ScrollView>
@@ -148,31 +114,9 @@ export default function DashboardScreen() {
       {/* Brain Today check-in */}
       <BrainTodayBottomSheet />
 
-      {/* Task edit modal */}
-      {editingTask && (
-        <TaskEditForm
-          task={editingTask}
-          visible
-          onClose={() => setEditingTask(null)}
-          onSave={updateTask}
-          onDelete={deleteTask}
-          onArchive={archiveTask}
-        />
-      )}
-
       {/* Alert modal */}
       {modalPayload && (
         <CognitiveAlertModal payload={modalPayload} onDismiss={dismissModal} />
-      )}
-
-      {/* Focus mode overlay */}
-      {focusTaskId && (
-        <FocusTimerFocus
-          taskId={focusTaskId}
-          taskTitle={focusedTask?.title ?? ""}
-          visible
-          onClose={() => setFocusTaskId(null)}
-        />
       )}
     </View>
   );

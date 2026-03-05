@@ -15,7 +15,6 @@ const CONTROL_SIZE = 44;
 
 export function FocusTimer({ taskId, onExpand }: FocusTimerProps) {
   const {
-    isActive,
     isRunning,
     mode,
     formattedTime,
@@ -27,55 +26,12 @@ export function FocusTimer({ taskId, onExpand }: FocusTimerProps) {
     reset,
     stop,
   } = useFocusTimer(taskId);
-  const {
-    resolvedColors,
-    resolvedFontSizes,
-    resolvedSpacing,
-    resolvedBorderRadius,
-  } = useTheme();
+  const { resolvedColors, resolvedFontSizes, resolvedSpacing } = useTheme();
 
   const modeLabel =
     mode === "focus" ? "Foco" : mode === "long_break" ? "Pausa longa" : "Pausa";
   const modeColor =
     mode === "focus" ? resolvedColors.primary : resolvedColors.ring;
-
-  if (!isActive) {
-    return (
-      <Pressable
-        onPress={start}
-        accessibilityRole="button"
-        accessibilityLabel="Iniciar timer de foco"
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: resolvedSpacing.xs,
-          backgroundColor: resolvedColors.muted,
-          borderRadius: resolvedBorderRadius.sm,
-          paddingHorizontal: resolvedSpacing.sm,
-          paddingVertical: resolvedSpacing.xs,
-          alignSelf: "flex-start",
-        }}
-      >
-        <Timer
-          size={18}
-          color={resolvedColors.mutedForeground}
-          accessibilityElementsHidden
-        />
-        <Text
-          style={{
-            fontSize: resolvedFontSizes.sm,
-            color: resolvedColors.mutedForeground,
-            gap: resolvedSpacing.xs,
-            alignContent: "center",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          Timer
-        </Text>
-      </Pressable>
-    );
-  }
 
   return (
     <View

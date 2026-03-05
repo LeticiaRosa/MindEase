@@ -1,199 +1,366 @@
-import { useRef } from "react";
-import { View, Text, Pressable, Animated } from "react-native";
-import { Swipeable } from "react-native-gesture-handler";
+import { useState, useEffect } from "react";
+import { View, Text, Pressable } from "react-native";
+import {
+  Trash2,
+  ChevronDown,
+  ChevronUp,
+  Timer,
+  Move,
+  Archive,
+  Pencil,
+} from "lucide-react-native";
 import type { Task } from "@/domain/entities/Task";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
-import { FocusTimer } from "./FocusTimer";
+import { useTimerContext } from "@/presentation/contexts/TimerContext";
+import { SmartChecklist } from "@/presentation/components/SmartChecklist";
+import { FocusTimer } from "@/presentation/components/FocusTimer";
+import { FocusTimerFocus } from "./FocusTimerFocus";
+import { TaskEditForm } from "./TaskEditForm";
+import type { UpdateTaskParams } from "@/application/useCases/UpdateTask";
 
 interface TaskCardProps {
   task: Task;
-  onPress?: () => void;
-  onSwipeRight?: () => void;
-  onSwipeLeft?: () => void;
-  onLongPress?: () => void;
-  onExpandFocus?: () => void;
+  onDelete: (id: string) => void;
+  onArchive?: (id: string) => void;
+  onUpdate?: (id: string, params: UpdateTaskParams) => void;
 }
 
 export function TaskCard({
   task,
-  onPress,
-  onSwipeRight,
-  onSwipeLeft,
-  onLongPress,
-  onExpandFocus,
+  onDelete,
+  onArchive,
+  onUpdate,
 }: TaskCardProps) {
   const {
+    mode,
+    helpers,
+    complexity,
     resolvedColors,
     resolvedFontSizes,
     resolvedSpacing,
     resolvedBorderRadius,
   } = useTheme();
-  const swipeableRef = useRef<Swipeable>(null);
+  const [checklistOpen, setChecklistOpen] = useState(mode === "detail");
+  const [timerOpen, setTimerOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [timerFocusOpen, setTimerFocusOpen] = useState(false);
 
-  const steps = task.checklistSteps ?? [];
-  const completedSteps = steps.filter((s) => s.completed).length;
-  const hasSteps = steps.length > 0;
-  const hasTimer = task.totalTimeSpent > 0;
+  useEffect(() => {
+    setChecklistOpen(mode === "detail");
+  }, [mode]);
 
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const h = Math.floor(m / 60);
-    if (h > 0) return `${h}h ${m % 60}m`;
-    return `${m}m`;
+  const { state: timerState } = useTimerContext();
+  const taskTimer = timerState.timers[task.id];
+  const isTimerActive = taskTimer?.status === "running";
+
+  const toLocaleRelativeTime = () => {
+    const now = new Date();
+    const updatedAt = new Date(task.statusUpdatedAt);
+    const diffMs = now.getTime() - updatedAt.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24)
+      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+    const diffDays = Math.floor(diffHours / 24);
+    return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
   };
 
-  const renderRightAction = (
-    _progress: Animated.AnimatedInterpolation<number>,
-    dragX: Animated.AnimatedInterpolation<number>,
-  ) => {
-    if (!onSwipeLeft) return null;
-    const scale = dragX.interpolate({
-      inputRange: [-80, 0],
-      outputRange: [1, 0],
-      extrapolate: "clamp",
-    });
-    return (
-      <Animated.View
-        style={{
-          backgroundColor: resolvedColors.destructive,
-          justifyContent: "center",
-          alignItems: "flex-end",
-          paddingHorizontal: resolvedSpacing.lg,
-          borderRadius: resolvedBorderRadius.md,
-          marginBottom: resolvedSpacing.sm,
-          transform: [{ scale }],
-        }}
-      >
-        <Text
-          style={{
-            color: resolvedColors.destructiveForeground,
-            fontSize: resolvedFontSizes.sm,
-            fontWeight: "600",
-          }}
-        >
-          ← Voltar
-        </Text>
-      </Animated.View>
-    );
+  const formatTimeSpent = (seconds: number) => {
+    if (seconds === 0) return null;
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
   };
 
-  const renderLeftAction = (
-    _progress: Animated.AnimatedInterpolation<number>,
-    dragX: Animated.AnimatedInterpolation<number>,
-  ) => {
-    if (!onSwipeRight) return null;
-    const scale = dragX.interpolate({
-      inputRange: [0, 80],
-      outputRange: [0, 1],
-      extrapolate: "clamp",
-    });
-    return (
-      <Animated.View
-        style={{
-          backgroundColor: resolvedColors.primary,
-          justifyContent: "center",
-          paddingHorizontal: resolvedSpacing.lg,
-          borderRadius: resolvedBorderRadius.md,
-          marginBottom: resolvedSpacing.sm,
-          transform: [{ scale }],
-        }}
-      >
-        <Text
-          style={{
-            color: resolvedColors.primaryForeground,
-            fontSize: resolvedFontSizes.sm,
-            fontWeight: "600",
-          }}
-        >
-          Avançar →
-        </Text>
-      </Animated.View>
-    );
-  };
-
-  const handleSwipeRight = () => {
-    swipeableRef.current?.close();
-    onSwipeRight?.();
-  };
-
-  const handleSwipeLeft = () => {
-    swipeableRef.current?.close();
-    onSwipeLeft?.();
-  };
+  const iconColor = resolvedColors.mutedForeground;
 
   return (
-    <Swipeable
-      ref={swipeableRef}
-      renderLeftActions={renderLeftAction}
-      renderRightActions={renderRightAction}
-      onSwipeableOpen={(direction) => {
-        if (direction === "left") handleSwipeRight();
-        else handleSwipeLeft();
+    <View
+      accessibilityLabel={`Task: ${task.title}`}
+      style={{
+        backgroundColor: resolvedColors.card,
+        borderWidth: 1,
+        borderColor: resolvedColors.border,
+        borderRadius: resolvedBorderRadius.lg,
+        padding: resolvedSpacing.sm,
+        shadowColor: resolvedColors.foreground,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 1,
       }}
-      overshootLeft={false}
-      overshootRight={false}
     >
-      <Pressable
-        onPress={onPress}
-        onLongPress={onLongPress}
-        accessibilityRole="button"
-        accessibilityLabel={task.title}
+      {/* Top action row */}
+      <View
         style={{
-          backgroundColor: resolvedColors.background,
-          borderWidth: 1,
-          borderColor: resolvedColors.border,
-          borderRadius: resolvedBorderRadius.md,
-          padding: resolvedSpacing.md,
-          marginBottom: resolvedSpacing.sm,
+          flexDirection: "row",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: resolvedSpacing.md,
+          padding: resolvedSpacing.sm,
         }}
       >
-        <Text
-          numberOfLines={2}
+        {/* Time spent badge */}
+        {task.totalTimeSpent > 0 && (
+          <View
+            accessibilityLabel={`Total time spent: ${formatTimeSpent(task.totalTimeSpent)}`}
+            style={{
+              marginHorizontal: resolvedSpacing.xs,
+              paddingHorizontal: resolvedSpacing.sm,
+              paddingVertical: 2,
+              backgroundColor: resolvedColors.primary + "1A",
+              borderWidth: 1,
+              borderColor: resolvedColors.primary + "33",
+              borderRadius: 9999,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: resolvedFontSizes.sm,
+                fontWeight: "500",
+                color: resolvedColors.primary,
+              }}
+            >
+              {formatTimeSpent(task.totalTimeSpent)}
+            </Text>
+          </View>
+        )}
+
+        {/* Focus indicator */}
+        {isTimerActive && (
+          <View
+            accessibilityLabel="Timer active"
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: resolvedColors.primary,
+              marginHorizontal: resolvedSpacing.xs,
+            }}
+          />
+        )}
+
+        {/* Edit button */}
+        {onUpdate && (
+          <Pressable
+            onPress={() => setEditDialogOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel={`Edit task: ${task.title}`}
+            hitSlop={8}
+            style={{
+              padding: resolvedSpacing.md,
+              backgroundColor: resolvedColors.muted,
+              borderRadius: 9999,
+            }}
+          >
+            <Pencil size={20} color={iconColor} />
+          </Pressable>
+        )}
+
+        {/* Delete button */}
+        <Pressable
+          onPress={() => onDelete(task.id)}
+          accessibilityRole="button"
+          accessibilityLabel={`Delete task: ${task.title}`}
+          hitSlop={8}
           style={{
-            fontSize: resolvedFontSizes.base,
-            color: resolvedColors.textPrimary,
-            fontWeight: "500",
+            padding: resolvedSpacing.md,
+            backgroundColor: resolvedColors.muted,
+            borderRadius: 9999,
           }}
         >
-          {task.title}
-        </Text>
+          <Trash2 size={20} color={iconColor} />
+        </Pressable>
 
-        {/* Metadata row */}
+        {/* Archive button */}
+        {onArchive && (
+          <Pressable
+            onPress={() => onArchive(task.id)}
+            accessibilityRole="button"
+            accessibilityLabel={`Archive task: ${task.title}`}
+            hitSlop={8}
+            style={{
+              padding: resolvedSpacing.md,
+              backgroundColor: resolvedColors.muted,
+              borderRadius: 9999,
+            }}
+          >
+            <Archive size={20} color={iconColor} />
+          </Pressable>
+        )}
+      </View>
+
+      {/* Title row */}
+      <View style={{ flex: 1 }}>
         <View
           style={{
             flexDirection: "row",
             alignItems: "center",
-            gap: resolvedSpacing.md,
-            marginTop: hasSteps || hasTimer ? resolvedSpacing.xs : 0,
+            gap: resolvedSpacing.sm,
+            paddingTop: resolvedSpacing.xs,
           }}
         >
-          {hasSteps && (
-            <Text
-              style={{
-                fontSize: resolvedFontSizes.sm,
-                color: resolvedColors.mutedForeground,
-              }}
-            >
-              ✓ {completedSteps}/{steps.length}
-            </Text>
-          )}
-          {hasTimer && (
-            <Text
-              style={{
-                fontSize: resolvedFontSizes.sm,
-                color: resolvedColors.mutedForeground,
-              }}
-            >
-              ⏱ {formatTime(task.totalTimeSpent)}
-            </Text>
-          )}
+          <Move size={20} color={iconColor} />
+          <Text
+            style={{
+              flex: 1,
+              fontSize: resolvedFontSizes.base,
+              fontWeight: "500",
+              color: resolvedColors.textPrimary,
+            }}
+          >
+            {task.title}
+          </Text>
         </View>
+        {task.statusUpdatedAt && (
+          <Text
+            accessibilityLabel={`Status updated at ${new Date(task.statusUpdatedAt).toLocaleString()}`}
+            style={{
+              textAlign: "right",
+              fontSize: resolvedFontSizes.xs,
+              color: resolvedColors.mutedForeground,
+              fontWeight: "300",
+              paddingVertical: resolvedSpacing.xs,
+            }}
+          >
+            Created {toLocaleRelativeTime()}
+          </Text>
+        )}
+      </View>
 
-        {/* Inline focus timer */}
-        <View style={{ marginTop: resolvedSpacing.sm }}>
-          <FocusTimer taskId={task.id} onExpand={onExpandFocus} />
+      {/* Action row */}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          padding: resolvedSpacing.md,
+          gap: resolvedSpacing.md,
+        }}
+      >
+        {/* Steps toggle */}
+        <Pressable
+          onPress={() => setChecklistOpen((v) => !v)}
+          accessibilityRole="button"
+          accessibilityState={{ expanded: checklistOpen }}
+          accessibilityLabel={
+            checklistOpen ? "Hide checklist" : "Show checklist"
+          }
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 4,
+            padding: resolvedSpacing.sm,
+            backgroundColor: resolvedColors.muted,
+            borderRadius: 9999,
+          }}
+        >
+          {checklistOpen ? (
+            <ChevronUp size={20} color={iconColor} />
+          ) : (
+            <ChevronDown size={20} color={iconColor} />
+          )}
+          <Text style={{ fontSize: resolvedFontSizes.sm, color: iconColor }}>
+            Steps
+          </Text>
+        </Pressable>
+
+        {/* Timer toggle */}
+        <Pressable
+          onPress={() => setTimerOpen((v) => !v)}
+          accessibilityRole="button"
+          accessibilityState={{ expanded: timerOpen }}
+          accessibilityLabel={timerOpen ? "Hide timer" : "Show timer"}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 4,
+            padding: resolvedSpacing.sm,
+            backgroundColor: resolvedColors.muted,
+            borderRadius: 9999,
+          }}
+        >
+          <Timer
+            size={20}
+            color={isTimerActive ? resolvedColors.primary : iconColor}
+          />
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.md,
+              color: isTimerActive ? resolvedColors.primary : iconColor,
+            }}
+          >
+            Timer
+          </Text>
+        </Pressable>
+
+        {/* Focus toggle */}
+        <Pressable
+          onPress={() => setTimerFocusOpen((v) => !v)}
+          accessibilityRole="button"
+          accessibilityState={{ expanded: timerFocusOpen }}
+          accessibilityLabel={
+            timerFocusOpen ? "Hide focus timer" : "Show focus timer"
+          }
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 4,
+            padding: resolvedSpacing.sm,
+            backgroundColor: resolvedColors.muted,
+            borderRadius: 9999,
+          }}
+        >
+          <Timer
+            size={20}
+            color={isTimerActive ? resolvedColors.primary : iconColor}
+          />
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.md,
+              color: isTimerActive ? resolvedColors.primary : iconColor,
+            }}
+          >
+            Focus
+          </Text>
+        </Pressable>
+
+        <View style={{ flex: 1 }} />
+      </View>
+
+      {/* Timer (collapsible) */}
+      {timerOpen && (
+        <View style={{ marginTop: resolvedSpacing.xs }}>
+          <FocusTimer taskId={task.id} />
         </View>
-      </Pressable>
-    </Swipeable>
+      )}
+
+      {/* Focus Timer (modal) */}
+      <FocusTimerFocus
+        taskId={task.id}
+        taskTitle={task.title}
+        visible={timerFocusOpen}
+        onClose={() => setTimerFocusOpen(false)}
+      />
+
+      {/* Checklist (collapsible) */}
+      {checklistOpen && (
+        <View style={{ marginTop: resolvedSpacing.xs }}>
+          <SmartChecklist taskId={task.id} />
+        </View>
+      )}
+
+      {/* Edit Dialog */}
+      {onUpdate && (
+        <TaskEditForm
+          task={task}
+          visible={editDialogOpen}
+          onClose={() => setEditDialogOpen(false)}
+          onSave={onUpdate}
+        />
+      )}
+    </View>
   );
 }
