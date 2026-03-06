@@ -100,6 +100,7 @@ export function UserMenuBottomSheet({
           >
             <View
               style={{
+                flex: 1,
                 flexDirection: "row",
                 alignItems: "center",
                 gap: resolvedSpacing.md,
@@ -125,7 +126,7 @@ export function UserMenuBottomSheet({
                   {initials}
                 </Text>
               </View>
-              <View>
+              <View style={{ flex: 1 }}>
                 <Text
                   style={{
                     fontSize: resolvedFontSizes.sm,
@@ -152,6 +153,7 @@ export function UserMenuBottomSheet({
                 style={{
                   fontSize: resolvedFontSizes.xl,
                   color: resolvedColors.mutedForeground,
+                  paddingLeft: resolvedSpacing.sm,
                 }}
               >
                 ✕
