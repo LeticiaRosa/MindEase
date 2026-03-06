@@ -66,7 +66,6 @@ export function TimerPreferencesPanel() {
       style={{
         backgroundColor: resolvedColors.card,
         borderRadius: resolvedBorderRadius.lg,
-        padding: resolvedSpacing.lg,
         gap: resolvedSpacing.lg,
       }}
     >

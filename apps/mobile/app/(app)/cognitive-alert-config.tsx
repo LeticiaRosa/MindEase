@@ -7,7 +7,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import Slider from "@react-native-community/slider";
-import { router } from "expo-router";
+import { PageHeader } from "@/presentation/components/PageHeader";
 import { useAlertPreferences } from "@/presentation/contexts/AlertPreferencesContext";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 import type {
@@ -52,37 +52,7 @@ export default function CognitiveAlertConfigScreen() {
     <SafeAreaView
       style={{ flex: 1, backgroundColor: resolvedColors.background }}
     >
-      {/* Header */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: resolvedSpacing.lg,
-          borderBottomWidth: 1,
-          borderBottomColor: resolvedColors.border,
-        }}
-      >
-        <Text
-          style={{
-            fontSize: resolvedFontSizes.xl,
-            fontWeight: "700",
-            color: resolvedColors.textPrimary,
-          }}
-        >
-          Alertas Cognitivos
-        </Text>
-        <Pressable onPress={() => router.back()} accessibilityLabel="Voltar">
-          <Text
-            style={{
-              fontSize: resolvedFontSizes.base,
-              color: resolvedColors.primary,
-            }}
-          >
-            ← Voltar
-          </Text>
-        </Pressable>
-      </View>
+      <PageHeader title=" Alertas Cognitivos " />
 
       {/* Tone */}
       <ScrollView

@@ -8,16 +8,22 @@ import {
   Alert,
   SafeAreaView,
 } from "react-native";
-import { router } from "expo-router";
-import { Pencil, Trash2 } from "lucide-react-native";
+import { Pencil, Trash2, ChevronUp, ChevronDown } from "lucide-react-native";
+import { PageHeader } from "@/presentation/components/PageHeader";
 import { useRoutines } from "@/presentation/hooks/useRoutines";
 import { RoutineIcon } from "@/presentation/components/RoutineIcon";
 import { IconPicker } from "@/presentation/components/IconPicker";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 
 export default function ManageRoutinesScreen() {
-  const { routines, isLoading, createRoutine, updateRoutine, deleteRoutine } =
-    useRoutines();
+  const {
+    routines,
+    isLoading,
+    createRoutine,
+    updateRoutine,
+    deleteRoutine,
+    reorderRoutines,
+  } = useRoutines();
   const {
     resolvedColors,
     resolvedFontSizes,
@@ -58,6 +64,26 @@ export default function ManageRoutinesScreen() {
     setEditingId(null);
   };
 
+  const moveUp = (routine: { id: string; position: number }) => {
+    const idx = routines.findIndex((r) => r.id === routine.id);
+    if (idx <= 0) return;
+    const prev = routines[idx - 1];
+    reorderRoutines([
+      { id: routine.id, position: prev.position },
+      { id: prev.id, position: routine.position },
+    ]);
+  };
+
+  const moveDown = (routine: { id: string; position: number }) => {
+    const idx = routines.findIndex((r) => r.id === routine.id);
+    if (idx >= routines.length - 1) return;
+    const next = routines[idx + 1];
+    reorderRoutines([
+      { id: routine.id, position: next.position },
+      { id: next.id, position: routine.position },
+    ]);
+  };
+
   const handleDelete = (id: string, name: string) => {
     Alert.alert(
       "Excluir rotina",
@@ -77,128 +103,133 @@ export default function ManageRoutinesScreen() {
     <SafeAreaView
       style={{ flex: 1, backgroundColor: resolvedColors.background }}
     >
-      {/* Header */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: resolvedSpacing.lg,
-          borderBottomWidth: 1,
-          borderBottomColor: resolvedColors.border,
-        }}
-      >
-        <Text
-          style={{
-            fontSize: resolvedFontSizes.xl,
-            fontWeight: "700",
-            color: resolvedColors.textPrimary,
-          }}
-        >
-          Gerenciar Rotinas
-        </Text>
-        <Pressable onPress={() => router.back()} accessibilityLabel="Voltar">
-          <Text
-            style={{
-              fontSize: resolvedFontSizes.base,
-              color: resolvedColors.primary,
-            }}
-          >
-            ← Voltar
-          </Text>
-        </Pressable>
-      </View>
+      <PageHeader title={"Gerenciar Kanbans"} />
 
       {/* Create form */}
-      <View
-        style={{
-          backgroundColor: resolvedColors.card,
-          borderRadius: resolvedBorderRadius.lg,
-          padding: resolvedSpacing.md,
+      <ScrollView
+        contentContainerStyle={{
           gap: resolvedSpacing.md,
         }}
       >
-        <Text
+        <View
           style={{
-            fontSize: resolvedFontSizes.lg,
-            fontWeight: "600",
-            color: resolvedColors.textPrimary,
-          }}
-        >
-          Nova Rotina
-        </Text>
-        <TextInput
-          value={newName}
-          onChangeText={setNewName}
-          placeholder="Nome da rotina"
-          placeholderTextColor={resolvedColors.mutedForeground}
-          style={{
-            backgroundColor: resolvedColors.background,
-            borderWidth: 1,
-            borderColor: resolvedColors.border,
-            borderRadius: resolvedBorderRadius.md,
-            paddingHorizontal: resolvedSpacing.md,
-            paddingVertical: resolvedSpacing.sm,
-            fontSize: resolvedFontSizes.base,
-            color: resolvedColors.textPrimary,
-          }}
-        />
-        <IconPicker selected={newIcon} onSelect={setNewIcon} />
-        <Pressable
-          onPress={handleCreate}
-          disabled={!newName.trim()}
-          style={{
-            backgroundColor: newName.trim()
-              ? resolvedColors.primary
-              : resolvedColors.muted,
-            borderRadius: resolvedBorderRadius.md,
-            paddingVertical: resolvedSpacing.md,
-            alignItems: "center",
+            backgroundColor: resolvedColors.card,
+            borderRadius: resolvedBorderRadius.lg,
+            gap: resolvedSpacing.xs,
+            padding: resolvedSpacing.md,
           }}
         >
           <Text
             style={{
-              fontSize: resolvedFontSizes.base,
-              fontWeight: "600",
-              color: newName.trim()
-                ? resolvedColors.primaryForeground
-                : resolvedColors.mutedForeground,
+              fontSize: resolvedFontSizes.sm,
+              color: resolvedColors.mutedForeground,
+              paddingBottom: resolvedSpacing.md,
             }}
           >
-            Criar Rotina
+            Personalize suas rotinas do jeito que quiser! Adicione quantos
+            Kanbans precisar para organizar suas tarefas de forma eficiente.
           </Text>
-        </Pressable>
-      </View>
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.lg,
+              fontWeight: "600",
+              color: resolvedColors.textPrimary,
+              paddingBottom: resolvedSpacing.md,
+            }}
+          >
+            Nova Rotina
+          </Text>
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.md,
+              fontWeight: "600",
+              color: resolvedColors.textPrimary,
+            }}
+          >
+            Nome
+          </Text>
+          <TextInput
+            value={newName}
+            onChangeText={setNewName}
+            placeholder="Ex: Estudos, Projetos pessoais..."
+            placeholderTextColor={resolvedColors.mutedForeground}
+            style={{
+              backgroundColor: resolvedColors.background,
+              borderWidth: 1,
+              borderColor: resolvedColors.border,
+              borderRadius: resolvedBorderRadius.md,
+              paddingHorizontal: resolvedSpacing.md,
+              paddingVertical: resolvedSpacing.sm,
+              fontSize: resolvedFontSizes.base,
+              color: resolvedColors.textPrimary,
+            }}
+          />
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.md,
+              fontWeight: "600",
+              color: resolvedColors.textPrimary,
+              paddingTop: resolvedSpacing.md,
+            }}
+          >
+            Ícone
+          </Text>
+          <IconPicker selected={newIcon} onSelect={setNewIcon} />
+          <View style={{ paddingTop: resolvedSpacing.lg }}>
+            <Pressable
+              onPress={handleCreate}
+              disabled={!newName.trim()}
+              style={{
+                backgroundColor: newName.trim()
+                  ? resolvedColors.primary
+                  : resolvedColors.muted,
+                borderRadius: resolvedBorderRadius.md,
+                paddingVertical: resolvedSpacing.md,
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: resolvedFontSizes.base,
+                  fontWeight: "600",
+                  color: newName.trim()
+                    ? resolvedColors.primaryForeground
+                    : resolvedColors.mutedForeground,
+                }}
+              >
+                Adicionar Kanban
+              </Text>
+            </Pressable>
+          </View>
+        </View>
 
-      {/* Existing routines */}
+        {/* Existing routines */}
 
-      <View
-        style={{
-          gap: resolvedSpacing.xs,
-          paddingHorizontal: resolvedSpacing.md,
-        }}
-      >
-        <Text
+        <View
           style={{
-            fontSize: resolvedFontSizes.lg,
-            fontWeight: "600",
-            color: resolvedColors.textPrimary,
-          }}
-        >
-          Suas Rotinas ({routines.length})
-        </Text>
-        <ScrollView
-          contentContainerStyle={{
-            padding: resolvedSpacing.md,
             gap: resolvedSpacing.md,
+            padding: resolvedSpacing.md,
           }}
         >
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.lg,
+              fontWeight: "600",
+              color: resolvedColors.textPrimary,
+            }}
+          >
+            Seus Kanbans ({routines.length})
+          </Text>
+
           {routines.map((routine) => (
             <View
               key={routine.id}
               style={{
                 backgroundColor: resolvedColors.card,
                 borderRadius: resolvedBorderRadius.lg,
+                borderWidth: 1,
+                borderColor: resolvedColors.border,
+                padding: resolvedSpacing.md,
                 gap: resolvedSpacing.sm,
               }}
             >
@@ -266,19 +297,13 @@ export default function ManageRoutinesScreen() {
                   </View>
                 </>
               ) : (
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
+                <View style={{ gap: resolvedSpacing.sm }}>
+                  {/* Icon + name */}
                   <View
                     style={{
                       flexDirection: "row",
                       alignItems: "center",
                       gap: resolvedSpacing.sm,
-                      flex: 1,
                     }}
                   >
                     <RoutineIcon
@@ -297,9 +322,60 @@ export default function ManageRoutinesScreen() {
                       {routine.name}
                     </Text>
                   </View>
+
+                  {/* Action buttons */}
                   <View
-                    style={{ flexDirection: "row", gap: resolvedSpacing.sm }}
+                    style={{
+                      flexDirection: "row",
+                      gap: resolvedSpacing.sm,
+                      justifyContent: "flex-end",
+                      alignContent: "flex-end",
+                    }}
                   >
+                    <Pressable
+                      onPress={() => moveUp(routine)}
+                      disabled={
+                        routines.findIndex((r) => r.id === routine.id) === 0
+                      }
+                      accessibilityLabel={`Mover ${routine.name} para cima`}
+                      style={{
+                        padding: resolvedSpacing.md - 2,
+                        backgroundColor: resolvedColors.muted,
+                        borderRadius: 9999,
+                        opacity:
+                          routines.findIndex((r) => r.id === routine.id) === 0
+                            ? 0.3
+                            : 1,
+                      }}
+                    >
+                      <ChevronUp
+                        size={18}
+                        color={resolvedColors.mutedForeground}
+                      />
+                    </Pressable>
+                    <Pressable
+                      onPress={() => moveDown(routine)}
+                      disabled={
+                        routines.findIndex((r) => r.id === routine.id) ===
+                        routines.length - 1
+                      }
+                      accessibilityLabel={`Mover ${routine.name} para baixo`}
+                      style={{
+                        padding: resolvedSpacing.md - 2,
+                        backgroundColor: resolvedColors.muted,
+                        borderRadius: 9999,
+                        opacity:
+                          routines.findIndex((r) => r.id === routine.id) ===
+                          routines.length - 1
+                            ? 0.3
+                            : 1,
+                      }}
+                    >
+                      <ChevronDown
+                        size={18}
+                        color={resolvedColors.mutedForeground}
+                      />
+                    </Pressable>
                     <Pressable
                       onPress={() => handleStartEdit(routine)}
                       accessibilityLabel={`Editar ${routine.name}`}
@@ -330,8 +406,8 @@ export default function ManageRoutinesScreen() {
               )}
             </View>
           ))}
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

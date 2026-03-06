@@ -216,7 +216,7 @@ export default function RoutineManagementPage() {
             id="list-heading"
             className="text-base font-semibold mb-4 text-foreground"
           >
-            Seus Kanbans
+            Seus Kanbans ({routines.length})
           </h2>
 
           {isLoading && (

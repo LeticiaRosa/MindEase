@@ -1,5 +1,5 @@
 import { View, Text, Pressable, FlatList, SafeAreaView } from "react-native";
-import { router } from "expo-router";
+import { PageHeader } from "@/presentation/components/PageHeader";
 import { useArchivedTasks } from "@/presentation/hooks/useArchivedTasks";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 
@@ -16,37 +16,7 @@ export default function ArchivedTasksScreen() {
     <SafeAreaView
       style={{ flex: 1, backgroundColor: resolvedColors.background }}
     >
-      {/* Header */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: resolvedSpacing.lg,
-          borderBottomWidth: 1,
-          borderBottomColor: resolvedColors.border,
-        }}
-      >
-        <Text
-          style={{
-            fontSize: resolvedFontSizes.xl,
-            fontWeight: "700",
-            color: resolvedColors.textPrimary,
-          }}
-        >
-          Tarefas Arquivadas
-        </Text>
-        <Pressable onPress={() => router.back()} accessibilityLabel="Voltar">
-          <Text
-            style={{
-              fontSize: resolvedFontSizes.base,
-              color: resolvedColors.primary,
-            }}
-          >
-            ← Voltar
-          </Text>
-        </Pressable>
-      </View>
+      <PageHeader title="Tarefas Arquivadas" />
 
       {isLoading ? (
         <View

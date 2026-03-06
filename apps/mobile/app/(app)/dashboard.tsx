@@ -12,6 +12,10 @@ import {
   Zap,
   CheckCircle2,
   Settings,
+  CalendarDays,
+  Archive,
+  Bell,
+  Timer,
   type LucideIcon,
 } from "lucide-react-native";
 import { useAuth } from "@/presentation/hooks/useAuth";
@@ -132,49 +136,56 @@ export default function DashboardScreen() {
           {(
             [
               {
-                label: "Gerenciar Rotinas",
+                label: "Gerenciar Kanbans",
                 route: "/(app)/manage-routines" as const,
+                Icon: CalendarDays,
               },
               {
                 label: "Tarefas Arquivadas",
                 route: "/(app)/archived-tasks" as const,
+                Icon: Archive,
               },
               {
                 label: "Alertas Cognitivos",
                 route: "/(app)/cognitive-alert-config" as const,
+                Icon: Bell,
+              },
+              {
+                label: "Preferencias do Timer",
+                route: "/(app)/timer-preferences" as const,
+                Icon: Timer,
               },
             ] as const
-          ).map(({ label, route }) => (
+          ).map(({ label, route, Icon }) => (
             <Pressable
               key={route}
               onPress={() => router.push(route)}
               accessibilityRole="button"
+              accessibilityLabel={label}
               style={({ pressed }) => ({
                 padding: resolvedSpacing.md,
                 borderRadius: resolvedBorderRadius.md,
                 backgroundColor: pressed
                   ? resolvedColors.muted
-                  : resolvedColors.card,
+                  : resolvedColors.accent,
                 flexDirection: "row",
                 alignItems: "center",
-                justifyContent: "space-between",
+                gap: resolvedSpacing.md,
               })}
             >
+              <Icon
+                size={20}
+                color={resolvedColors.mutedForeground}
+                strokeWidth={1.8}
+              />
               <Text
                 style={{
+                  flex: 1,
                   fontSize: resolvedFontSizes.base,
                   color: resolvedColors.textPrimary,
                 }}
               >
                 {label}
-              </Text>
-              <Text
-                style={{
-                  fontSize: resolvedFontSizes.base,
-                  color: resolvedColors.mutedForeground,
-                }}
-              >
-                →
               </Text>
             </Pressable>
           ))}
