@@ -102,7 +102,7 @@ export function SignInWithMagicLink({
           marginBottom: resolvedSpacing.lg,
         }}
       >
-        Enviaremos um link mágico para o seu email.
+        Enviaremos um link para o seu email.
       </Text>
 
       <Controller
@@ -201,7 +201,6 @@ export function SignInWithMagicLink({
           </Text>
         )}
       </TouchableOpacity>
-
       <TouchableOpacity
         onPress={onSwitchToPassword}
         accessibilityLabel="Voltar ao login com senha"

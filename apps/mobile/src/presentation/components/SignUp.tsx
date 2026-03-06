@@ -18,6 +18,7 @@ import {
 } from "@/domain/valueObjects/authSchemas";
 import { useAuth } from "@/presentation/hooks/useAuth";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
+import { Logo } from "./Logo";
 
 export function SignUp() {
   const router = useRouter();

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  View,
   Text,
   TouchableOpacity,
   KeyboardAvoidingView,
@@ -10,6 +11,7 @@ import { useRouter } from "expo-router";
 import { SignInWithPassword } from "./SignInWithPassword";
 import { SignInWithMagicLink } from "./SignInWithMagicLink";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
+import { Logo } from "./Logo";
 
 type Mode = "password" | "magic-link";
 
@@ -20,72 +22,61 @@ export function SignIn() {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: resolvedColors.background }}
+      style={{
+        flex: 1,
+        backgroundColor: resolvedColors.background,
+      }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
-          padding: resolvedSpacing.lg,
-          paddingTop: resolvedSpacing["3xl"],
           justifyContent: "center",
         }}
         keyboardShouldPersistTaps="handled"
       >
-        <Text
-          style={{
-            fontSize: resolvedFontSizes["3xl"],
-            fontWeight: "700",
-            color: resolvedColors.textPrimary,
-            marginBottom: resolvedSpacing.sm,
-          }}
-        >
-          MindEase
-        </Text>
-        <Text
-          style={{
-            fontSize: resolvedFontSizes.lg,
-            color: resolvedColors.textSecondary,
-            marginBottom: resolvedSpacing["2xl"],
-          }}
-        >
-          Entrar na sua conta
-        </Text>
+        <View style={{ padding: resolvedSpacing.lg }}>
+          <Logo size="large" />
 
-        {/* Tab selector */}
-        <TabSelector
-          mode={mode}
-          onModeChange={setMode}
-          resolvedColors={resolvedColors}
-          resolvedFontSizes={resolvedFontSizes}
-          resolvedSpacing={resolvedSpacing}
-        />
-
-        {mode === "password" ? (
-          <SignInWithPassword
-            onSwitchToMagicLink={() => setMode("magic-link")}
+          {/* Tab selector */}
+          <TabSelector
+            mode={mode}
+            onModeChange={setMode}
+            resolvedColors={resolvedColors}
+            resolvedFontSizes={resolvedFontSizes}
+            resolvedSpacing={resolvedSpacing}
           />
-        ) : (
-          <SignInWithMagicLink onSwitchToPassword={() => setMode("password")} />
-        )}
 
-        <TouchableOpacity
-          onPress={() => router.push("/(auth)/register")}
-          style={{ marginTop: resolvedSpacing.xl, alignItems: "center" }}
-          accessibilityLabel="Criar uma conta"
-        >
-          <Text
-            style={{
-              fontSize: resolvedFontSizes.base,
-              color: resolvedColors.textSecondary,
-            }}
+          {mode === "password" ? (
+            <SignInWithPassword
+              onSwitchToMagicLink={() => setMode("magic-link")}
+            />
+          ) : (
+            <SignInWithMagicLink
+              onSwitchToPassword={() => setMode("password")}
+            />
+          )}
+
+          <TouchableOpacity
+            onPress={() => router.push("/(auth)/register")}
+            style={{ marginTop: resolvedSpacing.xl, alignItems: "center" }}
+            accessibilityLabel="Criar uma conta"
           >
-            Não tem conta?{" "}
-            <Text style={{ color: resolvedColors.primary, fontWeight: "600" }}>
-              Criar conta
+            <Text
+              style={{
+                fontSize: resolvedFontSizes.base,
+                color: resolvedColors.textSecondary,
+              }}
+            >
+              Não tem conta?{" "}
+              <Text
+                style={{ color: resolvedColors.primary, fontWeight: "600" }}
+              >
+                Criar conta
+              </Text>
             </Text>
-          </Text>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -108,7 +99,7 @@ function TabSelector({
 }) {
   const tabs: { key: Mode; label: string }[] = [
     { key: "password", label: "Senha" },
-    { key: "magic-link", label: "Link Mágico" },
+    { key: "magic-link", label: "Entrar sem senha" },
   ];
 
   return (
