@@ -98,8 +98,8 @@ function TabSelector({
   resolvedSpacing: Record<string, number>;
 }) {
   const tabs: { key: Mode; label: string }[] = [
-    { key: "password", label: "Senha" },
-    { key: "magic-link", label: "Entrar sem senha" },
+    { key: "password", label: "E-mail e Senha" },
+    { key: "magic-link", label: "Link Mágico" },
   ];
 
   return (

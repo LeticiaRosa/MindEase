@@ -59,7 +59,12 @@ export function KanbanColumn({
           {tasks.length}
         </span>
       </header>
-
+      {/* Create task (only in TODO column) */}
+      {status === "todo" && (
+        <div className="px-3 pb-3 pt-1">
+          <TaskCreateForm onSubmit={onCreateTask} />
+        </div>
+      )}
       {/* Task list */}
       <div
         ref={setNodeRef}
@@ -86,13 +91,6 @@ export function KanbanColumn({
           )}
         </SortableContext>
       </div>
-
-      {/* Create task (only in TODO column) */}
-      {status === "todo" && (
-        <div className="px-3 pb-3 pt-1">
-          <TaskCreateForm onSubmit={onCreateTask} />
-        </div>
-      )}
     </section>
   );
 }

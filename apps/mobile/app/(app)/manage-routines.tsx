@@ -5,7 +5,6 @@ import {
   TextInput,
   Pressable,
   ScrollView,
-  Alert,
   SafeAreaView,
 } from "react-native";
 import { Pencil, Trash2, ChevronUp, ChevronDown } from "lucide-react-native";
@@ -13,6 +12,7 @@ import { PageHeader } from "@/presentation/components/PageHeader";
 import { useRoutines } from "@/presentation/hooks/useRoutines";
 import { RoutineIcon } from "@/presentation/components/RoutineIcon";
 import { IconPicker } from "@/presentation/components/IconPicker";
+import { ConfirmDeleteDialog } from "@/presentation/components/ConfirmDeleteDialog";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 
 export default function ManageRoutinesScreen() {
@@ -84,19 +84,12 @@ export default function ManageRoutinesScreen() {
     ]);
   };
 
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [confirmDeleteName, setConfirmDeleteName] = useState("");
+
   const handleDelete = (id: string, name: string) => {
-    Alert.alert(
-      "Excluir rotina",
-      `Tem certeza que deseja excluir "${name}"? As tarefas da rotina serão mantidas.`,
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Excluir",
-          style: "destructive",
-          onPress: () => deleteRoutine(id),
-        },
-      ],
-    );
+    setConfirmDeleteName(name);
+    setConfirmDeleteId(id);
   };
 
   return (
@@ -408,6 +401,17 @@ export default function ManageRoutinesScreen() {
           ))}
         </View>
       </ScrollView>
+
+      <ConfirmDeleteDialog
+        open={confirmDeleteId !== null}
+        title="Excluir Kanban?"
+        description={`Tem certeza que deseja excluir "${confirmDeleteName}"? As tarefas da rotina serão mantidas.`}
+        onConfirm={() => {
+          if (confirmDeleteId) deleteRoutine(confirmDeleteId);
+          setConfirmDeleteId(null);
+        }}
+        onCancel={() => setConfirmDeleteId(null)}
+      />
     </SafeAreaView>
   );
 }

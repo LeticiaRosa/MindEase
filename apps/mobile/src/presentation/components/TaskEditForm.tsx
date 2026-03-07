@@ -127,6 +127,9 @@ export function TaskEditForm({
               onChangeText={setTitle}
               placeholder="Nome da tarefa"
               placeholderTextColor={resolvedColors.mutedForeground}
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
               style={{
                 backgroundColor: resolvedColors.card,
                 borderWidth: 1,
@@ -136,6 +139,7 @@ export function TaskEditForm({
                 paddingVertical: resolvedSpacing.sm,
                 fontSize: resolvedFontSizes.base,
                 color: resolvedColors.textPrimary,
+                minHeight: 100,
               }}
             />
           </View>
@@ -157,7 +161,7 @@ export function TaskEditForm({
               placeholder="Detalhes adicionais…"
               placeholderTextColor={resolvedColors.mutedForeground}
               multiline
-              numberOfLines={4}
+              numberOfLines={12}
               textAlignVertical="top"
               style={{
                 backgroundColor: resolvedColors.card,
@@ -168,7 +172,7 @@ export function TaskEditForm({
                 paddingVertical: resolvedSpacing.sm,
                 fontSize: resolvedFontSizes.base,
                 color: resolvedColors.textPrimary,
-                minHeight: 100,
+                minHeight: 200,
               }}
             />
           </View>

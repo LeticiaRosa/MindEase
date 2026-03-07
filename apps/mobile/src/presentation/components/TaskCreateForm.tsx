@@ -43,7 +43,7 @@ export function TaskCreateForm({ onSubmit }: TaskCreateFormProps) {
           borderWidth: 1,
           borderColor: resolvedColors.border,
           borderRadius: resolvedBorderRadius.md,
-          paddingHorizontal: resolvedSpacing.md,
+          paddingHorizontal: resolvedSpacing.sm,
           paddingVertical: resolvedSpacing.sm,
           fontSize: resolvedFontSizes.base,
           color: resolvedColors.textPrimary,

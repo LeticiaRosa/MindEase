@@ -66,7 +66,7 @@ export function SignIn() {
               data-[state=active]:border-primary data-[state=active]:shadow-md cursor-pointer"
             >
               <Sparkles className="w-4 h-4 mr-2" />
-              Magic Link
+              Link Mágico
             </TabsTrigger>
           </TabsList>
 
@@ -84,7 +84,10 @@ export function SignIn() {
             onClick={() => navigate("/register")}
             disabled={loading}
           >
-            Não tem conta? Criar conta
+            <p className="text-muted-foreground hover:underline">
+              Não tem conta?{" "}
+            </p>
+            Criar conta
           </Button>
         </div>
       </CardContent>

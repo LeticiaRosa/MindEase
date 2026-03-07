@@ -197,7 +197,7 @@ export default function DashboardScreen() {
             <View
               style={{
                 paddingHorizontal: resolvedSpacing.md,
-                paddingTop: resolvedSpacing.md,
+                paddingTop: resolvedSpacing.sm,
                 paddingBottom: resolvedSpacing.sm,
                 backgroundColor: resolvedColors.background,
               }}

@@ -16,7 +16,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  Input,
   Textarea,
 } from "@repo/ui";
 
@@ -105,9 +104,9 @@ export function TaskEditForm({
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input
+                    <Textarea
                       placeholder="Task title…"
-                      type="text"
+                      className="min-h-16 resize-none"
                       {...field}
                       autoFocus
                     />

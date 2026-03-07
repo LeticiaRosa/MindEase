@@ -62,16 +62,7 @@ function DashboardContent() {
       </header>
       {/* Incluir scroll overflow */}
       <main className="max-w-7xl my-6 mx-auto px-6 py-4 border border-border rounded-lg shadow-xs">
-        <div className="flex items-center place-content-between mb-2 gap-4">
-          <h1 className="text-xl font-semibold tracking-tight text-foreground">
-            My Kamban{" "}
-            {routines.length > 0 &&
-              `- ${routines.find((r) => r.id === activeRoutineId)?.name || ""}`}
-          </h1>
-        </div>
-        <div className="flex items-center place-content-end mb-4 ">
-          <Routine />
-        </div>
+        <Routine />
         <div className="mb-2 place-items-start overflow-auto">
           <KanbanBoard />
         </div>

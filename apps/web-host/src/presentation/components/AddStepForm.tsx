@@ -1,5 +1,4 @@
-import { useState, useRef } from "react";
-import { Plus } from "lucide-react";
+import { useState } from "react";
 import { Input, Button } from "@repo/ui";
 
 interface AddStepFormProps {
@@ -7,68 +6,70 @@ interface AddStepFormProps {
 }
 
 export function AddStepForm({ onSubmit }: AddStepFormProps) {
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [title, setTitle] = useState("");
 
-  const handleOpen = () => {
-    setOpen(true);
-    setTimeout(() => inputRef.current?.focus(), 50);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const trimmed = value.trim();
+  const handleSubmit = () => {
+    const trimmed = title.trim();
     if (!trimmed) return;
     onSubmit(trimmed);
-    setValue("");
-    setOpen(false);
+    setTitle("");
+    setExpanded(false);
   };
 
-  if (!open) {
+  const handleCancel = () => {
+    setTitle("");
+    setExpanded(false);
+  };
+
+  if (!expanded) {
     return (
       <button
-        onClick={handleOpen}
-        className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded"
-        aria-label="Add a step"
+        onClick={() => setExpanded(true)}
+        className="w-full flex items-center justify-center text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded py-0.5"
+        aria-label="Adicionar etapa"
       >
-        <Plus className="size-3" />
-        Add step
+        + Adicionar etapa
       </button>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2">
+    <div className="flex flex-col gap-1.5">
       <Input
-        ref={inputRef}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder="Step description…"
-        className="h-7 text-xs flex-1"
-        aria-label="New step description"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === "Escape") {
-            setValue("");
-            setOpen(false);
-          }
+          if (e.key === "Enter") handleSubmit();
+          if (e.key === "Escape") handleCancel();
         }}
+        placeholder="Descrição da etapa…"
+        className="h-7 text-xs"
+        aria-label="Descrição da etapa"
+        autoFocus
       />
-      <Button type="submit" size="sm" className="h-7 px-2 text-xs">
-        Add
-      </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        className="h-7 px-2 text-xs"
-        onClick={() => {
-          setValue("");
-          setOpen(false);
-        }}
-      >
-        Cancel
-      </Button>
-    </form>
+      <div className="flex gap-2">
+        <Button
+          type="button"
+          size="sm"
+          className="flex-1 h-7 text-xs"
+          disabled={!title.trim()}
+          onClick={handleSubmit}
+          aria-label="Adicionar etapa"
+        >
+          Adicionar
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="flex-1 h-7 text-xs"
+          onClick={handleCancel}
+          aria-label="Cancelar"
+        >
+          Cancelar
+        </Button>
+      </div>
+    </div>
   );
 }

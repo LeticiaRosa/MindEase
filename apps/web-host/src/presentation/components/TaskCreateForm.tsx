@@ -1,109 +1,43 @@
-import { useState, useRef } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Plus } from "lucide-react";
-import {
-  Button,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Input,
-} from "@repo/ui";
-import { useActiveRoutine } from "@/presentation/contexts/ActiveRoutineContext";
-
-const schema = z.object({
-  title: z.string().min(1, "Title is required").max(200),
-});
-
-type FormValues = z.infer<typeof schema>;
+import { useState } from "react";
+import { Input, Button } from "@repo/ui";
 
 interface TaskCreateFormProps {
   onSubmit: (title: string) => void;
 }
 
 export function TaskCreateForm({ onSubmit }: TaskCreateFormProps) {
-  const [open, setOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const { activeRoutineId } = useActiveRoutine();
-  const isDisabled = !activeRoutineId;
+  const [title, setTitle] = useState("");
 
-  const formTask = useForm<FormValues>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      title: "",
-    },
-  });
-
-  const submit = (values: FormValues) => {
-    onSubmit(values.title);
-    formTask.reset();
-    setOpen(false);
+  const handleSubmit = () => {
+    const trimmed = title.trim();
+    if (!trimmed) return;
+    onSubmit(trimmed);
+    setTitle("");
   };
 
-  const handleOpen = () => {
-    setOpen(true);
-    setTimeout(() => inputRef.current?.focus(), 50);
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") handleSubmit();
   };
-
-  if (!open) {
-    return (
-      <button
-        onClick={handleOpen}
-        disabled={isDisabled}
-        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:opacity-50 disabled:cursor-not-allowed"
-        aria-label="Add a task"
-      >
-        <Plus className="size-4" />
-        Add task
-      </button>
-    );
-  }
 
   return (
-    <Form {...formTask}>
-      <form
-        onSubmit={formTask.handleSubmit(submit)}
-        className="flex flex-col gap-2"
+    <div className="flex gap-2 items-center">
+      <Input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="Nova tarefa…"
+        className="flex-1"
+        aria-label="Título da nova tarefa"
+      />
+      <Button
+        type="button"
+        size="sm"
+        disabled={!title.trim()}
+        onClick={handleSubmit}
+        aria-label="Adicionar tarefa"
       >
-        <FormField
-          control={formTask.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>New Task</FormLabel>
-              <FormControl>
-                <Input placeholder="Task title…" type="text" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {formTask.formState.errors.title && (
-          <p className="text-xs text-destructive" role="alert">
-            {formTask.formState.errors.title.message}
-          </p>
-        )}
-        <div className="flex gap-2">
-          <Button type="submit" size="sm" className="flex-1">
-            Add
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              formTask.reset();
-              setOpen(false);
-            }}
-          >
-            Cancel
-          </Button>
-        </div>
-      </form>
-    </Form>
+        +
+      </Button>
+    </div>
   );
 }

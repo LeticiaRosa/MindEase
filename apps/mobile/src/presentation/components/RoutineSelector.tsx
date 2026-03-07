@@ -26,7 +26,7 @@ export function RoutineSelector({
   return (
     <View
       style={{
-        gap: resolvedSpacing.lg,
+        gap: resolvedSpacing.md,
         paddingVertical: resolvedSpacing.sm,
       }}
     >

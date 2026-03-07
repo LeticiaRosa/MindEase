@@ -16,6 +16,7 @@ import { SmartChecklist } from "@/presentation/components/SmartChecklist";
 import { FocusTimer } from "@/presentation/components/FocusTimer";
 import { FocusTimerFocus } from "./FocusTimerFocus";
 import { TaskEditForm } from "./TaskEditForm";
+import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
 import type { UpdateTaskParams } from "@/application/useCases/UpdateTask";
 
 interface TaskCardProps {
@@ -43,6 +44,7 @@ export function TaskCard({
   const [checklistOpen, setChecklistOpen] = useState(mode === "detail");
   const [timerOpen, setTimerOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [timerFocusOpen, setTimerFocusOpen] = useState(false);
 
   useEffect(() => {
@@ -179,7 +181,7 @@ export function TaskCard({
 
         {/* Delete button */}
         <Pressable
-          onPress={() => onDelete(task.id)}
+          onPress={() => setConfirmDeleteOpen(true)}
           accessibilityRole="button"
           accessibilityLabel={`Delete task: ${task.title}`}
           hitSlop={8}
@@ -361,6 +363,18 @@ export function TaskCard({
           onSave={onUpdate}
         />
       )}
+
+      {/* Delete confirmation */}
+      <ConfirmDeleteDialog
+        open={confirmDeleteOpen}
+        title="Excluir tarefa?"
+        description="Esta tarefa e todos os seus passos serão removidos permanentemente. Esta ação não pode ser desfeita."
+        onConfirm={() => {
+          onDelete(task.id);
+          setConfirmDeleteOpen(false);
+        }}
+        onCancel={() => setConfirmDeleteOpen(false)}
+      />
     </View>
   );
 }

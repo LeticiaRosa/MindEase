@@ -177,7 +177,10 @@ export function SignUp() {
             onClick={() => navigate("/login")}
             disabled={loading}
           >
-            Já tem uma conta? Faça login
+            <p className="text-muted-foreground hover:underline">
+              Já tem uma conta?{" "}
+            </p>
+            Faça login
           </Button>
         </div>
       </CardContent>

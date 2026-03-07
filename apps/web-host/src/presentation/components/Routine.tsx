@@ -1,24 +1,14 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  SelectGroup,
-  SelectLabel,
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@repo/ui";
+import { useNavigate } from "react-router-dom";
+import { cn } from "@repo/ui";
 import { useRoutines } from "@/presentation/hooks/useRoutines";
 import { useActiveRoutine } from "@/presentation/contexts/ActiveRoutineContext";
 import { RoutineIcon } from "@/presentation/components/RoutineIcon";
-import { useThemePreferences } from "../contexts/ThemePreferencesContext";
 
 export function Routine() {
   const { routines, isLoading } = useRoutines();
   const { activeRoutineId, setActiveRoutineId } = useActiveRoutine();
-  const { helpers } = useThemePreferences();
+  const navigate = useNavigate();
+
   if (isLoading) {
     return (
       <div
@@ -29,48 +19,51 @@ export function Routine() {
   }
 
   return (
-    <div className="flex items-center gap-4 ">
-      <Tooltip>
-        <Select
-          value={activeRoutineId ?? ""}
-          onValueChange={setActiveRoutineId}
-          disabled={routines.length === 0}
-        >
-          <TooltipTrigger asChild className="w-full">
-            <SelectTrigger
-              id="kanban-select"
-              className="w-full text-md cursor-pointer"
-              aria-label="Selecionar Kanban"
+    <div className="flex flex-col gap-3 p-4">
+      <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+        Kanbans
+      </span>
+
+      <div
+        role="tablist"
+        aria-label="Selecionar Kanban"
+        className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {routines.map((routine) => {
+          const isActive = routine.id === activeRoutineId;
+          return (
+            <button
+              key={routine.id}
+              role="tab"
+              aria-selected={isActive}
+              aria-label={routine.name}
+              onClick={() => setActiveRoutineId(routine.id)}
+              className={cn(
+                "flex cursor-pointer shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                isActive
+                  ? "border-primary bg-primary font-semibold text-primary-foreground"
+                  : "border-border bg-card font-normal text-foreground hover:bg-muted",
+              )}
             >
-              <SelectValue placeholder="Selecione um Kanban" />
-            </SelectTrigger>
-          </TooltipTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Kanbans</SelectLabel>
-              {routines.map((routine) => (
-                <SelectItem key={routine.id} value={routine.id}>
-                  <span className="flex items-center gap-2 m-1 text-md text-light-foreground">
-                    <RoutineIcon
-                      name={routine.icon}
-                      className="size-4 text-foreground"
-                    />
-                    {routine.name}
-                  </span>
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        {helpers === "show" && (
-          <TooltipContent>
-            <span className="">
-              {routines.find((r) => r.id === activeRoutineId)?.name ||
-                "Select a Kanban"}
-            </span>
-          </TooltipContent>
-        )}
-      </Tooltip>
+              <RoutineIcon
+                name={routine.icon}
+                className={cn(
+                  "size-4",
+                  isActive ? "text-primary-foreground" : "text-foreground",
+                )}
+              />
+              {routine.name}
+            </button>
+          );
+        })}
+        <button
+          onClick={() => navigate("/settings/routines")}
+          className="text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+          aria-label="Gerenciar rotinas"
+        >
+          Gerenciar
+        </button>
+      </div>
     </div>
   );
 }

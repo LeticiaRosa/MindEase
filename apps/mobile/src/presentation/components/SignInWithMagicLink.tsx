@@ -95,16 +95,6 @@ export function SignInWithMagicLink({
 
   return (
     <>
-      <Text
-        style={{
-          fontSize: resolvedFontSizes.base,
-          color: resolvedColors.textSecondary,
-          marginBottom: resolvedSpacing.lg,
-        }}
-      >
-        Enviaremos um link para o seu email.
-      </Text>
-
       <Controller
         control={control}
         name="email"
@@ -158,19 +148,6 @@ export function SignInWithMagicLink({
           </View>
         )}
       />
-
-      {serverError && (
-        <Text
-          style={{
-            fontSize: resolvedFontSizes.sm,
-            color: resolvedColors.destructive,
-            marginBottom: resolvedSpacing.md,
-          }}
-        >
-          {serverError}
-        </Text>
-      )}
-
       <TouchableOpacity
         style={[
           {
@@ -201,6 +178,64 @@ export function SignInWithMagicLink({
           </Text>
         )}
       </TouchableOpacity>
+      <Text
+        style={{
+          fontSize: resolvedFontSizes.base,
+          color: resolvedColors.textSecondary,
+          marginBottom: resolvedSpacing.xs,
+        }}
+      >
+        Como funciona:
+      </Text>
+      <Text
+        style={{
+          fontSize: resolvedFontSizes.base,
+          color: resolvedColors.textSecondary,
+          marginBottom: resolvedSpacing.xs,
+        }}
+      >
+        1. Digite seu email acima
+      </Text>
+      <Text
+        style={{
+          fontSize: resolvedFontSizes.base,
+          color: resolvedColors.textSecondary,
+          marginBottom: resolvedSpacing.xs,
+        }}
+      >
+        2. Receba um link seguro por email
+      </Text>
+      <Text
+        style={{
+          fontSize: resolvedFontSizes.base,
+          color: resolvedColors.textSecondary,
+          marginBottom: resolvedSpacing.lg,
+        }}
+      >
+        3. Clique no link para fazer login
+      </Text>
+      <Text
+        style={{
+          fontSize: resolvedFontSizes.sm,
+          color: resolvedColors.textSecondary,
+          marginBottom: resolvedSpacing.lg,
+        }}
+      >
+        O link é válido por 5 minutos e pode ser usado apenas uma vez.
+      </Text>
+
+      {serverError && (
+        <Text
+          style={{
+            fontSize: resolvedFontSizes.sm,
+            color: resolvedColors.destructive,
+            marginBottom: resolvedSpacing.md,
+          }}
+        >
+          {serverError}
+        </Text>
+      )}
+
       <TouchableOpacity
         onPress={onSwitchToPassword}
         accessibilityLabel="Voltar ao login com senha"
@@ -213,7 +248,7 @@ export function SignInWithMagicLink({
             padding: resolvedSpacing.sm,
           }}
         >
-          Usar senha
+          Entrar com senha
         </Text>
       </TouchableOpacity>
     </>

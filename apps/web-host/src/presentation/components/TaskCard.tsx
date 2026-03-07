@@ -19,6 +19,7 @@ import { useTimerContext } from "@/presentation/contexts/TimerContext";
 import { FocusTimerFocus } from "./FocusTimerFocus";
 import { useThemePreferences } from "../contexts/ThemePreferencesContext";
 import { TaskEditForm } from "./TaskEditForm";
+import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
 import type { UpdateTaskParams } from "@/application/useCases/UpdateTask";
 
 interface TaskCardProps {
@@ -38,6 +39,7 @@ export function TaskCard({
   const [checklistOpen, setChecklistOpen] = useState(mode === "detail");
   const [timerOpen, setTimerOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   useEffect(() => {
     setChecklistOpen(mode === "detail");
@@ -161,7 +163,7 @@ export function TaskCard({
               onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation();
-                onDelete(task.id);
+                setConfirmDeleteOpen(true);
               }}
               aria-label={`Delete task: ${task.title}`}
             >
@@ -323,6 +325,18 @@ export function TaskCard({
           onSubmit={onUpdate}
         />
       )}
+
+      {/* Delete confirmation */}
+      <ConfirmDeleteDialog
+        open={confirmDeleteOpen}
+        title="Excluir tarefa?"
+        description="Esta tarefa e todos os seus passos serão removidos permanentemente. Esta ação não pode ser desfeita."
+        onConfirm={() => {
+          onDelete(task.id);
+          setConfirmDeleteOpen(false);
+        }}
+        onCancel={() => setConfirmDeleteOpen(false)}
+      />
     </article>
   );
 }

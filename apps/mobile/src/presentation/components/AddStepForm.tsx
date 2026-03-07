@@ -36,13 +36,19 @@ export function AddStepForm({ onSubmit }: AddStepFormProps) {
         accessibilityRole="button"
         accessibilityLabel="Adicionar etapa"
         style={{
+          flexDirection: "row",
           paddingVertical: resolvedSpacing.xs,
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         <Text
           style={{
             fontSize: resolvedFontSizes.sm,
-            color: resolvedColors.mutedForeground,
+            color: resolvedColors.textSecondary,
+            padding: resolvedSpacing.sm,
+            backgroundColor: resolvedColors.muted,
+            borderRadius: 9999,
           }}
         >
           + Adicionar etapa

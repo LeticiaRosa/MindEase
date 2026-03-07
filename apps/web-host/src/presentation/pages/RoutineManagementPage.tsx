@@ -27,6 +27,7 @@ import { useRoutines } from "@/presentation/hooks/useRoutines";
 import { IconPicker } from "@/presentation/components/IconPicker";
 import { RoutineIcon } from "@/presentation/components/RoutineIcon";
 import { DEFAULT_ROUTINE_ICON } from "@/presentation/components/RoutineIcon";
+import { ConfirmDeleteDialog } from "@/presentation/components/ConfirmDeleteDialog";
 import type { Routine } from "@/domain/entities/Routine";
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
@@ -342,39 +343,13 @@ export default function RoutineManagementPage() {
       </div>
 
       {/* ── Delete confirmation dialog ────────────────────────────────────── */}
-      {confirmDeleteId && (
-        <div
-          role="alertdialog"
-          aria-modal="true"
-          aria-labelledby="confirm-delete-title"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4"
-        >
-          <div className="bg-card border border-border rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-4">
-            <h3
-              id="confirm-delete-title"
-              className="text-base font-semibold text-foreground"
-            >
-              Excluir Kanban?
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Todas as tarefas deste Kanban serão removidas permanentemente.
-              Esta ação não pode ser desfeita.
-            </p>
-            <div className="flex gap-3 justify-end">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setConfirmDeleteId(null)}
-              >
-                Cancelar
-              </Button>
-              <Button variant="destructive" size="sm" onClick={confirmDelete}>
-                Excluir
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDeleteDialog
+        open={confirmDeleteId !== null}
+        title="Excluir Kanban?"
+        description="Todas as tarefas deste Kanban serão removidas permanentemente. Esta ação não pode ser desfeita."
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmDeleteId(null)}
+      />
     </div>
   );
 }
