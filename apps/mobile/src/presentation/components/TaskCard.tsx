@@ -153,7 +153,7 @@ export function TaskCard({
           accessibilityElementsHidden
           style={{
             position: "absolute",
-            left: 0,
+            right: 0,
             top: 0,
             bottom: 0,
             width: 100,
@@ -182,7 +182,7 @@ export function TaskCard({
           accessibilityElementsHidden
           style={{
             position: "absolute",
-            right: 0,
+            left: 0,
             top: 0,
             bottom: 0,
             width: 100,
