@@ -243,7 +243,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                     <Pencil size={14} color={resolvedColors.mutedForeground} />
                   </Pressable>
                   <Pressable
-                    onPress={() => deleteStep(step.id)}
+                    onPress={() => setDeletingStepId(step.id)}
                     hitSlop={8}
                     accessibilityRole="button"
                     accessibilityLabel="Remover etapa"

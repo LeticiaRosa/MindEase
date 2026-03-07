@@ -16,8 +16,12 @@ export function ConfirmDeleteDialog({
   onConfirm,
   onCancel,
 }: ConfirmDeleteDialogProps) {
-  const { resolvedColors, resolvedFontSizes, resolvedSpacing, resolvedBorderRadius } =
-    useTheme();
+  const {
+    resolvedColors,
+    resolvedFontSizes,
+    resolvedSpacing,
+    resolvedBorderRadius,
+  } = useTheme();
 
   return (
     <Modal
