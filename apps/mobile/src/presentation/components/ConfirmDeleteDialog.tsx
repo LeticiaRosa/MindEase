@@ -39,7 +39,7 @@ export function ConfirmDeleteDialog({
           backgroundColor: "rgba(0,0,0,0.5)",
           justifyContent: "center",
           alignItems: "center",
-          padding: resolvedSpacing.lg,
+          padding: resolvedSpacing.md,
         }}
       >
         {/* Card — stop propagation so tapping inside doesn't close */}
@@ -52,13 +52,13 @@ export function ConfirmDeleteDialog({
             borderRadius: resolvedBorderRadius.xl ?? resolvedBorderRadius.lg,
             padding: resolvedSpacing.lg,
             width: "100%",
-            maxWidth: 360,
+            maxWidth: 400,
             gap: resolvedSpacing.md,
           }}
         >
           <Text
             style={{
-              fontSize: resolvedFontSizes.base,
+              fontSize: resolvedFontSizes.lg,
               fontWeight: "600",
               color: resolvedColors.textPrimary,
             }}
@@ -67,9 +67,9 @@ export function ConfirmDeleteDialog({
           </Text>
           <Text
             style={{
-              fontSize: resolvedFontSizes.sm,
+              fontSize: resolvedFontSizes.base,
               color: resolvedColors.mutedForeground,
-              lineHeight: resolvedFontSizes.sm * 1.5,
+              lineHeight: resolvedFontSizes.base * 1.5,
             }}
           >
             {description}
@@ -77,7 +77,8 @@ export function ConfirmDeleteDialog({
           <View
             style={{
               flexDirection: "row",
-              justifyContent: "flex-end",
+              justifyContent: "space-between",
+              paddingTop: resolvedSpacing.md,
               gap: resolvedSpacing.sm,
             }}
           >
@@ -86,7 +87,7 @@ export function ConfirmDeleteDialog({
               accessibilityRole="button"
               accessibilityLabel="Cancelar"
               style={{
-                paddingVertical: resolvedSpacing.xs,
+                paddingVertical: resolvedSpacing.md,
                 paddingHorizontal: resolvedSpacing.md,
                 borderRadius: resolvedBorderRadius.md,
                 backgroundColor: resolvedColors.muted,
@@ -94,7 +95,7 @@ export function ConfirmDeleteDialog({
             >
               <Text
                 style={{
-                  fontSize: resolvedFontSizes.sm,
+                  fontSize: resolvedFontSizes.base,
                   color: resolvedColors.mutedForeground,
                   fontWeight: "500",
                 }}
@@ -107,7 +108,7 @@ export function ConfirmDeleteDialog({
               accessibilityRole="button"
               accessibilityLabel="Excluir"
               style={{
-                paddingVertical: resolvedSpacing.xs,
+                paddingVertical: resolvedSpacing.md,
                 paddingHorizontal: resolvedSpacing.md,
                 borderRadius: resolvedBorderRadius.md,
                 backgroundColor: resolvedColors.destructive,
@@ -115,7 +116,7 @@ export function ConfirmDeleteDialog({
             >
               <Text
                 style={{
-                  fontSize: resolvedFontSizes.sm,
+                  fontSize: resolvedFontSizes.base,
                   color: "#fff",
                   fontWeight: "600",
                 }}

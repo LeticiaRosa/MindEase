@@ -1,19 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
   Pressable,
-  TextInput,
   LayoutAnimation,
-  Modal,
-  KeyboardAvoidingView,
   Platform,
   UIManager,
 } from "react-native";
-import { Pencil, Trash2 } from "lucide-react-native";
+import {
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Pencil,
+  Trash2,
+} from "lucide-react-native";
 import { useSmartChecklist } from "@/presentation/hooks/useSmartChecklist";
 import { AddStepForm } from "./AddStepForm";
 import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
+import { StepFormModal } from "./StepFormModal";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 
 if (
@@ -32,6 +36,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
     currentStep,
     incompleteSteps,
     completedSteps,
+    remainingCount,
     allDone,
     totalSteps,
     completedCount,
@@ -42,15 +47,20 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
   } = useSmartChecklist(taskId);
   const {
     mode,
+    complexity,
     resolvedColors,
     resolvedFontSizes,
     resolvedSpacing,
     resolvedBorderRadius,
   } = useTheme();
 
-  const defaultExpanded = mode === "detail";
-  const [showCompleted, setShowCompleted] = useState(false);
-  const [showUpcoming, setShowUpcoming] = useState(defaultExpanded);
+  const [showAllStepsConcluded, setShowAllStepsConcluded] = useState(
+    mode === "detail",
+  );
+  const [showAll, setShowAll] = useState(mode === "detail");
+  const [animatingId, setAnimatingId] = useState<string | null>(null);
+  const prevCurrentIdRef = useRef<string | null>(null);
+  const animateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [editingStep, setEditingStep] = useState<{
     id: string;
     title: string;
@@ -59,19 +69,32 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
 
   const upcomingSteps = incompleteSteps.slice(1);
 
+  useEffect(() => {
+    setShowAll(mode === "detail");
+    setShowAllStepsConcluded(mode === "detail");
+  }, [mode]);
+
+  useEffect(() => {
+    const currentId = currentStep?.id ?? null;
+    if (currentId && currentId !== prevCurrentIdRef.current) {
+      const wasActive = prevCurrentIdRef.current !== null;
+      prevCurrentIdRef.current = currentId;
+      const t1 = setTimeout(() => {
+        if (wasActive) {
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          setAnimatingId(currentId);
+        }
+      }, 20);
+      animateTimerRef.current = setTimeout(() => setAnimatingId(null), 370);
+      return () => {
+        clearTimeout(t1);
+        if (animateTimerRef.current) clearTimeout(animateTimerRef.current);
+      };
+    }
+  }, [currentStep?.id]);
+
   const startEditing = (id: string, currentTitle: string) => {
     setEditingStep({ id, title: currentTitle });
-  };
-
-  const saveEditing = () => {
-    if (editingStep && editingStep.title.trim()) {
-      updateStep(editingStep.id, editingStep.title.trim());
-    }
-    setEditingStep(null);
-  };
-
-  const cancelEditing = () => {
-    setEditingStep(null);
   };
 
   if (totalSteps === 0) {
@@ -93,55 +116,44 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
 
   return (
     <View style={{ gap: resolvedSpacing.sm }}>
-      {/* Progress bar */}
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: resolvedSpacing.sm,
-        }}
-      >
+      {/* Progress bar — only in complex mode */}
+      {complexity === "complex" && totalSteps > 0 && (
         <View
           style={{
-            flex: 1,
-            height: 6,
-            backgroundColor: resolvedColors.muted,
-            borderRadius: 3,
-            overflow: "hidden",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: resolvedSpacing.sm,
           }}
         >
           <View
             style={{
-              width: `${(completedCount / totalSteps) * 100}%`,
-              height: "100%",
-              backgroundColor: resolvedColors.primary,
+              flex: 1,
+              height: 6,
+              backgroundColor: resolvedColors.muted,
               borderRadius: 3,
+              overflow: "hidden",
             }}
-          />
+          >
+            <View
+              style={{
+                width: `${(completedCount / totalSteps) * 100}%`,
+                height: "100%",
+                backgroundColor: resolvedColors.primary,
+                borderRadius: 3,
+              }}
+            />
+          </View>
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.xs,
+              color: resolvedColors.mutedForeground,
+            }}
+          >
+            {completedCount}/{totalSteps}
+          </Text>
         </View>
-        <Text
-          style={{
-            fontSize: resolvedFontSizes.xs,
-            color: resolvedColors.mutedForeground,
-          }}
-        >
-          {completedCount}/{totalSteps}
-        </Text>
-      </View>
-
-      {/* All done */}
-      {allDone && (
-        <Text
-          style={{
-            fontSize: resolvedFontSizes.base,
-            color: resolvedColors.primary,
-            fontWeight: "600",
-            textAlign: "center",
-          }}
-        >
-          ✓ Todas as etapas concluídas!
-        </Text>
       )}
+
       {/* Completed steps section */}
       {completedSteps.length > 0 && (
         <View>
@@ -150,38 +162,59 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
               LayoutAnimation.configureNext(
                 LayoutAnimation.Presets.easeInEaseOut,
               );
-              setShowCompleted((prev) => !prev);
+              setShowAllStepsConcluded((prev) => !prev);
             }}
             accessibilityRole="button"
-            accessibilityLabel={`${showCompleted ? "Ocultar" : "Mostrar"} ${completedSteps.length} etapa${completedSteps.length > 1 ? "s" : ""} concluída${completedSteps.length > 1 ? "s" : ""}`}
-            style={{ paddingVertical: resolvedSpacing.xs }}
+            accessibilityState={{ expanded: showAllStepsConcluded }}
+            accessibilityLabel={
+              showAllStepsConcluded
+                ? "Ocultar etapas concluídas"
+                : `Mostrar ${completedSteps.length} etapa${completedSteps.length === 1 ? "" : "s"} concluída${completedSteps.length === 1 ? "" : "s"}`
+            }
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: resolvedSpacing.xs,
+              paddingVertical: resolvedSpacing.xs,
+            }}
           >
+            {showAllStepsConcluded ? (
+              <ChevronUp size={12} color={resolvedColors.mutedForeground} />
+            ) : (
+              <ChevronDown size={12} color={resolvedColors.mutedForeground} />
+            )}
             <Text
               style={{
                 fontSize: resolvedFontSizes.sm,
                 color: resolvedColors.mutedForeground,
               }}
             >
-              {showCompleted ? "▼" : "▶"} {completedSteps.length} concluída
-              {completedSteps.length > 1 ? "s" : ""}
+              {showAllStepsConcluded
+                ? "Ocultar etapas concluídas"
+                : `${completedSteps.length} etapa${completedSteps.length === 1 ? "" : "s"} concluída${completedSteps.length === 1 ? "" : "s"}`}
             </Text>
           </Pressable>
-          {showCompleted &&
+          {showAllStepsConcluded &&
             completedSteps.map((step) => (
               <View
                 key={step.id}
                 style={{
                   paddingVertical: resolvedSpacing.xs,
                   paddingHorizontal: resolvedSpacing.sm,
-                  opacity: 0.6,
+                  borderRadius: resolvedBorderRadius.md,
+                  backgroundColor: resolvedColors.muted + "66",
+                  borderWidth: 2,
+                  borderColor: resolvedColors.border + "4D",
+                  opacity: 0.8,
                   gap: resolvedSpacing.xs,
+                  marginBottom: resolvedSpacing.xs,
                 }}
               >
                 <View
                   style={{
                     flexDirection: "row",
                     alignItems: "center",
-                    gap: resolvedSpacing.md,
+                    gap: resolvedSpacing.sm,
                   }}
                 >
                   <Pressable
@@ -224,7 +257,9 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                 <View
                   style={{
                     flexDirection: "row",
+                    justifyContent: "flex-end",
                     alignItems: "center",
+                    gap: 2,
                     paddingLeft: 38,
                   }}
                 >
@@ -232,7 +267,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                     onPress={() => startEditing(step.id, step.title)}
                     hitSlop={8}
                     accessibilityRole="button"
-                    accessibilityLabel="Editar etapa"
+                    accessibilityLabel={`Editar etapa: ${step.title}`}
                     style={{
                       minWidth: 44,
                       minHeight: 44,
@@ -240,13 +275,13 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                       justifyContent: "center",
                     }}
                   >
-                    <Pencil size={14} color={resolvedColors.mutedForeground} />
+                    <Pencil size={12} color={resolvedColors.mutedForeground} />
                   </Pressable>
                   <Pressable
                     onPress={() => setDeletingStepId(step.id)}
                     hitSlop={8}
                     accessibilityRole="button"
-                    accessibilityLabel="Remover etapa"
+                    accessibilityLabel={`Remover etapa: ${step.title}`}
                     style={{
                       minWidth: 44,
                       minHeight: 44,
@@ -254,24 +289,26 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                       justifyContent: "center",
                     }}
                   >
-                    <Trash2 size={14} color={resolvedColors.mutedForeground} />
+                    <Trash2 size={12} color={resolvedColors.mutedForeground} />
                   </Pressable>
                 </View>
               </View>
             ))}
         </View>
       )}
-      {/* Current step */}
+
+      {/* Current prominent step */}
       {currentStep && (
         <View
           style={{
             gap: resolvedSpacing.xs,
-            backgroundColor: resolvedColors.card,
+            backgroundColor: resolvedColors.muted + "66",
             borderWidth: 2,
             borderColor: resolvedColors.ring,
             borderRadius: resolvedBorderRadius.md,
             paddingHorizontal: resolvedSpacing.sm,
             paddingVertical: resolvedSpacing.xs,
+            opacity: animatingId === currentStep.id ? 0.85 : 1,
           }}
         >
           <View
@@ -285,7 +322,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
               onPress={() => toggleStep(currentStep.id, true)}
               accessibilityRole="checkbox"
               accessibilityState={{ checked: false }}
-              accessibilityLabel={`Marcar etapa como concluída: ${currentStep.title}`}
+              accessibilityLabel={`Concluir: ${currentStep.title}`}
               hitSlop={8}
               style={{
                 width: 22,
@@ -305,6 +342,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                 fontSize: resolvedFontSizes.base,
                 color: resolvedColors.textPrimary,
                 fontWeight: "500",
+                paddingVertical: resolvedSpacing.xs,
               }}
             >
               {currentStep.title}
@@ -313,7 +351,9 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
           <View
             style={{
               flexDirection: "row",
+              justifyContent: "flex-end",
               alignItems: "center",
+              gap: 2,
               paddingLeft: 38,
             }}
           >
@@ -321,7 +361,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
               onPress={() => startEditing(currentStep.id, currentStep.title)}
               hitSlop={8}
               accessibilityRole="button"
-              accessibilityLabel="Editar etapa"
+              accessibilityLabel={`Editar etapa: ${currentStep.title}`}
               style={{
                 minWidth: 44,
                 minHeight: 44,
@@ -329,13 +369,13 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                 justifyContent: "center",
               }}
             >
-              <Pencil size={16} color={resolvedColors.mutedForeground} />
+              <Pencil size={12} color={resolvedColors.mutedForeground} />
             </Pressable>
             <Pressable
               onPress={() => setDeletingStepId(currentStep.id)}
               hitSlop={8}
               accessibilityRole="button"
-              accessibilityLabel="Remover etapa"
+              accessibilityLabel={`Remover etapa: ${currentStep.title}`}
               style={{
                 minWidth: 44,
                 minHeight: 44,
@@ -343,120 +383,172 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                 justifyContent: "center",
               }}
             >
-              <Trash2 size={16} color={resolvedColors.mutedForeground} />
+              <Trash2 size={12} color={resolvedColors.mutedForeground} />
             </Pressable>
           </View>
         </View>
       )}
 
-      {/* Upcoming steps section */}
-      {upcomingSteps.length > 0 && (
+      {/* All done */}
+      {allDone && (
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: resolvedSpacing.xs,
+          }}
+        >
+          <Check size={12} color={resolvedColors.primary} />
+          <Text
+            style={{
+              fontSize: resolvedFontSizes.sm,
+              color: resolvedColors.mutedForeground,
+            }}
+          >
+            Todas as etapas concluídas!
+          </Text>
+        </View>
+      )}
+
+      {/* Upcoming steps — toggled */}
+      {remainingCount > 0 && (
         <View>
           <Pressable
             onPress={() => {
               LayoutAnimation.configureNext(
                 LayoutAnimation.Presets.easeInEaseOut,
               );
-              setShowUpcoming((prev) => !prev);
+              setShowAll((prev) => !prev);
             }}
             accessibilityRole="button"
-            accessibilityLabel={`${showUpcoming ? "Ocultar" : "Mostrar"} ${upcomingSteps.length} etapa${upcomingSteps.length > 1 ? "s" : ""} restante${upcomingSteps.length > 1 ? "s" : ""}`}
-            style={{ paddingVertical: resolvedSpacing.xs }}
+            accessibilityState={{ expanded: showAll }}
+            accessibilityLabel={
+              showAll
+                ? "Ocultar etapas pendentes"
+                : `${remainingCount} etapa${remainingCount === 1 ? "" : "s"} pendente${remainingCount === 1 ? "" : "s"}`
+            }
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: resolvedSpacing.xs,
+              paddingVertical: resolvedSpacing.xs,
+            }}
           >
+            {showAll ? (
+              <ChevronUp size={12} color={resolvedColors.mutedForeground} />
+            ) : (
+              <ChevronDown size={12} color={resolvedColors.mutedForeground} />
+            )}
             <Text
               style={{
                 fontSize: resolvedFontSizes.sm,
                 color: resolvedColors.mutedForeground,
               }}
             >
-              {showUpcoming ? "▼" : "▶"} +{upcomingSteps.length} etapa
-              {upcomingSteps.length > 1 ? "s" : ""} restante
-              {upcomingSteps.length > 1 ? "s" : ""}
+              {showAll
+                ? "Ocultar etapas pendentes"
+                : `${remainingCount} etapa${remainingCount === 1 ? "" : "s"} pendente${remainingCount === 1 ? "" : "s"}`}
             </Text>
           </Pressable>
-          {showUpcoming &&
-            upcomingSteps.map((step) => (
-              <View
-                key={step.id}
-                style={{
-                  paddingVertical: resolvedSpacing.xs,
-                  paddingHorizontal: resolvedSpacing.sm,
-                  gap: resolvedSpacing.xs,
-                }}
-              >
+          {showAll && (
+            <View style={{ gap: resolvedSpacing.sm }}>
+              {upcomingSteps.map((step) => (
                 <View
+                  key={step.id}
                   style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: resolvedSpacing.sm,
+                    paddingVertical: resolvedSpacing.xs,
+                    paddingHorizontal: resolvedSpacing.sm,
+                    borderRadius: resolvedBorderRadius.md,
+                    backgroundColor: resolvedColors.muted + "66",
+                    borderWidth: 1,
+                    borderColor: resolvedColors.border + "4D",
+                    opacity: 0.8,
+                    gap: resolvedSpacing.xs,
                   }}
                 >
-                  <Pressable
-                    onPress={() => toggleStep(step.id, true)}
-                    accessibilityRole="checkbox"
-                    accessibilityState={{ checked: false }}
-                    accessibilityLabel={`Marcar etapa como concluída: ${step.title}`}
-                    hitSlop={8}
+                  <View
                     style={{
-                      width: 22,
-                      height: 22,
-                      minWidth: 30,
-                      minHeight: 30,
-                      borderRadius: 11,
-                      borderWidth: 2,
-                      borderColor: resolvedColors.muted,
+                      flexDirection: "row",
                       alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  />
-                  <Text
-                    style={{
-                      flex: 1,
-                      fontSize: resolvedFontSizes.sm,
-                      color: resolvedColors.mutedForeground,
+                      gap: resolvedSpacing.sm,
                     }}
                   >
-                    {step.title}
-                  </Text>
+                    <Pressable
+                      onPress={() => toggleStep(step.id, true)}
+                      accessibilityRole="checkbox"
+                      accessibilityState={{ checked: false }}
+                      accessibilityLabel={`Concluir: ${step.title}`}
+                      hitSlop={8}
+                      style={{
+                        width: 22,
+                        height: 22,
+                        minWidth: 30,
+                        minHeight: 30,
+                        borderRadius: 11,
+                        borderWidth: 2,
+                        borderColor: resolvedColors.muted,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    />
+                    <Text
+                      style={{
+                        flex: 1,
+                        fontSize: resolvedFontSizes.sm,
+                        color: resolvedColors.mutedForeground,
+                      }}
+                    >
+                      {step.title}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                      gap: 2,
+                      paddingLeft: 38,
+                    }}
+                  >
+                    <Pressable
+                      onPress={() => startEditing(step.id, step.title)}
+                      hitSlop={8}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Editar etapa: ${step.title}`}
+                      style={{
+                        minWidth: 44,
+                        minHeight: 44,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Pencil
+                        size={12}
+                        color={resolvedColors.mutedForeground}
+                      />
+                    </Pressable>
+                    <Pressable
+                      onPress={() => setDeletingStepId(step.id)}
+                      hitSlop={8}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Remover etapa: ${step.title}`}
+                      style={{
+                        minWidth: 44,
+                        minHeight: 44,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Trash2
+                        size={12}
+                        color={resolvedColors.mutedForeground}
+                      />
+                    </Pressable>
+                  </View>
                 </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    paddingLeft: 38,
-                  }}
-                >
-                  <Pressable
-                    onPress={() => startEditing(step.id, step.title)}
-                    hitSlop={8}
-                    accessibilityRole="button"
-                    accessibilityLabel="Editar etapa"
-                    style={{
-                      minWidth: 44,
-                      minHeight: 44,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Pencil size={14} color={resolvedColors.mutedForeground} />
-                  </Pressable>
-                  <Pressable
-                    onPress={() => setDeletingStepId(step.id)}
-                    hitSlop={8}
-                    accessibilityRole="button"
-                    accessibilityLabel="Remover etapa"
-                    style={{
-                      minWidth: 44,
-                      minHeight: 44,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Trash2 size={14} color={resolvedColors.mutedForeground} />
-                  </Pressable>
-                </View>
-              </View>
-            ))}
+              ))}
+            </View>
+          )}
         </View>
       )}
 
@@ -476,111 +568,17 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
       />
 
       {/* Edit step modal */}
-      <Modal
+      <StepFormModal
         visible={editingStep !== null}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={cancelEditing}
-      >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{ flex: 1, backgroundColor: resolvedColors.background }}
-        >
-          {/* Header */}
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: resolvedSpacing.lg,
-              borderBottomWidth: 1,
-              borderBottomColor: resolvedColors.border,
-            }}
-          >
-            <Pressable
-              onPress={cancelEditing}
-              accessibilityRole="button"
-              accessibilityLabel="Cancelar edição"
-            >
-              <Text
-                style={{
-                  color: resolvedColors.mutedForeground,
-                  fontSize: resolvedFontSizes.base,
-                }}
-              >
-                Cancelar
-              </Text>
-            </Pressable>
-            <Text
-              style={{
-                fontSize: resolvedFontSizes.lg,
-                fontWeight: "600",
-                color: resolvedColors.textPrimary,
-              }}
-            >
-              Editar Etapa
-            </Text>
-            <Pressable
-              onPress={saveEditing}
-              accessibilityRole="button"
-              accessibilityLabel="Salvar edição"
-            >
-              <Text
-                style={{
-                  color: resolvedColors.primary,
-                  fontSize: resolvedFontSizes.base,
-                  fontWeight: "600",
-                  opacity: editingStep?.title.trim() ? 1 : 0.4,
-                }}
-              >
-                Salvar
-              </Text>
-            </Pressable>
-          </View>
-
-          {/* Body */}
-          <View
-            style={{
-              padding: resolvedSpacing.lg,
-              gap: resolvedSpacing.xs,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: resolvedFontSizes.sm,
-                fontWeight: "600",
-                color: resolvedColors.mutedForeground,
-              }}
-            >
-              Título
-            </Text>
-            <TextInput
-              value={editingStep?.title}
-              onChangeText={(text) =>
-                setEditingStep((prev) =>
-                  prev ? { ...prev, title: text } : null,
-                )
-              }
-              placeholder="Nome da etapa"
-              placeholderTextColor={resolvedColors.mutedForeground}
-              multiline
-              numberOfLines={12}
-              textAlignVertical="top"
-              style={{
-                backgroundColor: resolvedColors.card,
-                borderWidth: 1,
-                borderColor: resolvedColors.border,
-                borderRadius: resolvedBorderRadius.md,
-                paddingHorizontal: resolvedSpacing.md,
-                paddingVertical: resolvedSpacing.sm,
-                fontSize: resolvedFontSizes.base,
-                color: resolvedColors.textPrimary,
-                minHeight: 200,
-              }}
-            />
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
+        modalTitle="Editar etapa"
+        saveLabel="Salvar"
+        initialValue={editingStep?.title ?? ""}
+        onSave={(title) => {
+          if (editingStep) updateStep(editingStep.id, title);
+          setEditingStep(null);
+        }}
+        onClose={() => setEditingStep(null)}
+      />
     </View>
   );
 }
