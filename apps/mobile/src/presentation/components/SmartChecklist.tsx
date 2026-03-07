@@ -179,9 +179,9 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
             }}
           >
             {showAllStepsConcluded ? (
-              <ChevronUp size={12} color={resolvedColors.mutedForeground} />
+              <ChevronUp size={18} color={resolvedColors.mutedForeground} />
             ) : (
-              <ChevronDown size={12} color={resolvedColors.mutedForeground} />
+              <ChevronDown size={18} color={resolvedColors.mutedForeground} />
             )}
             <Text
               style={{
@@ -275,7 +275,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                       justifyContent: "center",
                     }}
                   >
-                    <Pencil size={12} color={resolvedColors.mutedForeground} />
+                    <Pencil size={14} color={resolvedColors.mutedForeground} />
                   </Pressable>
                   <Pressable
                     onPress={() => setDeletingStepId(step.id)}
@@ -289,7 +289,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                       justifyContent: "center",
                     }}
                   >
-                    <Trash2 size={12} color={resolvedColors.mutedForeground} />
+                    <Trash2 size={14} color={resolvedColors.mutedForeground} />
                   </Pressable>
                 </View>
               </View>
@@ -369,7 +369,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                 justifyContent: "center",
               }}
             >
-              <Pencil size={12} color={resolvedColors.mutedForeground} />
+              <Pencil size={18} color={resolvedColors.mutedForeground} />
             </Pressable>
             <Pressable
               onPress={() => setDeletingStepId(currentStep.id)}
@@ -383,7 +383,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                 justifyContent: "center",
               }}
             >
-              <Trash2 size={12} color={resolvedColors.mutedForeground} />
+              <Trash2 size={18} color={resolvedColors.mutedForeground} />
             </Pressable>
           </View>
         </View>
@@ -398,7 +398,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
             gap: resolvedSpacing.xs,
           }}
         >
-          <Check size={12} color={resolvedColors.primary} />
+          <Check size={18} color={resolvedColors.primary} />
           <Text
             style={{
               fontSize: resolvedFontSizes.sm,
@@ -435,9 +435,9 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
             }}
           >
             {showAll ? (
-              <ChevronUp size={12} color={resolvedColors.mutedForeground} />
+              <ChevronUp size={18} color={resolvedColors.mutedForeground} />
             ) : (
-              <ChevronDown size={12} color={resolvedColors.mutedForeground} />
+              <ChevronDown size={18} color={resolvedColors.mutedForeground} />
             )}
             <Text
               style={{
@@ -523,7 +523,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                       }}
                     >
                       <Pencil
-                        size={12}
+                        size={14}
                         color={resolvedColors.mutedForeground}
                       />
                     </Pressable>
@@ -540,7 +540,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                       }}
                     >
                       <Trash2
-                        size={12}
+                        size={14}
                         color={resolvedColors.mutedForeground}
                       />
                     </Pressable>
