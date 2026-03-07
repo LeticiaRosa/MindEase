@@ -26,7 +26,6 @@ export function AddStepForm({ onSubmit }: AddStepFormProps) {
       >
         <Text
           style={{
-            fontSize: resolvedFontSizes.xs,
             color: resolvedColors.mutedForeground,
           }}
         >

@@ -6,6 +6,7 @@ import {
   Text,
   Pressable,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import {
   Circle,
@@ -48,6 +49,7 @@ const TABS: TabDef[] = [
 
 export default function DashboardScreen() {
   const [activeTab, setActiveTab] = useState<TabId>("todo");
+  const insets = useSafeAreaInsets();
 
   const router = useRouter();
   const { user } = useAuth();
@@ -263,13 +265,14 @@ export default function DashboardScreen() {
         </>
       )}
 
-      {/* Bottom tab bar */}
+      {/* Bottom tab bar — paddingBottom estende o bg até cobrir a área do indicador de gestos */}
       <View
         style={{
           flexDirection: "row",
           borderTopWidth: 1,
           borderTopColor: resolvedColors.muted,
           backgroundColor: resolvedColors.background,
+          paddingBottom: insets.bottom,
         }}
       >
         {TABS.map(({ id, label, Icon }) => {

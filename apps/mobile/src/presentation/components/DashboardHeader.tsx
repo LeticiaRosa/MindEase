@@ -5,6 +5,7 @@ import { UserMenuBottomSheet } from "./UserMenuBottomSheet";
 import { CognitiveAlertBanner } from "./CognitiveAlertBanner";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Logo } from "./Logo";
 
 interface DashboardHeaderProps {
   user: User;
@@ -42,30 +43,7 @@ export function DashboardHeader({
           justifyContent: "space-between",
         }}
       >
-        <View
-          style={{
-            flexDirection: "column",
-            alignItems: "flex-start",
-          }}
-        >
-          <Text
-            style={{
-              fontSize: resolvedFontSizes.xl,
-              fontWeight: "700",
-              color: resolvedColors.primary,
-            }}
-          >
-            MindEase
-          </Text>
-          <Text
-            style={{
-              fontSize: resolvedFontSizes.xs,
-              color: resolvedColors.mutedForeground,
-            }}
-          >
-            Focus on what matters next
-          </Text>
-        </View>
+        <Logo size="small" />
         <Pressable
           onPress={() => setMenuOpen(true)}
           accessibilityLabel={`Menu do usuário ${displayName}`}

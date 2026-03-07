@@ -19,6 +19,7 @@ export function PageHeader({ title, onBack }: PageHeaderProps) {
         padding: resolvedSpacing.lg,
         borderBottomWidth: 1,
         borderBottomColor: resolvedColors.border,
+        paddingTop: resolvedSpacing["2xl"] + 8, // Adding extra padding for better spacing with status bar
       }}
     >
       <Text

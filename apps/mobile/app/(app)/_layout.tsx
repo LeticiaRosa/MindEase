@@ -7,6 +7,12 @@ import { AlertPreferencesProvider } from "@/presentation/contexts/AlertPreferenc
 import { ActivitySignalsProvider } from "@/presentation/contexts/ActivitySignalsContext";
 import { ActiveRoutineProvider } from "@/presentation/contexts/ActiveRoutineContext";
 import { TimerProvider } from "@/presentation/contexts/TimerContext";
+import { useTimerPreferences } from "@/presentation/hooks/useTimerPreferences";
+
+function TimerPreferencesBootstrap() {
+  useTimerPreferences();
+  return null;
+}
 
 export default function AppLayout() {
   const { user, loading } = useAuth();
@@ -32,7 +38,13 @@ export default function AppLayout() {
         <ActivitySignalsProvider>
           <ActiveRoutineProvider>
             <TimerProvider>
-              <Stack screenOptions={{ headerShown: false }}>
+              <TimerPreferencesBootstrap />
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  contentStyle: { backgroundColor: resolvedColors.background },
+                }}
+              >
                 <Stack.Screen name="dashboard" />
                 <Stack.Screen name="manage-routines" />
                 <Stack.Screen name="archived-tasks" />

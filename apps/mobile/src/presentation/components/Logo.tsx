@@ -11,14 +11,13 @@ export function Logo({ size = "medium" }: LogoProps) {
       style={{
         flexDirection: "column",
         alignItems: "flex-start",
-        paddingBottom: resolvedSpacing["2xl"],
       }}
     >
       <Text
         style={{
           fontSize:
             size === "small"
-              ? resolvedFontSizes["2xl"]
+              ? resolvedFontSizes["xl"]
               : size === "medium"
                 ? resolvedFontSizes["3xl"]
                 : resolvedFontSizes["4xl"],
@@ -31,7 +30,7 @@ export function Logo({ size = "medium" }: LogoProps) {
       <Text
         style={{
           fontSize:
-            size === "small" ? resolvedFontSizes.sm : resolvedFontSizes.base,
+            size === "small" ? resolvedFontSizes.xs : resolvedFontSizes.base,
           color: resolvedColors.mutedForeground,
         }}
       >

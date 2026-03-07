@@ -22,7 +22,12 @@ export default function AuthLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: resolvedColors.background },
+      }}
+    >
       <Stack.Screen name="login" />
       <Stack.Screen name="register" />
       <Stack.Screen name="magic-link-callback" />
