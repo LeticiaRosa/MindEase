@@ -69,9 +69,15 @@ export default function DashboardScreen() {
     tasksByStatus,
     createTask,
     updateTask,
+    updateTaskStatus,
     deleteTask,
     archiveTask,
   } = useTaskKanban(effectiveRoutineId);
+
+  const handleStatusChange = (
+    id: string,
+    newStatus: Parameters<typeof updateTaskStatus>[0]["status"],
+  ) => updateTaskStatus({ id, status: newStatus });
 
   const {
     bannerActive,
@@ -227,6 +233,7 @@ export default function DashboardScreen() {
                 onDeleteTask={deleteTask}
                 onArchiveTask={archiveTask}
                 onUpdateTask={updateTask}
+                onStatusChangeTask={handleStatusChange}
                 emptyMessage="Nenhuma tarefa pendente"
               />
             )}
@@ -237,6 +244,7 @@ export default function DashboardScreen() {
                 onDeleteTask={deleteTask}
                 onArchiveTask={archiveTask}
                 onUpdateTask={updateTask}
+                onStatusChangeTask={handleStatusChange}
                 emptyMessage="Nenhuma tarefa em andamento"
               />
             )}
@@ -247,6 +255,7 @@ export default function DashboardScreen() {
                 onDeleteTask={deleteTask}
                 onArchiveTask={archiveTask}
                 onUpdateTask={updateTask}
+                onStatusChangeTask={handleStatusChange}
                 emptyMessage="Nenhuma tarefa concluída"
               />
             )}

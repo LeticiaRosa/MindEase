@@ -9,6 +9,7 @@ import {
   UIManager,
 } from "react-native";
 import type { Task } from "@/domain/entities/Task";
+import type { TaskStatus } from "@/domain/valueObjects/TaskStatus";
 import { TaskCard } from "./TaskCard";
 import { TaskCreateForm } from "./TaskCreateForm";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
@@ -31,6 +32,7 @@ interface TaskGroupProps {
     id: string,
     params: { title?: string; description?: string },
   ) => void;
+  onStatusChangeTask?: (id: string, newStatus: TaskStatus) => void;
   emptyMessage?: string;
 }
 
@@ -42,6 +44,7 @@ export function TaskGroup({
   onDeleteTask,
   onArchiveTask,
   onUpdateTask,
+  onStatusChangeTask,
   emptyMessage = "Nenhuma tarefa aqui ainda",
 }: TaskGroupProps) {
   const {
@@ -87,6 +90,7 @@ export function TaskGroup({
               onDelete={onDeleteTask}
               onArchive={onArchiveTask}
               onUpdate={onUpdateTask}
+              onStatusChange={onStatusChangeTask}
             />
           )}
         />
