@@ -7,6 +7,7 @@ import {
   useTheme,
 } from "@/presentation/contexts/ThemePreferencesContext";
 import { SystemBarsManager } from "@/presentation/components/SystemBarsManager";
+import { AlertProvider } from "@/presentation/contexts/AlertContext";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -33,17 +34,19 @@ function AppShell() {
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView style={{ flex: 1, backgroundColor: bg }}>
-        <SystemBarsManager />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: bg },
-          }}
-        >
-          <Stack.Screen name="index" />
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(app)" />
-        </Stack>
+        <AlertProvider>
+          <SystemBarsManager />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: bg },
+            }}
+          >
+            <Stack.Screen name="index" />
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(app)" />
+          </Stack>
+        </AlertProvider>
       </GestureHandlerRootView>
     </SafeAreaProvider>
   );

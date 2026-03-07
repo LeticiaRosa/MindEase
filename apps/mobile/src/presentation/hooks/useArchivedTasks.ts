@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Alert } from "react-native";
+import { useAlert } from "@/presentation/contexts/AlertContext";
 import { SupabaseTaskRepository } from "@/infrastructure/adapters/SupabaseTaskRepository";
 import { UpdateTaskStatus } from "@/application/useCases/UpdateTaskStatus";
 import type { Task } from "@/domain/entities/Task";
@@ -10,6 +10,7 @@ const updateTaskStatus = new UpdateTaskStatus(repository);
 
 export function useArchivedTasks() {
   const queryClient = useQueryClient();
+  const { showAlert } = useAlert();
 
   const { data: archivedTasks = [], isLoading } = useQuery<Task[]>({
     queryKey: ["archivedTasks"],
@@ -28,13 +29,17 @@ export function useArchivedTasks() {
       return { previous };
     },
     onSuccess: (task) => {
-      Alert.alert("Sucesso", `Tarefa restaurada para "${task.status}"`);
+      showAlert(
+        "Sucesso",
+        `Tarefa restaurada para "${task.status}"`,
+        "success",
+      );
       queryClient.invalidateQueries({ queryKey: ["tasks", task.routineId] });
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["archivedTasks"], ctx.previous);
-      Alert.alert("Erro", "Falha ao restaurar tarefa");
+      showAlert("Erro", "Falha ao restaurar tarefa", "error");
     },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["archivedTasks"] }),

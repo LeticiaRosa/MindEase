@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Alert } from "react-native";
+import { useAlert } from "@/presentation/contexts/AlertContext";
 import { useTimerContext } from "@/presentation/contexts/TimerContext";
 import { SupabaseTaskRepository } from "@/infrastructure/adapters/SupabaseTaskRepository";
 import { useQueryClient } from "@tanstack/react-query";
@@ -17,6 +17,7 @@ export function useFocusTimer(taskId: string) {
     getTimerState,
   } = useTimerContext();
   const queryClient = useQueryClient();
+  const { showAlert } = useAlert();
 
   const timer = getTimerState(taskId);
   const isActive = !!state.timers[taskId];
@@ -36,7 +37,7 @@ export function useFocusTimer(taskId: string) {
         timer.mode === "focus"
           ? "Sessão de foco concluída — hora de uma pausa"
           : "Pausa concluída — pronto para focar?";
-      Alert.alert("Timer", modeLabel);
+      showAlert("Timer", modeLabel, "info");
       nextMode(taskId);
     }
   }, [

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Alert } from "react-native";
+import { useAlert } from "@/presentation/contexts/AlertContext";
 import { SupabaseTaskRepository } from "@/infrastructure/adapters/SupabaseTaskRepository";
 import { ToggleChecklistStep } from "@/application/useCases/ToggleChecklistStep";
 import { AddChecklistStep } from "@/application/useCases/AddChecklistStep";
@@ -15,6 +15,7 @@ const updateStepUseCase = new UpdateChecklistStep(repository);
 
 export function useSmartChecklist(taskId: string) {
   const queryClient = useQueryClient();
+  const { showAlert } = useAlert();
   const qKey = ["checklist_steps", taskId];
 
   const { data: steps = [] } = useQuery<ChecklistStep[]>({
@@ -70,7 +71,7 @@ export function useSmartChecklist(taskId: string) {
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(qKey, ctx.previous);
-      Alert.alert("Erro", "Falha ao adicionar etapa");
+      showAlert("Erro", "Falha ao adicionar etapa", "error");
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: qKey }),
   });
@@ -87,7 +88,7 @@ export function useSmartChecklist(taskId: string) {
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(qKey, ctx.previous);
-      Alert.alert("Erro", "Falha ao remover etapa");
+      showAlert("Erro", "Falha ao remover etapa", "error");
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: qKey }),
   });
@@ -105,7 +106,7 @@ export function useSmartChecklist(taskId: string) {
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(qKey, ctx.previous);
-      Alert.alert("Erro", "Falha ao atualizar etapa");
+      showAlert("Erro", "Falha ao atualizar etapa", "error");
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: qKey }),
   });

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Alert } from "react-native";
+import { useAlert } from "@/presentation/contexts/AlertContext";
 import { SupabaseTaskRepository } from "@/infrastructure/adapters/SupabaseTaskRepository";
 import { CreateTask } from "@/application/useCases/CreateTask";
 import { UpdateTask } from "@/application/useCases/UpdateTask";
@@ -23,6 +23,7 @@ export interface UpdateTaskParams {
 
 export function useTaskKanban(routineId: string) {
   const queryClient = useQueryClient();
+  const { showAlert } = useAlert();
 
   const { data: tasks = [], isLoading } = useQuery<Task[]>({
     queryKey: ["tasks", routineId],
@@ -56,7 +57,7 @@ export function useTaskKanban(routineId: string) {
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["tasks", routineId], ctx.previous);
-      Alert.alert("Erro", "Falha ao criar tarefa");
+      showAlert("Erro", "Falha ao criar tarefa", "error");
     },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
@@ -76,7 +77,7 @@ export function useTaskKanban(routineId: string) {
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["tasks", routineId], ctx.previous);
-      Alert.alert("Erro", "Falha ao atualizar tarefa");
+      showAlert("Erro", "Falha ao atualizar tarefa", "error");
     },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
@@ -105,7 +106,7 @@ export function useTaskKanban(routineId: string) {
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["tasks", routineId], ctx.previous);
-      Alert.alert("Erro", "Falha ao reordenar tarefas");
+      showAlert("Erro", "Falha ao reordenar tarefas", "error");
     },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
@@ -124,7 +125,7 @@ export function useTaskKanban(routineId: string) {
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["tasks", routineId], ctx.previous);
-      Alert.alert("Erro", "Falha ao deletar tarefa");
+      showAlert("Erro", "Falha ao deletar tarefa", "error");
     },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
@@ -143,7 +144,7 @@ export function useTaskKanban(routineId: string) {
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["tasks", routineId], ctx.previous);
-      Alert.alert("Erro", "Falha ao arquivar tarefa");
+      showAlert("Erro", "Falha ao arquivar tarefa", "error");
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks", routineId] });
@@ -165,7 +166,7 @@ export function useTaskKanban(routineId: string) {
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["tasks", routineId], ctx.previous);
-      Alert.alert("Erro", "Falha ao atualizar tarefa");
+      showAlert("Erro", "Falha ao atualizar tarefa", "error");
     },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),

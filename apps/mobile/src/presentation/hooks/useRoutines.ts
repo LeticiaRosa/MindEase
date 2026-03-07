@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Alert } from "react-native";
+import { useAlert } from "@/presentation/contexts/AlertContext";
 import type { Routine } from "@/domain/entities/Routine";
 import { SupabaseRoutineRepository } from "@/infrastructure/adapters/SupabaseRoutineRepository";
 import { GetRoutines } from "@/application/useCases/GetRoutines";
@@ -17,6 +17,7 @@ const reorderRoutines = new ReorderRoutines(repository);
 
 export function useRoutines() {
   const queryClient = useQueryClient();
+  const { showAlert } = useAlert();
 
   const { data: routines = [], isLoading } = useQuery<Routine[]>({
     queryKey: ["routines"],
@@ -48,7 +49,7 @@ export function useRoutines() {
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(["routines"], ctx.previous);
-      Alert.alert("Erro", "Falha ao criar rotina");
+      showAlert("Erro", "Falha ao criar rotina", "error");
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["routines"] }),
   });
@@ -71,7 +72,7 @@ export function useRoutines() {
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(["routines"], ctx.previous);
-      Alert.alert("Erro", "Falha ao atualizar rotina");
+      showAlert("Erro", "Falha ao atualizar rotina", "error");
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["routines"] }),
   });
@@ -88,7 +89,7 @@ export function useRoutines() {
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(["routines"], ctx.previous);
-      Alert.alert("Erro", "Falha ao excluir rotina");
+      showAlert("Erro", "Falha ao excluir rotina", "error");
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["routines"] }),
   });
