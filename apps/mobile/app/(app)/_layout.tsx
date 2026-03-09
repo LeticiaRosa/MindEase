@@ -54,8 +54,6 @@ export default function AppLayout() {
                   <Stack.Screen name="archived-tasks" />
                   <Stack.Screen name="cognitive-alert-config" />
                 </Stack>
-                {/* baseBottom=80 clears the dashboard custom tab bar (~60px) */}
-                <AppearanceFloatingButton baseBottom={80} />
               </View>
             </TimerProvider>
           </ActiveRoutineProvider>
