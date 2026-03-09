@@ -47,6 +47,9 @@ export function useRoutines() {
       ]);
       return { previous };
     },
+    onSuccess: () => {
+      showAlert("Sucesso", "Rotina criada", "success");
+    },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(["routines"], ctx.previous);
       showAlert("Erro", "Falha ao criar rotina", "error");
@@ -70,6 +73,9 @@ export function useRoutines() {
       );
       return { previous };
     },
+    onSuccess: () => {
+      showAlert("Sucesso", "Rotina atualizada", "success");
+    },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(["routines"], ctx.previous);
       showAlert("Erro", "Falha ao atualizar rotina", "error");
@@ -86,6 +92,9 @@ export function useRoutines() {
         old.filter((r) => r.id !== id),
       );
       return { previous };
+    },
+    onSuccess: () => {
+      showAlert("Sucesso", "Rotina excluída", "success");
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(["routines"], ctx.previous);
@@ -112,6 +121,7 @@ export function useRoutines() {
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(["routines"], ctx.previous);
+      showAlert("Erro", "Falha ao reordenar rotinas", "error");
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: ["routines"] }),
   });

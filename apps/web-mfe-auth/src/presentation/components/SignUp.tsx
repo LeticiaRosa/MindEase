@@ -65,7 +65,7 @@ export function SignUp() {
 
   return (
     <Card
-      className="w-full max-w-md mx-auto "
+      className="w-full max-w-md mx-auto shadow-sm"
       role="main"
       aria-label="Formulário de cadastro"
     >

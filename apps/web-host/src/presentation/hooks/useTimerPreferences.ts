@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useAuth } from "auth/auth";
+import { useToast } from "@repo/ui";
 import { SupabaseTaskRepository } from "@/infrastructure/adapters/SupabaseTaskRepository";
 import { UpdateTimerPreferences } from "@/application/useCases/UpdateTimerPreferences";
 import { DEFAULT_TIMER_PREFERENCES } from "@/domain/entities/TimerPreferences";
@@ -13,6 +14,7 @@ const updatePreferences = new UpdateTimerPreferences(repository);
 export function useTimerPreferences() {
   const queryClient = useQueryClient();
   const { syncPreferences } = useTimerContext();
+  const toast = useToast();
   const { user, loading } = useAuth();
   const userId = user?.id ?? null;
 
@@ -45,6 +47,9 @@ export function useTimerPreferences() {
         longBreakDuration: data.longBreakDuration,
         cyclesBeforeLongBreak: data.cyclesBeforeLongBreak,
       });
+    },
+    onError: () => {
+      toast.error("Falha ao salvar preferências");
     },
     onSettled: () =>
       queryClient.invalidateQueries({

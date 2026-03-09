@@ -1,25 +1,33 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import AuthWrapper from "@/components/AuthWrapper";
 import Dashboard from "@/presentation/pages/Dashboard";
 import CognitiveAlertConfigPage from "@/presentation/pages/CognitiveAlertConfigPage";
 import RoutineManagementPage from "@/presentation/pages/RoutineManagementPage";
 import ArchivedTasksPage from "@/presentation/pages/ArchivedTasksPage";
+import LandingPage from "@/presentation/pages/LandingPage";
 import { ProtectedRoute } from "@/presentation/components/ProtectedRoute";
+import { PublicRoute } from "@/presentation/components/PublicRoute";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to="/login" replace />,
+    element: <LandingPage />,
   },
-  // Auth routes — rendered by the federated Auth MFE
+  // Auth routes — only accessible to unauthenticated users
   {
-    path: "/login",
-    element: <AuthWrapper />,
+    element: <PublicRoute />,
+    children: [
+      {
+        path: "/login",
+        element: <AuthWrapper />,
+      },
+      {
+        path: "/register",
+        element: <AuthWrapper />,
+      },
+    ],
   },
-  {
-    path: "/register",
-    element: <AuthWrapper />,
-  },
+  // Auth callback is always public (handles magic link redirects)
   {
     path: "/auth/callback",
     element: <AuthWrapper />,

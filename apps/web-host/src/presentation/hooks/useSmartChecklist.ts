@@ -48,6 +48,7 @@ export function useSmartChecklist(taskId: string) {
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(qKey, ctx.previous);
+      toast.error("Failed to update step");
     },
     onSuccess: (_, { completed }) => {
       if (completed) {
@@ -86,6 +87,9 @@ export function useSmartChecklist(taskId: string) {
       ]);
       return { previous };
     },
+    onSuccess: () => {
+      toast.success("Step added");
+    },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(qKey, ctx.previous);
       toast.error("Failed to add step");
@@ -102,6 +106,9 @@ export function useSmartChecklist(taskId: string) {
         old.filter((s) => s.id !== id),
       );
       return { previous };
+    },
+    onSuccess: () => {
+      toast.success("Step removed");
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(qKey, ctx.previous);

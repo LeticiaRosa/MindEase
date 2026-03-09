@@ -52,6 +52,9 @@ export function useTaskKanban(routineId: string) {
       ]);
       return { previous };
     },
+    onSuccess: () => {
+      toast.success("Tarefa criada");
+    },
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["tasks", routineId], ctx.previous);
@@ -70,9 +73,11 @@ export function useTaskKanban(routineId: string) {
       queryClient.setQueryData<Task[]>(["tasks", routineId], (old = []) =>
         old.map((t) => (t.id === id ? { ...t, status } : t)),
       );
-      if (status === "done")
-        toast.success("Task completed", { duration: 3000 });
       return { previous };
+    },
+    onSuccess: (task) => {
+      if (task.status === "done")
+        toast.success("Task completed", { duration: 3000 });
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous)

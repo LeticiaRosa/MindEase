@@ -46,6 +46,7 @@ export function useSmartChecklist(taskId: string) {
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(qKey, ctx.previous);
+      showAlert("Erro", "Falha ao atualizar etapa", "error");
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: qKey }),
   });
@@ -69,6 +70,9 @@ export function useSmartChecklist(taskId: string) {
       ]);
       return { previous };
     },
+    onSuccess: () => {
+      showAlert("Sucesso", "Etapa adicionada", "success");
+    },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(qKey, ctx.previous);
       showAlert("Erro", "Falha ao adicionar etapa", "error");
@@ -85,6 +89,9 @@ export function useSmartChecklist(taskId: string) {
         old.filter((s) => s.id !== id),
       );
       return { previous };
+    },
+    onSuccess: () => {
+      showAlert("Sucesso", "Etapa removida", "success");
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(qKey, ctx.previous);
@@ -103,6 +110,9 @@ export function useSmartChecklist(taskId: string) {
         old.map((s) => (s.id === id ? { ...s, title } : s)),
       );
       return { previous };
+    },
+    onSuccess: () => {
+      showAlert("Sucesso", "Etapa atualizada", "success");
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(qKey, ctx.previous);

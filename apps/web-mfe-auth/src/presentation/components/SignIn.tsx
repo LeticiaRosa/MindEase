@@ -29,7 +29,7 @@ export function SignIn() {
 
   return (
     <Card
-      className="w-full max-w-md mx-auto"
+      className="w-full max-w-md mx-auto shadow-sm"
       role="main"
       aria-label="Formulário de login"
     >
@@ -54,19 +54,17 @@ export function SignIn() {
           <TabsList className="w-full mb-4 grid grid-cols-2">
             <TabsTrigger
               value="password"
-              className=" data-[state=active]:border 
-              data-[state=active]:border-primary data-[state=active]:shadow-md cursor-pointer"
+              className="gap-1.5 overflow-hidden data-[state=active]:border data-[state=active]:border-primary data-[state=active]:shadow-md cursor-pointer min-w-0"
             >
-              <Mail className="w-4 h-4 mr-2" />
-              E-mail e Senha
+              <Mail className="size-4 shrink-0" />
+              <span className="truncate">E-mail e Senha</span>
             </TabsTrigger>
             <TabsTrigger
               value="magiclink"
-              className="data-[state=active]:border 
-              data-[state=active]:border-primary data-[state=active]:shadow-md cursor-pointer"
+              className="gap-1.5 overflow-hidden data-[state=active]:border data-[state=active]:border-primary data-[state=active]:shadow-md cursor-pointer min-w-0"
             >
-              <Sparkles className="w-4 h-4 mr-2" />
-              Link Mágico
+              <Sparkles className="size-4 shrink-0" />
+              <span className="truncate">Link Mágico</span>
             </TabsTrigger>
           </TabsList>
 

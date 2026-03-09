@@ -2,11 +2,16 @@ import { cva } from "class-variance-authority";
 
 type LogoProps = {
   size?: "sm" | "md" | "lg" | "2xl";
+  href?: string;
 };
 
-function Logo({ size = "md" }: LogoProps) {
+function Logo({ size = "md", href = "/" }: LogoProps) {
   return (
-    <div>
+    <a
+      href={href}
+      aria-label="MindEase — página inicial"
+      className="inline-block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded"
+    >
       <h1
         className={cva("text-primary font-semibold tracking-tight", {
           variants: {
@@ -41,7 +46,7 @@ function Logo({ size = "md" }: LogoProps) {
       >
         Focus on what matters next
       </p>
-    </div>
+    </a>
   );
 }
 

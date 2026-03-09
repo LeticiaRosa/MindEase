@@ -55,6 +55,9 @@ export function useTaskKanban(routineId: string) {
       ]);
       return { previous };
     },
+    onSuccess: () => {
+      showAlert("Sucesso", "Tarefa criada", "success");
+    },
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["tasks", routineId], ctx.previous);
@@ -74,6 +77,13 @@ export function useTaskKanban(routineId: string) {
         old.map((t) => (t.id === id ? { ...t, status } : t)),
       );
       return { previous };
+    },
+    onSuccess: (task) => {
+      showAlert(
+        "Sucesso",
+        `Status atualizado para "${task.status}"`,
+        "success",
+      );
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous)
@@ -123,6 +133,9 @@ export function useTaskKanban(routineId: string) {
       );
       return { previous };
     },
+    onSuccess: () => {
+      showAlert("Sucesso", "Tarefa excluída", "success");
+    },
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["tasks", routineId], ctx.previous);
@@ -141,6 +154,9 @@ export function useTaskKanban(routineId: string) {
         old.filter((t) => t.id !== id),
       );
       return { previous };
+    },
+    onSuccess: () => {
+      showAlert("Sucesso", "Tarefa arquivada com sucesso", "success");
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous)
@@ -163,6 +179,9 @@ export function useTaskKanban(routineId: string) {
         old.map((t) => (t.id === id ? { ...t, ...params } : t)),
       );
       return { previous };
+    },
+    onSuccess: () => {
+      showAlert("Sucesso", "Tarefa atualizada", "success");
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous)
