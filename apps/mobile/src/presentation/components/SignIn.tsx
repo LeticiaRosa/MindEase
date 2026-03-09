@@ -37,7 +37,7 @@ export function SignIn() {
       >
         <View style={{ padding: resolvedSpacing.lg }}>
           <Logo size="large" />
-
+          <View style={{ padding: resolvedSpacing.lg }} />
           {/* Tab selector */}
           <TabSelector
             mode={mode}
