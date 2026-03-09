@@ -8,6 +8,7 @@ import { ActivitySignalsProvider } from "@/presentation/contexts/ActivitySignals
 import { ActiveRoutineProvider } from "@/presentation/contexts/ActiveRoutineContext";
 import { TimerProvider } from "@/presentation/contexts/TimerContext";
 import { useTimerPreferences } from "@/presentation/hooks/useTimerPreferences";
+import { AppearanceFloatingButton } from "@/presentation/components/AppearanceFloatingButton";
 
 function TimerPreferencesBootstrap() {
   useTimerPreferences();
@@ -39,17 +40,23 @@ export default function AppLayout() {
           <ActiveRoutineProvider>
             <TimerProvider>
               <TimerPreferencesBootstrap />
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                  contentStyle: { backgroundColor: resolvedColors.background },
-                }}
-              >
-                <Stack.Screen name="dashboard" />
-                <Stack.Screen name="manage-routines" />
-                <Stack.Screen name="archived-tasks" />
-                <Stack.Screen name="cognitive-alert-config" />
-              </Stack>
+              <View style={{ flex: 1 }}>
+                <Stack
+                  screenOptions={{
+                    headerShown: false,
+                    contentStyle: {
+                      backgroundColor: resolvedColors.background,
+                    },
+                  }}
+                >
+                  <Stack.Screen name="dashboard" />
+                  <Stack.Screen name="manage-routines" />
+                  <Stack.Screen name="archived-tasks" />
+                  <Stack.Screen name="cognitive-alert-config" />
+                </Stack>
+                {/* baseBottom=80 clears the dashboard custom tab bar (~60px) */}
+                <AppearanceFloatingButton baseBottom={80} />
+              </View>
             </TimerProvider>
           </ActiveRoutineProvider>
         </ActivitySignalsProvider>

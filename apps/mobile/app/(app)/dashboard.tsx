@@ -31,6 +31,8 @@ import { RoutineSelector } from "@/presentation/components/RoutineSelector";
 import { TaskGroup } from "@/presentation/components/TaskGroup";
 import { CognitiveAlertModal } from "@/presentation/components/CognitiveAlertModal";
 import { TaskCreateForm } from "@/presentation/components/TaskCreateForm";
+import { CreateTaskFAB } from "@/presentation/components/CreateTaskFAB";
+import { AppearanceFloatingButton } from "@/presentation/components/AppearanceFloatingButton";
 
 type TabId = "todo" | "in_progress" | "done" | "settings";
 
@@ -102,7 +104,6 @@ export default function DashboardScreen() {
           onDismissAlert={dismissBanner}
         />
       )}
-
       {/* Routine selector — hidden on settings tab */}
       {activeTab !== "settings" && routines.length > 0 && (
         <View
@@ -119,7 +120,6 @@ export default function DashboardScreen() {
           />
         </View>
       )}
-
       {/* Tab content */}
       {activeTab === "settings" ? (
         <ScrollView
@@ -200,20 +200,6 @@ export default function DashboardScreen() {
         </ScrollView>
       ) : (
         <>
-          {/* TaskCreateForm pinned — only shown on todo tab */}
-          {activeTab === "todo" && (
-            <View
-              style={{
-                paddingHorizontal: resolvedSpacing.md,
-                paddingTop: resolvedSpacing.sm,
-                paddingBottom: resolvedSpacing.sm,
-                backgroundColor: resolvedColors.background,
-              }}
-            >
-              <TaskCreateForm onSubmit={createTask} />
-            </View>
-          )}
-
           <ScrollView
             style={{ flex: 1 }}
             contentContainerStyle={{
@@ -264,7 +250,6 @@ export default function DashboardScreen() {
           </ScrollView>
         </>
       )}
-
       {/* Bottom tab bar — paddingBottom estende o bg até cobrir a área do indicador de gestos */}
       <View
         style={{
@@ -326,14 +311,22 @@ export default function DashboardScreen() {
           );
         })}
       </View>
-
       {/* Brain Today check-in */}
       <BrainTodayBottomSheet />
-
       {/* Alert modal */}
       {modalPayload && (
         <CognitiveAlertModal payload={modalPayload} onDismiss={dismissModal} />
       )}
+      {/* FAB: create task — visible on kanban tabs, sits above the AppearanceFloatingButton */}
+      {activeTab == "todo" && (
+        <CreateTaskFAB
+          onSubmit={(title, status) => createTask(title, status)}
+          defaultStatus={activeTab}
+          baseBottom={144}
+        />
+      )}
+      {/* FAB: appearance — always visible on all 4 tabs */}
+      <AppearanceFloatingButton baseBottom={80} />
     </View>
   );
 }

@@ -51,12 +51,13 @@ export class SupabaseTaskRepository implements ITaskRepository {
     routineId: string,
     title: string,
     description?: string,
+    status: TaskStatus = "todo",
   ): Promise<Task> {
     const { data: existing } = await supabaseClient
       .from("tasks")
       .select("position")
       .eq("routine_id", routineId)
-      .eq("status", "todo")
+      .eq("status", status)
       .order("position", { ascending: false })
       .limit(1)
       .single();
@@ -69,7 +70,7 @@ export class SupabaseTaskRepository implements ITaskRepository {
         routine_id: routineId,
         title,
         description,
-        status: "todo",
+        status,
         position: nextPosition,
       })
       .select("*, checklist_steps(*)")

@@ -11,6 +11,7 @@ export interface ITaskRepository {
     routineId: string,
     title: string,
     description?: string,
+    status?: TaskStatus,
   ): Promise<Task>;
   updateTask(
     id: string,

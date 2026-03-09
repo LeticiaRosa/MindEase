@@ -32,8 +32,9 @@ export function useTaskKanban(routineId: string) {
   });
 
   const createMutation = useMutation({
-    mutationFn: (title: string) => createTask.execute(routineId, title),
-    onMutate: async (title) => {
+    mutationFn: ({ title, status }: { title: string; status?: TaskStatus }) =>
+      createTask.execute(routineId, title, undefined, status),
+    onMutate: async ({ title, status }) => {
       await queryClient.cancelQueries({ queryKey: ["tasks", routineId] });
       const previous = queryClient.getQueryData<Task[]>(["tasks", routineId]);
       const optimistic: Task = {
@@ -41,7 +42,7 @@ export function useTaskKanban(routineId: string) {
         userId: "",
         routineId,
         title,
-        status: "todo",
+        status: status ?? "todo",
         position: previous?.length ?? 0,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -181,7 +182,8 @@ export function useTaskKanban(routineId: string) {
     tasks,
     isLoading,
     tasksByStatus,
-    createTask: createMutation.mutate,
+    createTask: (title: string, status?: TaskStatus) =>
+      createMutation.mutate({ title, status }),
     updateTask: (id: string, params: UpdateTaskParams) =>
       updateTaskMutation.mutate({ id, params }),
     updateTaskStatus: updateStatusMutation.mutate,
