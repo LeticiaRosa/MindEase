@@ -1,6 +1,6 @@
 [build]
-  command    = "cd ../.. && pnpm install --frozen-lockfile && pnpm turbo run build --filter=web-mfe-auth"
-  publish    = "dist"
+  command    = "pnpm install --frozen-lockfile && pnpm turbo run build --filter=web-mfe-auth"
+  publish    = "apps/web-mfe-auth/dist"
 
 [build.environment]
   NODE_VERSION = "20"

@@ -1,6 +1,6 @@
 [build]
-  command    = "cd ../.. && pnpm install --frozen-lockfile && pnpm turbo run build --filter=web-host"
-  publish    = "dist"
+  command    = "pnpm install --frozen-lockfile && pnpm turbo run build --filter=web-host"
+  publish    = "apps/web-host/dist"
 
 [build.environment]
   NODE_VERSION = "20"
