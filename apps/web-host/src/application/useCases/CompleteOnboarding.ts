@@ -2,7 +2,11 @@ import type { IOnboardingStateRepository } from "@/domain/interfaces/IOnboarding
 import type { OnboardingState } from "@/domain/entities/OnboardingState";
 
 export class CompleteOnboarding {
-  constructor(private readonly repository: IOnboardingStateRepository) {}
+  private readonly repository: IOnboardingStateRepository;
+
+  constructor(repository: IOnboardingStateRepository) {
+    this.repository = repository;
+  }
 
   async execute(): Promise<OnboardingState> {
     const next: OnboardingState = {

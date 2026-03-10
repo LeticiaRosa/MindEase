@@ -10,7 +10,11 @@ import { AdvanceOnboardingStep } from "@/application/useCases/AdvanceOnboardingS
 import { CompleteOnboarding } from "@/application/useCases/CompleteOnboarding";
 
 class InMemoryOnboardingRepo implements IOnboardingStateRepository {
-  constructor(private state: OnboardingState = DEFAULT_ONBOARDING_STATE) {}
+  private state: OnboardingState;
+
+  constructor(initialState?: OnboardingState) {
+    this.state = initialState ?? DEFAULT_ONBOARDING_STATE;
+  }
 
   async load(): Promise<OnboardingState> {
     return this.state;

@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { Button, Input, useToast } from "@repo/ui";
 import { useThemePreferences } from "@/presentation/contexts/ThemePreferencesContext";
 import { useOnboarding } from "@/presentation/contexts/OnboardingContext";
