@@ -2,7 +2,7 @@ export type OnboardingStatus = "pending" | "completed" | "skipped";
 
 export interface OnboardingState {
   status: OnboardingStatus;
-  currentStep: 1 | 2 | 3;
+  currentStep: 1 | 2 | 3 | 4 | 5;
   updatedAt: string;
 }
 

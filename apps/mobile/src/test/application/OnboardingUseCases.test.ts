@@ -42,22 +42,22 @@ describe("Mobile onboarding use cases", () => {
     expect(advanced.currentStep).toBe(2);
   });
 
-  it("keeps step capped at 3 and completes with persisted final state", async () => {
+  it("keeps step capped at 5 and completes with persisted final state", async () => {
     const repo = new InMemoryOnboardingRepo({
       status: "pending",
-      currentStep: 3,
+      currentStep: 5,
       updatedAt: new Date().toISOString(),
     });
 
     const advanced = await new AdvanceOnboardingStep(repo).execute();
-    expect(advanced.currentStep).toBe(3);
+    expect(advanced.currentStep).toBe(5);
 
     const completed = await new CompleteOnboarding(repo).execute();
     const loaded = await new GetOnboardingState(repo).execute();
 
     expect(completed.status).toBe("completed");
     expect(loaded.status).toBe("completed");
-    expect(loaded.currentStep).toBe(3);
+    expect(loaded.currentStep).toBe(5);
   });
 
   it("supports skip and reset transitions", async () => {

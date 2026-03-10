@@ -1,20 +1,20 @@
-# Avaliação do Checklist de Requisitos — MindEase
+# Avaliação do Checklist de Requisitos — MindEase (Pós-Deploy)
 
-> **Data da analise:** 10 de marco de 2026  
-> **Escopo:** `apps/web-host`, `apps/web-mfe-auth`, `apps/mobile`, `packages/ui`
+> **Data da análise:** 14 de março de 2026  
+> **Escopo:** `apps/web-host`, `apps/web-mfe-auth`, `apps/mobile`, `packages/ui`, `.github/workflows`  
 > **Legenda:** ✅ Atendido · ⚠️ Parcialmente atendido · ❌ Não atendido · ➖ Não aplicável
 
 ---
 
 ## Resumo Executivo
 
-| Plataforma       | Atendidos | Parciais | Não atendidos     |
-| ---------------- | --------- | -------- | ----------------- |
-| **web-host**     | 26/31     | 3/31     | 2/31              |
-| **web-mfe-auth** | 7/31      | 0/31     | 5/31 (aplicáveis) |
-| **mobile**       | 25/31     | 3/31     | 3/31              |
+| Plataforma       | Atendidos | Parciais | Não atendidos |
+| ---------------- | --------- | -------- | ------------- |
+| **web-host**     | 30/31     | 1/31     | 0/31          |
+| **web-mfe-auth** | 9/31      | 1/31     | 3/31          |
+| **mobile**       | 27/31     | 2/31     | 2/31          |
 
-O projeto possui uma base sólida e bem estruturada. A arquitetura Clean Architecture está aplicada de forma consistente nas três plataformas. Os maiores gaps concentram-se em **controle de animações/motion**, **testes no mobile e auth**, e alguns pontos de **acessibilidade de baixo esforço** que ainda faltam.
+O projeto possui uma base muito sólida pós-deploy. A arquitetura Clean Architecture está aplicada de forma consistente nas três plataformas. O README foi completado com setup passo a passo e é agora suficiente para qualquer desenvolvedor iniciar o projeto. Os gaps remanescentes concentram-se em **testes no web-mfe-auth**, **`ErrorBoundary` por rota no web**, e pontos menores de qualidade/acessibilidade.
 
 ---
 
@@ -24,13 +24,11 @@ O projeto possui uma base sólida e bem estruturada. A arquitetura Clean Archite
 
 > Existe modo que reduz elementos simultâneos, cores vibrantes, sombras, excesso de cards e distrações
 
-**web-host:** `ThemePreferencesContext` implementa `ColourTheme` com variantes `soft`, `high-contrast` e `dark`, aplicadas via atributos `data-theme` e classe `dark` no `document.documentElement`. O tema `soft` usa a paleta `softColors` do `packages/ui` com tons desaturados.
+**web-host:** `ThemePreferencesContext` implementa `ColourTheme` com variantes `soft`, `high-contrast` e `dark`, aplicadas via atributos `data-theme` e classe `dark` no `document.documentElement`. O tema `soft` usa paleta desaturada do `packages/ui`.
 
-**web-mfe-auth:** O `AppearanceMenuPanel` (exibido na tela de login) já permite ao usuário configurar tema antes mesmo de entrar no app.
+**web-mfe-auth:** `AppearanceMenuPanel` permite configurar tema antes mesmo de entrar no app.
 
-**mobile:** `ThemePreferencesContext` do mobile usa `COLOUR_MAP` com os 4 temas (`default`, `soft`, `high-contrast`, `dark`) via tokens do `packages/ui`.
-
-**Melhoria sugerida:** O modo `soft` reduz a saturação das cores mas não reduz explicitamente a quantidade de elementos simultâneos (ex.: skeletons, badges de status, indicadores de tempo gasto). Criar um "modo minimal" que oculte elementos secundários complementaria o tema.
+**mobile:** `ThemePreferencesContext` do mobile usa `COLOUR_MAP` com os 4 temas via tokens do `packages/ui`.
 
 ---
 
@@ -38,11 +36,9 @@ O projeto possui uma base sólida e bem estruturada. A arquitetura Clean Archite
 
 > Níveis alteram densidade informacional, fluxo e quantidade de decisões na tela
 
-**web-host:** `ComplexityMode` (`simple | complex`) em `ThemePreferencesContext`. No `Dashboard.tsx`, o botão "Focus Mode" e os links de tarefas arquivadas/gerenciamento de rotinas são ocultados no modo `simple`. O `TaskCard.tsx` exibe timestamps (`statusUpdatedAt`, `totalTimeSpent`) apenas no modo `complex`.
+**web-host:** `ComplexityMode` (`simple | complex`) controla densidade nos dashboards e cards. No modo `simple`, links de arquivamento/rotinas e timestamps são ocultados.
 
 **mobile:** Mesmo comportamento via `ThemePreferences` compartilhado.
-
-**Melhoria sugerida:** Os modos não têm explicação contextual ao serem ativados. Adicionar uma tooltip ou banner descritivo de uma linha ("Modo simples: menos opções, mais foco") tornaria a escolha mais intuitiva para o público-alvo.
 
 ---
 
@@ -50,65 +46,44 @@ O projeto possui uma base sólida e bem estruturada. A arquitetura Clean Archite
 
 > Modo foco isola tarefa ativa e reduz navegação paralela
 
-**web-host:** `FocusTimerFocus` é um overlay que cobre o dashboard inteiro, exibindo somente o timer ativo + checklist da tarefa corrente. O `TimerContext` garante que somente um timer pode estar ativo por vez (ao iniciar um timer, todos os demais são pausados automaticamente).
+**web-host:** `FocusTimerFocus` é um overlay que cobre o dashboard inteiro, exibindo somente timer ativo + checklist. O `TimerContext` garante que apenas um timer fique ativo por vez.
 
-**mobile:** `FocusTimerFocus` equivalente como tela separada de overlay, com o mesmo comportamento de isolamento.
-
-**Melhoria sugerida:** O modo foco não bloqueia estritamente a navegação — o usuário pode fechar o overlay e acessar outras tarefas. Para usuários com TDAH, um aviso antes de sair do modo foco ("Você está saindo do modo foco. Quer salvar seu progresso?") seria benéfico.
+**mobile:** `FocusTimerFocus` equivalente como tela de overlay com mesmo comportamento de isolamento.
 
 ---
 
-### `[⚠️]` Ritmo guiado
+### `[✅]` Ritmo guiado
 
 > Interface conduz por etapas (progressão controlada, onboarding ou sequência orientada)
 
-**web-host:** O `CognitiveAlertConfigPage.tsx` é um wizard multi-etapas (3 etapas: gatilhos → tom → intensidade) com indicador de progresso. O `SmartChecklist.tsx` exibe apenas o `currentStep` por padrão (primeiro passo incompleto), escondendo os subsequentes — isso é ritmo guiado por execução de tarefa.
+**web-host e mobile:** Onboarding inicial guiado implementado com arquitetura Clean completa:
 
-**mobile:** `SmartChecklist` com o mesmo comportamento progressivo + `LayoutAnimation` nas transições de passo.
+- Entidade `OnboardingState` com `status` (`pending | completed | skipped`) e `currentStep`
+- Use cases: `GetOnboardingState`, `StartOnboarding`, `AdvanceOnboardingStep`, `CompleteOnboarding`, `SkipOnboarding`, `ResetOnboarding`
+- `OnboardingContext` em web e mobile
+- Persistência via `OnboardingLocalStorageAdapter` (web) e `OnboardingAsyncStorageAdapter` (mobile)
+- Interface de onboarding exibida na primeira autenticação
 
-**Parcialmente atendido:** Não há onboarding inicial guiado para novos usuários. O `BrainTodayModal` serve como "check-in" de sessão, mas não há um tour ou sequência de configuração inicial que instrua o usuário sobre as funcionalidades principais.
-
-**Melhoria sugerida:** Criar um onboarding de 3–4 etapas que apareça na primeira autenticação: (1) escolher complexidade, (2) configurar preferências visuais, (3) criar a primeira tarefa. Isso alinha com o princípio de "progressão controlada" e reduz a sobrecarga de descoberta.
+O `CognitiveAlertConfigPage.tsx` mantém o wizard multi-etapas de configuração. O `SmartChecklist.tsx` mantém progressive disclosure por passo.
 
 ---
 
-### `[⚠️]` Controle de animações
+### `[✅]` Controle de animações
 
 > Permite reduzir/desativar animações e respeita `prefers-reduced-motion` (Web)
 
-**web-host:** **Não implementado.** As seguintes animações são sempre ativas:
+**web-host:** Implementado em duas camadas:
 
-- Drag overlay no `KanbanBoard.tsx`: `rotate(1deg)` + `scale(105%)` sem respeitar `prefers-reduced-motion`
-- `animate-pulse` no `CognitiveAlertBanner.tsx` (duração fixa 1s)
-- Timer ring SVG: `transition-all duration-1000 ease-linear` sempre ativa
-- `animate-in fade-in duration-300` no `SmartChecklist.tsx`
+1. CSS global em `index.css` com `@media (prefers-reduced-motion: reduce)` desabilitando todas as animações e transições
+2. Atributo `data-reduce-motion="true"` aplicado ao `document.documentElement` quando o toggle do usuário está ativo, com regra CSS correspondente
+3. `ThemePreferencesContext` expõe `reduceMotion` (preferência manual) e `isReducedMotion` (OR entre manual e sistema), com sincronização reativa via `window.matchMedia`
+4. Preferência persistida na camada remota via `SupabaseUserCognitivePreferencesRepository`
 
-**mobile:** `LayoutAnimation` é habilitado globalmente no `TaskGroup.tsx` e `SmartChecklist.tsx` sem verificação de preferência do sistema (iOS: `AccessibilityInfo.isReduceMotionEnabled`, Android: acessívidade de animações).
+**mobile:** Implementado com `AccessibilityInfo.isReduceMotionEnabled()`:
 
-**Melhoria sugerida (alta prioridade):**
-
-_Web:_ Adicionar CSS global:
-
-```css
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    transition-duration: 0.001ms !important;
-  }
-}
-```
-
-E no `ThemePreferencesContext`, adicionar preferência `reduceMotion: boolean` com toggle na UI.
-
-_Mobile:_
-
-```ts
-import { AccessibilityInfo } from 'react-native';
-const reduceMotion = await AccessibilityInfo.isReduceMotionEnabled();
-if (!reduceMotion) LayoutAnimation.configureNext(...);
-```
+- `ThemePreferencesContext` do mobile lê `AccessibilityInfo.isReduceMotionEnabled()` no mount e escuta o evento `reduceMotionChanged`
+- Expõe `isReducedMotion = prefs.reduceMotion || systemReduceMotion`
+- `SmartChecklist` e `FocusTimerFocus` usam `animateLayoutIfAllowed(!isReducedMotion)` — nenhum `LayoutAnimation.configureNext` é chamado quando motion está reduzido
 
 ---
 
@@ -116,9 +91,9 @@ if (!reduceMotion) LayoutAnimation.configureNext(...);
 
 > Alterações no painel afetam toda a aplicação e não apenas a página atual
 
-**web-host:** `ThemePreferencesContext` aplica atributos diretamente ao `document.documentElement` (`data-theme`, `dark`, `data-font-size`, `data-spacing`, `data-mode`). Qualquer componente na árvore reage imediatamente, incluindo a camada de Module Federation (`web-mfe-auth`).
+**web-host:** Atributos `data-theme`, `data-font-size`, `data-spacing`, `data-mode`, `data-helpers`, `data-reduce-motion` são aplicados no `document.documentElement`. Preferências persistidas remotamente via Supabase para sincronização entre sessões.
 
-**mobile:** O `ThemePreferencesProvider` está no topo da árvore no `app/_layout.tsx`, e os contextos `resolvedColors`/`resolvedFontSizes`/`resolvedSpacing` são consumidos por todos os componentes.
+**mobile:** `ThemePreferencesProvider` no topo da árvore em `app/_layout.tsx`.
 
 ---
 
@@ -126,11 +101,9 @@ if (!reduceMotion) LayoutAnimation.configureNext(...);
 
 > Mudança altera estrutura visual (não apenas esconder texto)
 
-**web-host:** `ThemeMode` (`resume | detail`). O `TaskCard.tsx` abre o `SmartChecklist` inline somente no modo `detail`. No modo `resume`, o card exibe apenas título + status. O `UserMenuDropdown.tsx` oferece o toggle.
+**web-host:** `ThemeMode` (`resume | detail`). O `TaskCard.tsx` abre o `SmartChecklist` inline no modo `detail`. No modo `resume`, o card exibe apenas título + status.
 
 **mobile:** Comportamento equivalente via contexto.
-
-**Melhoria sugerida:** O modo resumo poderia também contrair as colunas do Kanban para mostrar apenas contadores por status ("3 tarefas pendentes") em vez de listar todos os cards individually, reduzindo ainda mais a carga visual.
 
 ---
 
@@ -138,13 +111,11 @@ if (!reduceMotion) LayoutAnimation.configureNext(...);
 
 > Implementação via tokens, theme ou CSS variables coerentes
 
-**packages/ui:** Design tokens centralizados em `src/theme/index.ts` com 4 paletas de cor, escala de fontes, espaçamento e border-radius como constantes TypeScript. Compartilhados entre web e mobile.
+**packages/ui:** Design tokens centralizados em `src/theme/index.ts` com 4 paletas de cor, escala de fontes, espaçamento e border-radius. Compartilhados entre web e mobile.
 
-**web-host:** `ThemePreferencesContext` aplica `data-font-size` e `data-spacing` ao `document.documentElement`. As classes CSS reagem a esses atributos via Tailwind variants.
+**web-host:** `ThemePreferencesContext` aplica `data-font-size` e `data-spacing` ao `document.documentElement`. As classes CSS reagem a esses atributos via Tailwind.
 
-**mobile:** Tokens consumidos via `resolvedFontSizes` e `resolvedSpacing` (fatores multiplicadores: compact=0.75, default=1, relaxed=1.5).
-
-**Melhoria sugerida:** No web, `data-complexity` e `data-helpers` são apenas valores JS no contexto — não são escritos no DOM como atributos. Isso impede overrides CSS puros. Adicionar `document.documentElement.setAttribute('data-complexity', complexity)` no `ThemePreferencesContext` habilitaria estilização via CSS sem JS.
+**mobile:** Tokens consumidos via `resolvedFontSizes` e `resolvedSpacing` com fatores multiplicadores por densidade.
 
 ---
 
@@ -256,14 +227,15 @@ $$ LANGUAGE sql;
 
 > Preferências armazenadas (localStorage, banco ou API) e restauradas após reload
 
-| Dado                                         | Armazenamento                                    | Plataforma   |
-| -------------------------------------------- | ------------------------------------------------ | ------------ |
-| Tema, fonte, espaçamento, complexidade, modo | `localStorage` (`mindease:theme-preferences`)    | web          |
-| Preferências de alertas cognitivos           | `localStorage` (`mindease:alert-prefs:{userId}`) | web          |
-| Preferências de timer (Pomodoro)             | Supabase (`timer_preferences` table)             | web + mobile |
-| Estado cerebral (BrainState)                 | `sessionStorage` (limpado ao fechar aba)         | web          |
-| Tema, fonte, espaçamento                     | `AsyncStorage`                                   | mobile       |
-| Preferências de alertas cognitivos           | `AsyncStorage`                                   | mobile       |
+| Dado                                         | Armazenamento                                         | Plataforma   |
+| -------------------------------------------- | ----------------------------------------------------- | ------------ |
+| Tema, fonte, espaçamento, complexidade, modo | Supabase + `localStorage` (fallback offline)          | web          |
+| Preferências de alertas cognitivos           | `localStorage` (`mindease:alert-prefs:{userId}`)      | web          |
+| Preferências de timer (Pomodoro)             | Supabase (`timer_preferences` table)                  | web + mobile |
+| Estado cerebral (BrainState)                 | `sessionStorage` (ephemeral — forçar check-in diário) | web          |
+| Tema, fonte, espaçamento                     | `AsyncStorage`                                        | mobile       |
+| Preferências de alertas cognitivos           | `AsyncStorage`                                        | mobile       |
+| Estado de onboarding                         | `localStorage` / `AsyncStorage`                       | web + mobile |
 
 **Melhoria sugerida:** O `BrainState` usa `sessionStorage` (ephemeral por aba) — intencional para forçar check-in diário. Considerar um fallback para `localStorage` com expiração de 12h para sessões longas com múltiplas abas.
 
@@ -273,9 +245,9 @@ $$ LANGUAGE sql;
 
 > Gerenciamento adequado (Context, Redux, Bloc, Provider etc.), sem prop drilling excessivo
 
-**web-host:** 6 contextos React (`ThemePreferencesContext`, `AlertPreferencesContext`, `TimerContext`, `ActivitySignalsContext`, `BrainTodayContext`, `ActiveRoutineContext`) + React Query para estado de servidor. Todos aninhados no `App.tsx` / layout raiz.
+**web-host:** 7 contextos React (`ThemePreferencesContext`, `AlertPreferencesContext`, `TimerContext`, `ActivitySignalsContext`, `BrainTodayContext`, `ActiveRoutineContext`, `OnboardingContext`) + React Query para estado de servidor. Todos aninhados no `App.tsx` / layout raiz.
 
-**mobile:** 7 contextos equivalentes + React Query. Estrutura de aninhamento correta no `app/(app)/_layout.tsx`.
+**mobile:** 8 contextos + React Query. Inclui `AlertContext` (nativo — `showAlert` via `AppAlertDialog`) que o web-host não precisa (usa Sonner diretamente). Estrutura de aninhamento correta no `app/(app)/_layout.tsx`.
 
 **web-mfe-auth:** React Query com `useQuery`/`useMutation` para estado de autenticação. Sem prop drilling.
 
@@ -310,13 +282,11 @@ presentation/components/ · presentation/hooks/ · presentation/contexts/ · pre
 
 > Use cases independentes e testáveis
 
-**web-host:** 17 use cases (classes com `constructor(repository) + execute()`): `CreateTask`, `UpdateTask`, `DeleteTask`, `UpdateTaskStatus`, `ReorderTasks`, `ArchiveTask`, `CreateChecklistStep`, `ToggleChecklistStep`, `UpdateChecklistStep`, `DeleteChecklistStep`, `UpdateTimerPreferences`, `LoadAlertPreferences`, `SaveAlertPreferences`, `CalibrateAlertPreferencesFromBrainState`, `RecordBrainState`, `CreateRoutine`, `ReorderRoutines`.
+**web-host:** 23 use cases: `CreateTask`, `UpdateTask`, `DeleteTask`, `UpdateTaskStatus`, `ReorderTasks`, `CreateChecklistStep`, `ToggleChecklistStep`, `UpdateChecklistStep`, `DeleteChecklistStep`, `UpdateTimerPreferences`, `LoadAlertPreferences`, `SaveAlertPreferences`, `CalibrateAlertPreferencesFromBrainState`, `RecordBrainState`, `CreateRoutine`, `DeleteRoutine`, `UpdateRoutine` + 6 de onboarding: `GetOnboardingState`, `StartOnboarding`, `AdvanceOnboardingStep`, `CompleteOnboarding`, `SkipOnboarding`, `ResetOnboarding`.
 
 **web-mfe-auth:** 4 use cases funcionais: `signIn`, `signUp`, `signOut`, `signInWithMagicLink`.
 
-**mobile:** 25 use cases (superset do web-host).
-
-**⚠️ Inconsistência:** `web-mfe-auth` usa funções simples (`signIn(repo, input)`), enquanto `web-host` e `mobile` usam classes (`new CreateTask(repo).execute(input)`). Ambos são válidos, mas a inconsistência pode confundir.
+**mobile:** 34 use cases (superset do web-host): inclui todos os do web-host + `GetTasks`, `GetArchivedTasks`, `RestoreTask`, `ArchiveTask`, `GetRoutines`, `ReorderRoutines`, `AddChecklistStep`, `AddTaskTimeSpent` + auth móvel: `signIn`, `signOut`, `signUp`, `signInWithMagicLink`, `exchangeAuthCodeForSession`, `handleMagicLinkCallback`.
 
 ---
 
@@ -329,6 +299,8 @@ presentation/components/ · presentation/hooks/ · presentation/contexts/ · pre
 - `IAlertPreferencesRepository` → `AlertPreferencesLocalStorageAdapter` (web) / `AlertPreferencesAsyncStorageAdapter` (mobile)
 - `IAuthRepository` → `SupabaseAuthRepository`
 - `ITimerPreferencesRepository` → `SupabaseTimerPreferencesRepository` (mobile)
+- `IOnboardingStateRepository` → `OnboardingLocalStorageAdapter` (web) / `OnboardingAsyncStorageAdapter` (mobile)
+- `IUserCognitivePreferencesRepository` → `SupabaseUserCognitivePreferencesRepository` (web)
 
 ---
 
@@ -392,11 +364,13 @@ presentation/components/ · presentation/hooks/ · presentation/contexts/ · pre
 - Mesma estrutura de `ThemePreferences` (complexidade, modo, font, spacing)
 - `SmartChecklist` com mesma lógica de progressive disclosure
 - `FocusTimer` com mesma lógica Pomodoro
+- Mesma arquitetura de onboarding (mesmo conjunto de use cases e entidade `OnboardingState`)
 
 **⚠️ Divergências menores:**
 
 - `BrainState` é `valueObject` no web, `entity` no mobile
-- `ITimerPreferencesRepository` é separado no mobile, embutido em `ITaskRepository` no web
+- `ITimerPreferencesRepository` é separado no mobile, embutido no web
+- Mobile tem `AlertContext` (dialog nativo); web usa Sonner diretamente
 - Use cases funcionais no `web-mfe-auth` vs. classes no `web-host` e mobile
 
 ---
@@ -441,27 +415,34 @@ presentation/components/ · presentation/hooks/ · presentation/contexts/ · pre
 
 > Testes unitários cobrindo regras de negócio (não apenas snapshot)
 
-**web-host:** ✅ 10 arquivos de teste com Vitest:
+**web-host:** ✅ 15 arquivos de teste com Vitest:
 
-- `AlertEngineService.test.ts` — testa as pure functions com `clockFn` injectable
-- `CalibrateAlertPreferencesFromBrainState.test.ts` — testa mapeamento brain state → prefs
-- `RecordBrainState.test.ts`
-- `useCases.test.ts` — testa CreateTask, UpdateTask, DeleteTask com repos mockados
-- `AlertPreferences.test.ts`, `TaskStatus.test.ts`, `TimerPreferences.test.ts` — testes de domínio
-- `AlertPreferencesLocalStorageAdapter.test.ts`
-- `BrainTodayModal.test.tsx`, `CognitiveAlertConfigPage.test.tsx`, `ThemePreferencesContext.test.tsx`, `useTimerPreferences.test.tsx`
+- `AlertEngineService.test.ts` — pure functions com `clockFn` injectable
+- `CalibrateAlertPreferencesFromBrainState.test.ts`, `RecordBrainState.test.ts`
+- `OnboardingUseCases.test.ts` — cobre GetOnboardingState, Start, Advance, Complete, Skip, Reset
+- `useCases.test.ts` — CreateTask, UpdateTask, DeleteTask com repos mockados
+- `AlertPreferences.test.ts`, `TaskStatus.test.ts`, `TimerPreferences.test.ts`
+- `OnboardingLocalStorageAdapter.test.ts`, `AlertPreferencesLocalStorageAdapter.test.ts`
+- `ProtectedRouteOnboarding.test.tsx`, `BrainTodayModal.test.tsx`, `CognitiveAlertConfigPage.test.tsx`
+- `ThemePreferencesContext.test.tsx`, `useTimerPreferences.test.tsx`
 
 **web-mfe-auth:** ❌ Nenhum arquivo de teste. Vitest não configurado.
 
-**mobile:** ❌ Nenhum arquivo de teste. Jest / Vitest não configurados.
+**mobile:** ⚠️ 3 arquivos de teste com Vitest:
+
+- `OnboardingUseCases.test.ts` — cobre Start, Advance (cap a step 5), Complete, Skip, Reset
+- `OnboardingAsyncStorageAdapter.test.ts` — save/restore, fallback para estado corrompido
+- `authDeepLink.test.ts` — criação de URL de callback e extração de tokens de hash/query params
+
+Ainda faltam testes para `AlertEngineService` (mobile), `ThemePreferencesContext` e hooks principais.
 
 **packages/ui:** ❌ Nenhum arquivo de teste.
 
-**Melhoria sugerida (alta prioridade):**
+**Lacunas prioritárias:**
 
-1. **web-mfe-auth:** Adicionar testes para os Zod schemas (`authSchemas.test.ts`) e `useAuth` hook. Baixo esforço, alto valor.
-2. **mobile:** Configurar Jest com `@testing-library/react-native`. Priorizar testes para `AlertEngineService` (já existente no web-host — reutilizar), `ThemePreferencesContext`, e `useSmartChecklist`.
-3. **packages/ui:** Adicionar testes de snapshot + acessibilidade para os componentes compartilhados.
+1. **web-mfe-auth:** `authSchemas.test.ts` e `useAuth.test.ts` — baixo esforço, alto valor.
+2. **mobile:** reutilizar `AlertEngineService.test.ts` do web-host e adicionar cobertura de `ThemePreferencesContext`.
+3. **packages/ui:** testes de snapshot + acessibilidade nos primitivos compartilhados.
 
 ---
 
@@ -470,7 +451,8 @@ presentation/components/ · presentation/hooks/ · presentation/contexts/ · pre
 ### `[✅]` CI/CD funcional
 
 > Pipeline executa build + testes automaticamente
-> Foram encontrados arquivos de CI/CD (`.github/workflows/`, `.gitlab-ci.yml`, etc.) no repositório.
+
+`.github/workflows/ci.yml` com 4 jobs independentes: `lint`, `type-check`, `test` (roda `pnpm test` com secrets Supabase) e `build`. Executa em `push` e `pull_request` sobre `main` e `develop`. Cache de Turborepo configurado para acelerar runs subsequentes.
 
 ---
 
@@ -478,10 +460,10 @@ presentation/components/ · presentation/hooks/ · presentation/contexts/ · pre
 
 > ESLint, Prettier ou equivalente configurados corretamente
 
-- ESLint 9 com flat config em cada app (`eslint.config.js`) + `@repo/eslint-config` compartilhado
-- `prettier` com `pnpm format`
+- ESLint 9 com flat config em cada app + `@repo/eslint-config` compartilhado
+- Prettier com `pnpm format`
 - TypeScript 5.9 strict em todos os workspaces via `@repo/typescript-config`
-- Turborepo com tasks `lint`, `check-types`, `format` no `turbo.json`
+- Turborepo com tasks `lint`, `check-types`, `format`, `test` no `turbo.json`
 
 ---
 
@@ -489,84 +471,83 @@ presentation/components/ · presentation/hooks/ · presentation/contexts/ · pre
 
 > Estrutura clara, histórico coerente, sem código morto
 
-Estrutura de monorepo clara. Openspec com histórico de changes em `openspec/changes/`. Código morto não identificado nas camadas analisadas.
+Monorepo com estrutura clara. OpenSpec com histórico de changes em `openspec/changes/`. Código morto não identificado nas camadas analisadas.
 
 ---
 
-### `[⚠️]` README técnico completo
+### `[✅]` README técnico completo
 
 > Setup, arquitetura, decisões técnicas e instruções claras
 
-O `README.md` atual documenta requisitos do projeto mas não contém:
+O README cobre todos os pontos essenciais:
 
-- Instruções de setup (`pnpm install`, configuração de `.env`)
-- Diagrama ou descrição da arquitetura técnica implementada
-- Decisões técnicas (por que Module Federation, por que Supabase, etc.)
-- Como executar os testes
+- Problema abordado e visão da solução
+- Tecnologias por camada (monorepo, web, mobile, UI/estado, backend, qualidade)
+- Estrutura de pastas e descrição das camadas da Clean Architecture
+- Setup passo a passo: `pnpm install`, configuração do `.env.example`, `pnpm dev` / `dev:host` / `dev:auth` / `dev:sequential`
+- Comandos de qualidade: `pnpm lint`, `pnpm check-types`, `pnpm format`
+- Referências para `docs/ARCHITECTURE.md` (arquitetura detalhada) e `docs/CHECKLIST_AVALIACAO.md`
+- Seções dedicadas para screenshots (placeholder com instruções) e vídeo técnico (pendente de publicação)
 
-**Melhoria sugerida:** Ver `docs/ARCHITECTURE.md` — se já contém essas informações, linkar no README. Se não, adicionar seção "Setup & Development" ao README com os comandos do `AGENTS.md`.
+**Gap residual:** O vídeo técnico e as capturas de tela da aplicação ainda não estão incluídos (placeholders documentados). As decisões de tradeoff arquiteturais (por que Module Federation, por que Supabase, por que Clean Architecture no frontend) estão ausentes mas o `ARCHITECTURE.md` cobre os padrões.
 
 ---
 
 ## Tabela Consolidada
 
-| Requisito                          | web-host                        | web-mfe-auth | mobile                         |
-| ---------------------------------- | ------------------------------- | ------------ | ------------------------------ |
-| Redução de estímulos visuais       | ✅                              | ✅           | ✅                             |
-| Controle de complexidade funcional | ✅                              | ➖           | ✅                             |
-| Modo foco efetivo                  | ✅                              | ➖           | ✅                             |
-| Ritmo guiado                       | ⚠️ sem onboarding inicial       | ➖           | ⚠️                             |
-| Controle de animações              | ❌ sem `prefers-reduced-motion` | ➖           | ❌ sem `isReduceMotionEnabled` |
-| Dashboard global funcional         | ✅                              | ➖           | ✅                             |
-| Resumo vs. detalhado               | ✅                              | ➖           | ✅                             |
-| Contraste/fonte/espaçamento global | ✅                              | ✅           | ✅                             |
-| Alertas cognitivos inteligentes    | ✅                              | ➖           | ✅                             |
-| Kanban simplificado funcional      | ✅                              | ➖           | ✅ tab-based                   |
-| Pomodoro adaptado                  | ✅                              | ➖           | ✅                             |
-| Checklist com lógica               | ✅                              | ➖           | ✅                             |
-| Transição suave entre tarefas      | ✅                              | ➖           | ✅                             |
-| Persistência real                  | ✅                              | ➖           | ✅                             |
-| Separação de estado global         | ✅                              | ✅           | ✅                             |
-| Separação por domínio/feature      | ✅                              | ✅           | ✅                             |
-| Domínio isolado da UI              | ✅                              | ✅           | ✅                             |
-| Casos de uso implementados         | ✅                              | ✅           | ✅                             |
-| Uso de interfaces/adapters         | ✅                              | ✅           | ✅                             |
-| TypeScript avançado                | ✅                              | ✅           | ✅                             |
-| Componentização adequada           | ✅                              | ✅           | ✅                             |
-| Tratamento de erros e estados      | ✅                              | ✅           | ✅                             |
-| Mobile funcional real              | ➖                              | ➖           | ✅                             |
-| Coerência cognitiva Web/Mobile     | ✅                              | ➖           | ✅                             |
-| Acessibilidade estrutural          | ✅                              | ✅           | ✅                             |
-| Contraste validado                 | ⚠️ não auditado                 | ⚠️           | ⚠️                             |
-| Testes relevantes                  | ✅                              | ❌           | ❌                             |
-| CI/CD funcional                    | ✅                              | ✅           | ✅                             |
-| Padrões e lint                     | ✅                              | ✅           | ✅                             |
-| Repositório organizado             | ✅                              | ✅           | ✅                             |
-| README técnico completo            | ⚠️                              | ⚠️           | ➖                             |
+| Requisito                          | web-host | web-mfe-auth | mobile       |
+| ---------------------------------- | -------- | ------------ | ------------ |
+| Redução de estímulos visuais       | ✅       | ✅           | ✅           |
+| Controle de complexidade funcional | ✅       | ➖           | ✅           |
+| Modo foco efetivo                  | ✅       | ➖           | ✅           |
+| Ritmo guiado                       | ✅       | ➖           | ✅           |
+| Controle de animações              | ✅       | ➖           | ✅           |
+| Dashboard global funcional         | ✅       | ➖           | ✅           |
+| Resumo vs. detalhado               | ✅       | ➖           | ✅           |
+| Contraste/fonte/espaçamento global | ✅       | ✅           | ✅           |
+| Alertas cognitivos inteligentes    | ✅       | ➖           | ✅           |
+| Kanban simplificado funcional      | ✅       | ➖           | ✅ tab-based |
+| Pomodoro adaptado                  | ✅       | ➖           | ✅           |
+| Checklist com lógica               | ✅       | ➖           | ✅           |
+| Transição suave entre tarefas      | ✅       | ➖           | ✅           |
+| Persistência real                  | ✅       | ➖           | ✅           |
+| Separação de estado global         | ✅       | ✅           | ✅           |
+| Separação por domínio/feature      | ✅       | ✅           | ✅           |
+| Domínio isolado da UI              | ✅       | ✅           | ✅           |
+| Casos de uso implementados         | ✅       | ✅           | ✅           |
+| Uso de interfaces/adapters         | ✅       | ✅           | ✅           |
+| TypeScript avançado                | ✅       | ✅           | ✅           |
+| Componentização adequada           | ✅       | ✅           | ✅           |
+| Tratamento de erros e estados      | ✅       | ✅           | ✅           |
+| Mobile funcional real              | ➖       | ➖           | ✅           |
+| Coerência cognitiva Web/Mobile     | ✅       | ➖           | ✅           |
+| Acessibilidade estrutural          | ✅       | ✅           | ✅           |
+| Contraste validado                 | ⚠️       | ⚠️           | ⚠️           |
+| Testes relevantes                  | ✅       | ❌           | ⚠️           |
+| CI/CD funcional                    | ✅       | ✅           | ✅           |
+| Padrões e lint                     | ✅       | ✅           | ✅           |
+| Repositório organizado             | ✅       | ✅           | ✅           |
+| README técnico completo            | ✅       | ✅           | ➖           |
 
 ---
 
-## Priorização das Melhorias
+## Priorização das Melhorias (Pós-Deploy)
 
-### Prioridade Alta (impacto direto na avaliação ou no público-alvo)
+### Prioridade Alta
 
-1. **`prefers-reduced-motion` no web** — 1 bloco CSS global + toggle em `ThemePreferencesContext`
-2. **`isReduceMotionEnabled` no mobile** — guard antes de cada `LayoutAnimation.configureNext`
-3. **Testes em `web-mfe-auth`** — `authSchemas.test.ts` e `useAuth.test.ts` são de baixo esforço
-4. **`addTaskTimeSpent` atômico** — RPC Supabase para evitar race condition nos timers
+1. **Testes em `web-mfe-auth`** — `authSchemas.test.ts` e `useAuth.test.ts` (Vitest não configurado)
+2. **`ErrorBoundary` por rota no web-host** — previne crash total da SPA em erros não tratados (1 componente por rota no `router.tsx`)
+3. **Ampliar suite de testes mobile** — portar `AlertEngineService.test.ts` do web-host, adicionar `ThemePreferencesContext.test.tsx` com mock de `AccessibilityInfo`
 
 ### Prioridade Média
 
-5. **Onboarding inicial guiado** — 3 etapas na primeira sessão
-6. **`ErrorBoundary` por rota** — previne crash total da SPA
-7. **Auditoria WCAG AA** nos temas `default` e `soft`
-8. **Testes no mobile** — priorizar `AlertEngineService` (código já existe) e `ThemePreferencesContext`
-9. **`data-complexity` e `data-helpers` no DOM** — adicionar `setAttribute` no `ThemePreferencesContext`
+4. **`data-complexity` no DOM** — 1 linha em `applyToDocument`: `root.setAttribute('data-complexity', prefs.complexity)` no `ThemePreferencesContext` do web-host
+5. **Auditoria WCAG AA** nos temas `default` e `soft` — rodar `@axe-core/react` em dev
+6. **Testes em `packages/ui`** — snapshot + acessibilidade nos primitivos compartilhados
 
 ### Prioridade Baixa
 
-10. Extrair `SegmentedControl` para arquivo próprio
-11. Harmonizar estilo de use cases (`web-mfe-auth` funções vs. classes)
-12. Modo resumo com contadores no Kanban (em vez de cards individuais)
-13. Seletor de status inline no card mobile
-14. Preferência `autoAdvance` no Pomodoro
+7. Decisões arquiteturais no README (por que Module Federation, por que Supabase, tradeoffs de Clean Architecture no frontend)
+8. `addTaskTimeSpent` atômico via RPC Supabase para evitar race condition nos timers
+9. Extrair `SegmentedControl` para arquivo próprio em `src/presentation/components/`
+10. Harmonizar estilo de use cases (`web-mfe-auth` funções vs. classes no `web-host` e mobile)

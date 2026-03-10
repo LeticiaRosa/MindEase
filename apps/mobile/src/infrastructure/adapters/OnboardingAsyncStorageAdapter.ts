@@ -20,7 +20,11 @@ export class OnboardingAsyncStorageAdapter implements IOnboardingStateRepository
         (status !== "pending" &&
           status !== "completed" &&
           status !== "skipped") ||
-        (currentStep !== 1 && currentStep !== 2 && currentStep !== 3)
+        (currentStep !== 1 &&
+          currentStep !== 2 &&
+          currentStep !== 3 &&
+          currentStep !== 4 &&
+          currentStep !== 5)
       ) {
         return DEFAULT_ONBOARDING_STATE;
       }

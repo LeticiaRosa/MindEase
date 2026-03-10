@@ -1,207 +1,180 @@
 # MindEase
 
-Facilitar a vida acadêmica e profissional de pessoas neurodivergentes e/ou com desafios de processamento cognitivo.
+MindEase e uma plataforma para reduzir sobrecarga cognitiva no estudo e no trabalho, com foco em pessoas neurodivergentes (TDAH, TEA, dislexia e perfis com fadiga mental).
 
-## Intro
+## Problema Abordado
 
-O MindEase é uma plataforma que oferece uma variedade de ferramentas e recursos para ajudar pessoas neurodivergentes e/ou com desafios de processamento cognitivo a gerenciar suas tarefas diárias, organizar suas rotinas, melhorar sua comunicação e promover seu bem-estar mental. A plataforma é composta por três micro frontends principais: Autenticação, Painel Cognitivo e Organizador de Tarefas, todos integrados em um ambiente unificado.
+Ferramentas digitais tradicionais costumam aumentar a carga cognitiva em vez de reduzir:
 
-## Público-Alvo
+- excesso de informacao simultanea na tela
+- baixa previsibilidade de navegacao
+- fluxos longos e sem orientacao por etapas
+- pouca personalizacao de foco, contraste, fonte e espacamento
+- feedback invasivo (modais ou interrupcoes frequentes)
 
-Pessoas com dificuldades cognitivas, como:
-● TDAH;
-● TEA (Autismo);
-● Dislexia;
-● Burnout e sobrecarga mental;
-● Dificuldades de foco e retenção;
-● Ansiedade em ambientes digitais;
-● Sobrecarga sensorial.
+## Visao da Solucao
 
-## Problema
+MindEase combina dashboard cognitivo, autenticacao e organizacao de tarefas em um monorepo com Web + Mobile. A proposta e:
 
-Esses usuários relataram grande dificuldade ao utilizar plataformas atuais por causa de:
-● Excesso de informação na tela;
-● Falta de previsibilidade e consistência;
-● Ausência de modo de foco;
-● Textos longos e pouco adaptados;
-● Navegação caótica;
+- reduzir estimulos visuais e decisorios
+- guiar o usuario com progressao controlada
+- manter consistencia cognitiva entre plataformas
+- persistir preferencias de acessibilidade e foco
 
-## Requisitos
+Principais entregas funcionais:
 
-### Painel Cognitivo Personalizável
+- ajustes globais de tema, contraste, fonte, espacamento e complexidade
+- modo foco para isolamento da tarefa ativa
+- organizador de tarefas com Kanban simplificado
+- timer de foco (Pomodoro adaptado)
+- checklist progressivo para decompor tarefas complexas
+- alertas cognitivos suaves, nao intrusivos, baseados em contexto
 
-Um dashboard onde o usuário ajusta:
-● Nível de complexidade da interface;
-● Modo de foco (esconde distrações);
-● Modo resumo / modo detalhado;
-● Contraste, espaçamento e tamanho de fonte;
-● Alertas cognitivos (ex.: “você está muito tempo nesta tarefa”).
+## Tecnologias Utilizadas
 
-### Organizador de Tarefas com Suporte Cognitivo
+### Monorepo e Build
 
-Um sistema de tarefas com:
-● Etapas visuais (Kanban simplificado);
-● Timers com controle de foco (método Pomodoro adaptado);
-● Checklist inteligente para reduzir sobrecarga. O checklist inteligente seria basicamente quebrar a tarefa em passos menores, por exemplo. Ou mostrar menos coisa de cada vez e ajudar o usuário a focar no próximo passo, com o objetivo de reduzir sobrecarga..
-Ele fica dentro da tarefa, como um apoio cognitivo pra execução. A implementação é livre, o importante é explicar como isso ajuda no foco e na organização mental.
-● Avisos de transição suave entre atividades.
+- pnpm 9
+- Turborepo 2.8
+- TypeScript 5.9
 
-### Perfil do Usuário + Configurações Persistentes
+### Web
 
-Armazenar preferências como:
-● Modo de foco;
-● Intensidade de contraste e espaçamento;
-● Perfil de navegação;
-● Necessidades específicas;
-● Rotinas de estudo ou trabalho.
+- React 18
+- Vite 7
+- React Router v6
+- Module Federation com @module-federation/vite
 
-## Tecnologias Esperadas
+### Mobile
 
-### Arquitetura Microfrontend
+- React Native 0.76
+- Expo 52
+- expo-router
 
-● Separação clara entre módulos (painel, biblioteca, tarefas, perfil);
-● Comunicação entre microapps.
+### UI e Estado
 
-### Desenvolvimento Mobile
+- Tailwind CSS v4
+- shadcn/ui (pacote compartilhado)
+- @tanstack/react-query
+- react-hook-form + zod
 
-● Flutter ou React Native;
-● Versão mobile deve manter coerência cognitiva com a versão Web.
+### Backend e Persistencia
 
-### Desenvolvimento Web
+- Supabase (auth + dados)
 
-● Typescript;
-● Angular, React ou Next.js.
+### Qualidade
 
-### Clean Architecture (modularidade, separação de camadas: apresentação, domínio, infra)
+- ESLint 9 (flat config)
+- Prettier
+- Vitest (web-host)
 
-● Camada de domínio isolada;
-● Casos de uso independentes de UI;
-● Adaptadores e interfaces claras.
+## Arquitetura do Projeto
 
-### Gerenciamento de estado avançado
+Este repositorio e um monorepo com separacao por apps e pacotes compartilhados:
 
-● Implementação de gerenciamento de estado avançado (State Management: Context API, Provider, etc.)
+```text
+apps/
+  web-host/      # Shell host (porta 3000)
+  web-mfe-auth/  # Microfrontend de autenticacao (porta 3001)
+  mobile/        # App mobile (Expo)
+packages/
+  ui/                # componentes e tokens compartilhados
+  eslint-config/     # configuracoes de lint compartilhadas
+  typescript-config/ # configuracoes TS compartilhadas
+```
 
-### Testes
+A arquitetura segue Clean Architecture em todas as plataformas:
 
-● Testes unitários para lógica de negócios;
-● Testes de integração para fluxos principais;
-● Testes de usabilidade com usuários neurodivergentes.
+- domain: entidades, regras e contratos
+- application: casos de uso e servicos de orquestracao
+- infrastructure: adapters, clientes e integracoes externas
+- presentation: componentes, paginas, hooks e contexts
 
-### Acessibilidade Cognitiva (obrigatório)
+A documentacao arquitetural detalhada esta em `docs/ARCHITECTURE.md`.
 
-● Níveis ajustáveis de complexidade;
-● Componentes de foco;
-● Ritmos guiados na interface;
-● Redução de estímulos visuais;
-● Animações controláveis.
+## Como Rodar o Projeto
 
-## Estrutura do Projeto
+### 1. Pre-requisitos
 
-my-turborepo/
-├── apps/
-│ ├── web-host/ ← web app principal ( React )
-│ ├── web-auth/ ← web app de autenticação ( React )
-│ └── mobile/ ← app mobile ( React Native )
-├── packages/
-│ ├── ui/ ← componentes compartilhados entre os micro frontends
-│ ├── ├── src/ ← código-fonte dos componentes
-│ ├── ├── hooks/ ← hooks compartilhados de UI ( ex.: use-toast )
+- Node.js 20+
+- pnpm 9+
 
-## CheckList de Requisitos do Projeto - Critério Objetivo de Avaliação
+### 2. Instalar dependencias
 
-[] Redução real de estímulos visuais
-Existe modo que reduz elementos simultâneos, cores vibrantes, sombras, excesso de cards e distrações (não apenas troca de tema)
+```bash
+pnpm install
+```
 
-[] Controle de complexidade funcional
-Níveis alteram densidade informacional, fluxo e quantidade de decisões na tela
+### 3. Configurar variaveis de ambiente (auth web)
 
-[] Modo foco efetivo
-Modo foco isola tarefa ativa e reduz navegação paralela
+Crie o arquivo `apps/web-mfe-auth/.env` com base em `apps/web-mfe-auth/.env.example`:
 
-[] Ritmo guiado
-Interface conduz por etapas (progressão controlada, onboarding ou sequência orientada)
+```env
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY=...
+```
 
-[] Controle de animações
-Permite reduzir/desativar animações e respeita prefers-reduced-motion (Web)
+### 4. Executar em desenvolvimento
 
-[] Dashboard global funcional
-Alterações no painel afetam toda a aplicação e não apenas a página atual
+Rodar todo o workspace:
 
-[] Resumo vs detalhado implementado corretamente
-Mudança altera estrutura visual (não apenas esconder texto)
+```bash
+pnpm dev
+```
 
-[] Contraste, fonte e espaçamento aplicados globalmente
-Implementação via tokens, theme ou CSS variables coerentes
+Rodar apenas o host web:
 
-[] Alertas cognitivos inteligentes
-Alertas possuem regra clara (tempo, troca de contexto) e não são invasivos
+```bash
+pnpm dev:host
+```
 
-[] Kanban simplificado funcional
-Estados claros e persistidos, sem lógica acoplada à UI
+Rodar apenas o microfrontend de auth:
 
-[] Pomodoro adaptado
-Timer configurável com pausa controlada e feedback suave
+```bash
+pnpm dev:auth
+```
 
-[] Checklist com lógica
-Checklist possui comportamento adicional (dependência, sugestão ou agrupamento)
+Rodar auth e host em sequencia (evita race de federation):
 
-[] Transição suave entre tarefas
-Aviso prévio, salvamento de estado ou resumo antes de trocar
+```bash
+pnpm dev:sequential
+```
 
-[] Persistência real
-Preferências armazenadas (localStorage, banco ou API) e restauradas após reload
+### 5. Comandos de qualidade
 
-[] Separação de estado global
-Gerenciamento adequado (Context, Redux, Bloc, Provider etc.), sem prop drilling excessivo
+```bash
+pnpm lint
+pnpm check-types
+pnpm format
+```
 
-[] Separação por domínio/feature
-Estrutura organizada por responsabilidade e não apenas por tipo de arquivo
+## Prints ou GIFs da Aplicacao
 
-[] Domínio isolado da UI
-Regras de negócio não dependem de framework ou componentes
+Ainda nao ha capturas oficiais versionadas do produto no repositorio. Para fechar este requisito, adicione arquivos em `docs/media/` e atualize esta secao.
 
-[] Casos de uso implementados
-Use cases independentes e testáveis
+Sugestao minima:
 
-[] Uso de interfaces/adapters
-Dependências externas desacopladas via abstrações
+- `docs/media/web-dashboard.png`
+- `docs/media/web-focus-mode.gif`
+- `docs/media/mobile-dashboard.png`
 
-[] TypeScript avançado
-Uso correto de tipos, generics, enums, sem abuso de any
+Exemplo de como referenciar quando os arquivos forem adicionados:
 
-[] Componentização adequada
-Componentes reutilizáveis, coesos e sem lógica excessiva
+```md
+![Dashboard Web](docs/media/web-dashboard.png)
+![Modo Foco (GIF)](docs/media/web-focus-mode.gif)
+![Dashboard Mobile](docs/media/mobile-dashboard.png)
+```
 
-[] Tratamento de erros e estados
-Loading, error e empty states tratados explicitamente
+## Link do Video
 
-[] Mobile funcional real
-Aplicação roda em Flutter/RN com navegação própria
+Video tecnico (arquitetura + criterios cognitivos + demo):
 
-[] Coerência cognitiva Web/Mobile
-Mesma lógica de foco e complexidade mantida entre plataformas
+- Pendente de publicacao
+- Recomendacao: video de ate 15 minutos com secao de decisoes arquiteturais e secao de acessibilidade cognitiva
 
-[] Acessibilidade estrutural
-Semântica correta, aria quando necessário, navegação por teclado funcional
+## Documentacao Complementar
 
-[] Contraste validado
-Cores respeitam WCAG mínimo (AA)
-
-[] Testes relevantes
-Testes unitários cobrindo regras de negócio (não apenas snapshot)
-
-[] CI/CD funcional
-Pipeline executa build + testes automaticamente
-
-[] Padrões e lint
-ESLint, Prettier ou equivalente configurados corretamente
-
-[] Repositório organizado
-Estrutura clara, histórico coerente, sem código morto
-
-[] README técnico completo
-Setup, arquitetura, decisões técnicas e instruções claras
-
-[] Vídeo técnico (<=15min)
-Explica decisões arquiteturais e cognitivas, não apenas demonstração visual
+- `AGENTS.md`: padroes e operacao do projeto
+- `docs/ARCHITECTURE.md`: visao de arquitetura Clean
+- `docs/CHECKLIST_AVALIACAO.md`: avaliacao objetiva dos requisitos

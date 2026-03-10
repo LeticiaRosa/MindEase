@@ -47,12 +47,12 @@ describe("OnboardingAsyncStorageAdapter", () => {
   it("persists completion state", async () => {
     await adapter.save({
       status: "completed",
-      currentStep: 3,
+      currentStep: 5,
       updatedAt: new Date().toISOString(),
     });
 
     const loaded = await adapter.load();
     expect(loaded.status).toBe("completed");
-    expect(loaded.currentStep).toBe(3);
+    expect(loaded.currentStep).toBe(5);
   });
 });

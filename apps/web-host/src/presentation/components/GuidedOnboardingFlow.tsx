@@ -14,6 +14,7 @@ const createTaskUseCase = new CreateTask(taskRepository);
 export function GuidedOnboardingFlow() {
   const toast = useToast();
   const [title, setTitle] = useState("");
+  const [createdTaskTitle, setCreatedTaskTitle] = useState("");
   const [savingTask, setSavingTask] = useState(false);
 
   const { state, start, nextStep, complete, skip } = useOnboarding();
@@ -57,13 +58,24 @@ export function GuidedOnboardingFlow() {
 
     try {
       setSavingTask(true);
-      await createTaskUseCase.execute(effectiveRoutineId, title);
-      await complete();
-      toast.success("Onboarding concluido. Bem-vindo ao MindEase!");
+      const normalizedTitle = title.trim();
+      await createTaskUseCase.execute(effectiveRoutineId, normalizedTitle);
+      setCreatedTaskTitle(normalizedTitle);
+      await nextStep();
+      toast.success("Task criada no To Do. Vamos visualizar no quadro.");
     } catch {
       toast.error("Nao foi possivel criar a primeira tarefa");
     } finally {
       setSavingTask(false);
+    }
+  };
+
+  const handleCompleteOnboarding = async () => {
+    try {
+      await complete();
+      toast.success("Onboarding concluido. Bem-vindo ao MindEase!");
+    } catch {
+      toast.error("Nao foi possivel concluir onboarding");
     }
   };
 
@@ -80,7 +92,7 @@ export function GuidedOnboardingFlow() {
     <section className="min-h-screen bg-background px-6 py-8 flex items-center justify-center">
       <div className="w-full max-w-2xl rounded-2xl border border-border bg-card p-8 shadow-sm space-y-6">
         <header className="space-y-2">
-          <p className="text-sm text-muted-foreground">Passo {step} de 3</p>
+          <p className="text-sm text-muted-foreground">Passo {step} de 5</p>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             Configuração guiada inicial
           </h1>
@@ -145,7 +157,7 @@ export function GuidedOnboardingFlow() {
         {step === 3 && (
           <form className="space-y-4" onSubmit={handleCreateFirstTask}>
             <h2 className="text-lg font-medium text-foreground">
-              Crie sua primeira tarefa
+              Crie sua primeira tarefa para To Do
             </h2>
             <p className="text-sm text-muted-foreground">
               Digite uma tarefa pequena para iniciar com clareza.
@@ -162,7 +174,7 @@ export function GuidedOnboardingFlow() {
               className="w-full"
               disabled={savingTask || routinesLoading || !title.trim()}
             >
-              {savingTask ? "Finalizando..." : "Concluir onboarding"}
+              {savingTask ? "Criando task..." : "Criar task e continuar"}
             </Button>
             <Button
               type="button"
@@ -174,6 +186,97 @@ export function GuidedOnboardingFlow() {
               Pular onboarding
             </Button>
           </form>
+        )}
+
+        {step === 4 && (
+          <div className="space-y-4">
+            <h2 className="text-lg font-medium text-foreground">
+              O que é um Kanban
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Kanban é um quadro para organizar tarefas por etapa. No MindEase,
+              você começa em To Do, move para Doing ao iniciar e marca como Done
+              quando concluir.
+            </p>
+            <div
+              className="grid gap-3 sm:grid-cols-3"
+              aria-label="Desenho simples de kanban"
+            >
+              <div className="rounded-lg border border-border bg-background p-3">
+                <p className="text-xs font-medium text-foreground">To Do</p>
+                <div className="mt-2 rounded-md border border-dashed border-border px-2 py-3 text-center text-xs text-muted-foreground">
+                  tarefas novas
+                </div>
+              </div>
+              <div className="rounded-lg border border-border bg-background p-3">
+                <p className="text-xs font-medium text-foreground">Doing</p>
+                <div className="mt-2 rounded-md border border-dashed border-border px-2 py-3 text-center text-xs text-muted-foreground">
+                  em andamento
+                </div>
+              </div>
+              <div className="rounded-lg border border-border bg-background p-3">
+                <p className="text-xs font-medium text-foreground">Done</p>
+                <div className="mt-2 rounded-md border border-dashed border-border px-2 py-3 text-center text-xs text-muted-foreground">
+                  concluidas
+                </div>
+              </div>
+            </div>
+            <Button className="w-full" onClick={() => nextStep()}>
+              Entendi, continuar
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full"
+              onClick={handleSkipOnboarding}
+            >
+              Pular onboarding
+            </Button>
+          </div>
+        )}
+
+        {step === 5 && (
+          <div className="space-y-4">
+            <h2 className="text-lg font-medium text-foreground">
+              Como sua task aparece no To Do
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              A task criada no passo anterior entra automaticamente no card To
+              Do. Esse comportamento é igual no mobile e no web.
+            </p>
+            <div
+              className="grid gap-3 sm:grid-cols-3"
+              aria-label="Desenho completo do quadro com task"
+            >
+              <div className="rounded-lg border border-border bg-background p-3">
+                <p className="text-xs font-medium text-foreground">To Do</p>
+                <div className="mt-2 rounded-md border border-border bg-card px-2 py-2 text-xs text-foreground">
+                  {createdTaskTitle || title.trim() || "Sua primeira task"}
+                </div>
+              </div>
+              <div className="rounded-lg border border-border bg-background p-3">
+                <p className="text-xs font-medium text-foreground">Doing</p>
+                <div className="mt-2 rounded-md border border-dashed border-border px-2 py-3 text-center text-xs text-muted-foreground">
+                  vazio
+                </div>
+              </div>
+              <div className="rounded-lg border border-border bg-background p-3">
+                <p className="text-xs font-medium text-foreground">Done</p>
+                <div className="mt-2 rounded-md border border-dashed border-border px-2 py-3 text-center text-xs text-muted-foreground">
+                  vazio
+                </div>
+              </div>
+            </div>
+            <Button className="w-full" onClick={handleCompleteOnboarding}>
+              Concluir onboarding
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full"
+              onClick={handleSkipOnboarding}
+            >
+              Pular onboarding
+            </Button>
+          </div>
         )}
       </div>
     </section>

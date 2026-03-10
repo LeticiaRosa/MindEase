@@ -12,7 +12,7 @@ export class AdvanceOnboardingStep {
     const current = await this.repository.load();
     if (current.status !== "pending") return current;
 
-    const nextStep = Math.min(current.currentStep + 1, 3) as 1 | 2 | 3;
+    const nextStep = Math.min(current.currentStep + 1, 5) as 1 | 2 | 3 | 4 | 5;
     const next: OnboardingState = {
       status: "pending",
       currentStep: nextStep,

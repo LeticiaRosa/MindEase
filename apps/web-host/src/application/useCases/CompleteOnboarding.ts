@@ -11,7 +11,7 @@ export class CompleteOnboarding {
   async execute(): Promise<OnboardingState> {
     const next: OnboardingState = {
       status: "completed",
-      currentStep: 3,
+      currentStep: 5,
       updatedAt: new Date().toISOString(),
     };
 

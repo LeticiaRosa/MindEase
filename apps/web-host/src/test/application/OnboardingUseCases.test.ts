@@ -52,30 +52,30 @@ describe("Onboarding use cases", () => {
     expect(result.currentStep).toBe(1);
   });
 
-  it("advances onboarding step and caps at step 3", async () => {
+  it("advances onboarding step and caps at step 5", async () => {
     const repo = new InMemoryOnboardingRepo({
       status: "pending",
-      currentStep: 2,
+      currentStep: 4,
       updatedAt: new Date().toISOString(),
     });
 
     const firstAdvance = await new AdvanceOnboardingStep(repo).execute();
-    expect(firstAdvance.currentStep).toBe(3);
+    expect(firstAdvance.currentStep).toBe(5);
 
     const secondAdvance = await new AdvanceOnboardingStep(repo).execute();
-    expect(secondAdvance.currentStep).toBe(3);
+    expect(secondAdvance.currentStep).toBe(5);
   });
 
-  it("completes onboarding and pins step 3", async () => {
+  it("completes onboarding and pins step 5", async () => {
     const repo = new InMemoryOnboardingRepo({
       status: "pending",
-      currentStep: 2,
+      currentStep: 4,
       updatedAt: new Date().toISOString(),
     });
 
     const result = await new CompleteOnboarding(repo).execute();
     expect(result.status).toBe("completed");
-    expect(result.currentStep).toBe(3);
+    expect(result.currentStep).toBe(5);
   });
 
   it("skips onboarding", async () => {
@@ -88,7 +88,7 @@ describe("Onboarding use cases", () => {
   it("resets onboarding to pending step 1", async () => {
     const repo = new InMemoryOnboardingRepo({
       status: "completed",
-      currentStep: 3,
+      currentStep: 5,
       updatedAt: new Date().toISOString(),
     });
 

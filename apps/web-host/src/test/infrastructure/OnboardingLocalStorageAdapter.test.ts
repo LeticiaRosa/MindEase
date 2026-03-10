@@ -59,7 +59,7 @@ describe("OnboardingLocalStorageAdapter", () => {
   it("clears onboarding state", async () => {
     await adapter.save({
       status: "completed",
-      currentStep: 3,
+      currentStep: 5,
       updatedAt: new Date().toISOString(),
     });
     await adapter.clear();
