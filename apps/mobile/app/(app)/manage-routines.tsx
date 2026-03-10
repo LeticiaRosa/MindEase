@@ -133,7 +133,7 @@ export default function ManageRoutinesScreen() {
           </Text>
           <Text
             style={{
-              fontSize: resolvedFontSizes.md,
+              fontSize: resolvedFontSizes.base,
               fontWeight: "600",
               color: resolvedColors.textPrimary,
             }}
@@ -158,7 +158,7 @@ export default function ManageRoutinesScreen() {
           />
           <Text
             style={{
-              fontSize: resolvedFontSizes.md,
+              fontSize: resolvedFontSizes.base,
               fontWeight: "600",
               color: resolvedColors.textPrimary,
               paddingTop: resolvedSpacing.md,
