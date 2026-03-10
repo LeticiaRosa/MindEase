@@ -1,6 +1,6 @@
 # Avaliação do Checklist de Requisitos — MindEase (Pós-Deploy)
 
-> **Data da análise:** 14 de março de 2026  
+> **Data da análise:** 10 de março de 2026  
 > **Escopo:** `apps/web-host`, `apps/web-mfe-auth`, `apps/mobile`, `packages/ui`, `.github/workflows`  
 > **Legenda:** ✅ Atendido · ⚠️ Parcialmente atendido · ❌ Não atendido · ➖ Não aplicável
 
@@ -14,7 +14,7 @@
 | **web-mfe-auth** | 9/31      | 1/31     | 3/31          |
 | **mobile**       | 27/31     | 2/31     | 2/31          |
 
-O projeto possui uma base muito sólida pós-deploy. A arquitetura Clean Architecture está aplicada de forma consistente nas três plataformas. O README foi completado com setup passo a passo e é agora suficiente para qualquer desenvolvedor iniciar o projeto. Os gaps remanescentes concentram-se em **testes no web-mfe-auth**, **`ErrorBoundary` por rota no web**, e pontos menores de qualidade/acessibilidade.
+O projeto possui uma base muito sólida pós-deploy. A arquitetura Clean Architecture está aplicada de forma consistente nas três plataformas. O README foi completado com setup passo a passo e é agora suficiente para qualquer desenvolvedor iniciar o projeto. As melhorias de alta prioridade desta rodada foram concluídas (testes no `web-mfe-auth`, `ErrorBoundary` por rota no web-host e ampliação da suíte mobile). Os gaps remanescentes concentram-se em qualidade/acessibilidade e cobertura adicional em `packages/ui`.
 
 ---
 
@@ -341,7 +341,7 @@ presentation/components/ · presentation/hooks/ · presentation/contexts/ · pre
 - `SmartChecklist`: estado "sem passos" + "todos concluídos"
 - `SupabaseAuthRepository`: `trackMagicLinkRequest` falha de forma não-fatal (apenas `console.warn`)
 
-**Melhoria sugerida:** Nenhum `ErrorBoundary` React envolve as rotas. Erros não tratados em qualquer componente derrubam toda a SPA. Adicionar um boundary por rota é de baixo esforço e alto impacto.
+**Status atualizado:** Implementado `RouteErrorBoundary` por rota em `src/presentation/router.tsx` do `web-host` (`/`, `/login`, `/register`, `/auth/callback`, `/dashboard`, `/settings/cognitive-alerts`, `/settings/routines`, `/archived-tasks`), com fallback acessível (`role="alert"`) e ação de recarregar.
 
 ---
 
@@ -426,23 +426,26 @@ presentation/components/ · presentation/hooks/ · presentation/contexts/ · pre
 - `ProtectedRouteOnboarding.test.tsx`, `BrainTodayModal.test.tsx`, `CognitiveAlertConfigPage.test.tsx`
 - `ThemePreferencesContext.test.tsx`, `useTimerPreferences.test.tsx`
 
-**web-mfe-auth:** ❌ Nenhum arquivo de teste. Vitest não configurado.
+**web-mfe-auth:** ✅ Vitest configurado e testes adicionados:
 
-**mobile:** ⚠️ 3 arquivos de teste com Vitest:
+- `authSchemas.test.ts` — valida login, signup (incluindo mismatch de senha) e magic link.
+- `useAuth.test.tsx` — cobre carregamento de usuário, fluxo de sucesso/erro no `signIn` e unsubscribe no unmount.
+
+**mobile:** ⚠️ 5 arquivos de teste com Vitest:
 
 - `OnboardingUseCases.test.ts` — cobre Start, Advance (cap a step 5), Complete, Skip, Reset
 - `OnboardingAsyncStorageAdapter.test.ts` — save/restore, fallback para estado corrompido
 - `authDeepLink.test.ts` — criação de URL de callback e extração de tokens de hash/query params
+- `AlertEngineService.test.ts` — cobre gatilhos, mapeamento de canal e cooldown
+- `ThemePreferencesContext.test.tsx` — cobre hidratação/persistência e integração com `AccessibilityInfo` mockado
 
-Ainda faltam testes para `AlertEngineService` (mobile), `ThemePreferencesContext` e hooks principais.
+Ainda faltam testes para hooks principais de tela e fluxos de integração end-to-end.
 
 **packages/ui:** ❌ Nenhum arquivo de teste.
 
-**Lacunas prioritárias:**
+**Lacuna prioritária atual:**
 
-1. **web-mfe-auth:** `authSchemas.test.ts` e `useAuth.test.ts` — baixo esforço, alto valor.
-2. **mobile:** reutilizar `AlertEngineService.test.ts` do web-host e adicionar cobertura de `ThemePreferencesContext`.
-3. **packages/ui:** testes de snapshot + acessibilidade nos primitivos compartilhados.
+1. **packages/ui:** testes de snapshot + acessibilidade nos primitivos compartilhados.
 
 ---
 
@@ -523,7 +526,7 @@ O README cobre todos os pontos essenciais:
 | Coerência cognitiva Web/Mobile     | ✅       | ➖           | ✅           |
 | Acessibilidade estrutural          | ✅       | ✅           | ✅           |
 | Contraste validado                 | ⚠️       | ⚠️           | ⚠️           |
-| Testes relevantes                  | ✅       | ❌           | ⚠️           |
+| Testes relevantes                  | ✅       | ✅           | ⚠️           |
 | CI/CD funcional                    | ✅       | ✅           | ✅           |
 | Padrões e lint                     | ✅       | ✅           | ✅           |
 | Repositório organizado             | ✅       | ✅           | ✅           |
@@ -535,9 +538,9 @@ O README cobre todos os pontos essenciais:
 
 ### Prioridade Alta
 
-1. **Testes em `web-mfe-auth`** — `authSchemas.test.ts` e `useAuth.test.ts` (Vitest não configurado)
-2. **`ErrorBoundary` por rota no web-host** — previne crash total da SPA em erros não tratados (1 componente por rota no `router.tsx`)
-3. **Ampliar suite de testes mobile** — portar `AlertEngineService.test.ts` do web-host, adicionar `ThemePreferencesContext.test.tsx` com mock de `AccessibilityInfo`
+1. ✅ **Testes em `web-mfe-auth`** — `authSchemas.test.ts` e `useAuth.test.ts` implementados com Vitest configurado
+2. ✅ **`ErrorBoundary` por rota no web-host** — implementado com 1 boundary por rota no `router.tsx`
+3. ✅ **Ampliar suite de testes mobile** — `AlertEngineService.test.ts` portado e `ThemePreferencesContext.test.tsx` adicionado com mock de `AccessibilityInfo`
 
 ### Prioridade Média
 

@@ -16,7 +16,7 @@ type DbRecord = {
   complexity: UserCognitivePreferences["complexity"];
   reduce_motion: boolean;
   onboarding_state: OnboardingStateValue;
-  current_step: 1 | 2 | 3;
+  current_step: 1 | 2 | 3 | 4 | 5;
   onboarding_completed_at: string | null;
   updated_at: string;
 };

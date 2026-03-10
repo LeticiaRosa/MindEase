@@ -92,6 +92,64 @@ A arquitetura segue Clean Architecture em todas as plataformas:
 
 A documentacao arquitetural detalhada esta em `docs/ARCHITECTURE.md`.
 
+## Decisoes Arquiteturais
+
+### Por que Module Federation (web-host + web-mfe-auth)
+
+**Contexto do problema:** autenticacao e shell principal possuem ciclos de mudanca diferentes e exigem deploy desacoplado.
+
+**Decisao:** usar Module Federation via `@module-federation/vite`, com o `web-host` consumindo o remoto de auth.
+
+**Beneficios esperados:**
+
+- separacao de ownership entre shell e autenticacao
+- deploy independente do fluxo de auth sem rebuild completo do host
+- isolamento de falhas e evolucao incremental por feature
+
+**Tradeoffs assumidos:**
+
+- maior complexidade de ambiente local (ordem de subida dos apps)
+- necessidade de alinhamento de versoes e compartilhamento de dependencias singleton (`react`, `react-dom`, `@tanstack/react-query`)
+- observabilidade e debugging mais complexos entre fronteiras host/remoto
+
+### Por que Supabase (auth + persistencia)
+
+**Contexto do problema:** precisavamos acelerar entrega com autenticacao, banco relacional e regras de acesso sem operar backend completo do zero.
+
+**Decisao:** adotar Supabase para autenticacao (senha + magic link), Postgres e camada de dados.
+
+**Beneficios esperados:**
+
+- reducao de tempo de implementacao para auth e persistencia
+- stack SQL com maturidade de Postgres para consultas e evolucao de schema
+- integracao simples com web e mobile, mantendo tipagem TypeScript no dominio
+
+**Tradeoffs assumidos:**
+
+- dependencia de plataforma externa e do modelo de quotas/planos
+- necessidade de disciplina em politicas de seguranca e modelagem para evitar acoplamento ao banco
+- latencia/rede impactando UX em fluxos sensiveis, exigindo fallback local quando aplicavel
+
+### Tradeoffs de Clean Architecture no frontend
+
+**Contexto do problema:** o produto exige alta manutencao, regras cognitivas explicitas e paridade entre web e mobile.
+
+**Decisao:** manter separacao em `domain`, `application`, `infrastructure` e `presentation` em todas as plataformas.
+
+**Beneficios esperados:**
+
+- regras de negocio testaveis e independentes de framework
+- maior previsibilidade para evolucao de features cognitivas
+- possibilidade de reutilizar conceitos e contratos entre web e mobile
+
+**Tradeoffs assumidos:**
+
+- mais arquivos, camadas e boilerplate para features pequenas
+- curva inicial maior para onboarding de novos contribuidores
+- risco de sobre-engenharia se fronteiras de dominio nao forem aplicadas com criterio
+
+**Mitigacao adotada:** priorizamos casos de uso e entidades apenas onde ha regra de negocio real; para fluxos simples, mantemos implementacoes enxutas para evitar complexidade acidental.
+
 ## Como Rodar o Projeto
 
 ### 1. Pre-requisitos

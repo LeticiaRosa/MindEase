@@ -1,9 +1,9 @@
 import { defineConfig } from "vitest/config";
-import { resolve } from "path";
+import { resolve } from "node:path";
 
 export default defineConfig({
   test: {
-    environment: "node",
+    environment: "jsdom",
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
   },
@@ -11,7 +11,6 @@ export default defineConfig({
     alias: {
       "@": resolve(__dirname, "./src"),
       "@repo/ui": resolve(__dirname, "../../packages/ui/src"),
-      "react-native": resolve(__dirname, "./src/test/mocks/react-native.ts"),
     },
   },
 });

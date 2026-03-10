@@ -9,7 +9,7 @@ export interface UserCognitivePreferences {
   complexity: "simple" | "complex";
   reduceMotion: boolean;
   onboardingState: OnboardingStateValue;
-  currentStep: 1 | 2 | 3;
+  currentStep: 1 | 2 | 3 | 4 | 5;
   onboardingCompletedAt: string | null;
   updatedAt: string;
 }
