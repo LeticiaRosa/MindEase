@@ -394,9 +394,7 @@ export function UserMenuBottomSheet({
               {motionOptions.map((opt) => (
                 <Pressable
                   key={opt.label}
-                  onPress={() =>
-                    updatePreferences({ reduceMotion: opt.value })
-                  }
+                  onPress={() => updatePreferences({ reduceMotion: opt.value })}
                   style={{
                     flex: 1,
                     backgroundColor:

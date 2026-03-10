@@ -121,8 +121,9 @@ export function ThemePreferencesProvider({
   children: ReactNode;
 }) {
   const [prefs, setPrefs] = useState<ThemePreferences>(readFromStorage);
-  const [systemReduceMotion, setSystemReduceMotion] =
-    useState<boolean>(getSystemReduceMotion);
+  const [systemReduceMotion, setSystemReduceMotion] = useState<boolean>(
+    getSystemReduceMotion,
+  );
 
   useEffect(() => {
     if (typeof window.matchMedia !== "function") {
