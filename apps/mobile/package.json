@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "main": "expo-router/entry",
-  "type": "module",
   "scripts": {
     "dev": "expo start --tunnel",
     "dev:tunnel": "ANDROID_HOME=/home/lenix/Android/Sdk expo start --tunnel --clear",

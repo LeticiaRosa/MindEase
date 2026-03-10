@@ -87,7 +87,7 @@ const FONT_SCALE: Record<FontSize, number> = {
 function scaleFontSizes(size: FontSize): typeof fontSizes {
   const factor = FONT_SCALE[size];
   const result = {} as Record<string, number>;
-  for (const [key, value] of Object.entries(fontSizes)) {
+  for (const [key, value] of Object.entries(fontSizes) as [string, number][]) {
     result[key] = Math.round(value * factor);
   }
   return result as unknown as typeof fontSizes;
@@ -104,7 +104,7 @@ const SPACING_SCALE: Record<SpacingDensity, number> = {
 function scaleSpacing(density: SpacingDensity): typeof spacing {
   const factor = SPACING_SCALE[density];
   const result = {} as Record<string, number>;
-  for (const [key, value] of Object.entries(spacing)) {
+  for (const [key, value] of Object.entries(spacing) as [string, number][]) {
     result[key] = Math.round(value * factor);
   }
   return result as unknown as typeof spacing;

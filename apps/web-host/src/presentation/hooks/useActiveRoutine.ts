@@ -2,7 +2,7 @@ import { useContext } from "react";
 import {
   ActiveRoutineContext,
   type ActiveRoutineContextValue,
-} from "@/presentation/contexts/ActiveRoutineContext";
+} from "../contexts/activeRoutineContextDef";
 
 export function useActiveRoutine(): ActiveRoutineContextValue {
   const ctx = useContext(ActiveRoutineContext);
