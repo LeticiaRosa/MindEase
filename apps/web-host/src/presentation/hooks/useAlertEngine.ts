@@ -3,7 +3,10 @@ import { useToast } from "@repo/ui";
 import { useActivitySignals } from "@/presentation/contexts/ActivitySignalsContext";
 import { useAlertPreferences } from "@/presentation/contexts/AlertPreferencesContext";
 import { useBrainToday } from "@/presentation/contexts/BrainTodayContext";
-import { evaluateAlerts, evaluateAlert } from "@/application/services/AlertEngineService";
+import {
+  evaluateAlerts,
+  evaluateAlert,
+} from "@/application/services/AlertEngineService";
 import type { AlertPayload } from "@/domain/entities/AlertPayload";
 import type { AlertTrigger } from "@/domain/valueObjects/AlertTypes";
 

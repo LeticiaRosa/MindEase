@@ -4,7 +4,7 @@ import { KanbanBoard } from "@/presentation/components/KanbanBoard";
 import { UserMenuDropdown } from "@/presentation/components/UserMenuDropdown";
 import { CognitiveAlertBanner } from "@/presentation/components/CognitiveAlertBanner";
 import { CognitiveAlertModal } from "@/presentation/components/CognitiveAlertModal";
-import { AlertDebugPanel } from "@/presentation/components/AlertDebugPanel";
+
 import { Button, cn, Logo } from "@repo/ui";
 import { Timer } from "lucide-react";
 import { FocusTimerFocus } from "../components/FocusTimerFocus";
@@ -13,6 +13,7 @@ import { useTimerPreferences } from "@/presentation/hooks/useTimerPreferences";
 import { Routine } from "../components/Routine";
 import { useThemePreferences } from "../contexts/ThemePreferencesContext";
 import { useNavigate } from "react-router-dom";
+import { AlertDebugPanel } from "../components/AlertDebugPanel";
 
 function DashboardContent() {
   useTimerPreferences();
@@ -62,6 +63,9 @@ function DashboardContent() {
       <main className="max-w-7xl my-6 mx-auto px-6 py-4 border border-border rounded-lg shadow-xs">
         <Routine />
         <div className="mb-2 place-items-start overflow-auto">
+          {import.meta.env.DEV && debugTrigger && (
+            <AlertDebugPanel onTrigger={debugTrigger} />
+          )}
           <KanbanBoard />
         </div>
         {complexity === "complex" && (
@@ -105,10 +109,6 @@ function DashboardContent() {
         message={modalMessage}
         onClose={dismissModal}
       />
-
-      {import.meta.env.DEV && debugTrigger && (
-        <AlertDebugPanel onTrigger={debugTrigger} />
-      )}
     </div>
   );
 }
