@@ -1,0 +1,17 @@
+[build]
+  command    = "cd ../.. && pnpm install --frozen-lockfile && pnpm turbo run build --filter=web-mfe-auth"
+  publish    = "dist"
+  base       = "apps/web-mfe-auth"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200

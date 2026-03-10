@@ -1,0 +1,12 @@
+[build]
+  command    = "cd ../.. && pnpm install --frozen-lockfile && pnpm turbo run build --filter=web-host"
+  publish    = "dist"
+  base       = "apps/web-host"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
