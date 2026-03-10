@@ -25,13 +25,13 @@ describe("OnboardingAsyncStorageAdapter", () => {
 
   it("saves and restores onboarding state for resume", async () => {
     await adapter.save({
-      status: "in_progress",
+      status: "pending",
       currentStep: 2,
       updatedAt: new Date().toISOString(),
     });
 
     await expect(adapter.load()).resolves.toMatchObject({
-      status: "in_progress",
+      status: "pending",
       currentStep: 2,
     });
   });
@@ -40,7 +40,7 @@ describe("OnboardingAsyncStorageAdapter", () => {
     store[ONBOARDING_STATE_STORAGE_KEY] = "{invalid";
     const loaded = await adapter.load();
 
-    expect(loaded.status).toBe("not_started");
+    expect(loaded.status).toBe("pending");
     expect(loaded.currentStep).toBe(1);
   });
 

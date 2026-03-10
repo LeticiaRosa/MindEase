@@ -23,7 +23,7 @@ export function GuidedOnboardingScreen() {
   const [title, setTitle] = useState("");
   const [savingTask, setSavingTask] = useState(false);
 
-  const { state, start, nextStep, complete } = useOnboarding();
+  const { state, start, nextStep, complete, skip } = useOnboarding();
   const { routines, isLoading: routinesLoading } = useRoutines();
   const { activeRoutineId, setActiveRoutineId } = useActiveRoutine();
   const { showAlert } = useAlert();
@@ -81,6 +81,15 @@ export function GuidedOnboardingScreen() {
       showAlert("Erro", "Nao foi possivel criar a primeira tarefa", "error");
     } finally {
       setSavingTask(false);
+    }
+  };
+
+  const skipFlow = async () => {
+    try {
+      await skip();
+      showAlert("Sucesso", "Onboarding pulado", "success");
+    } catch {
+      showAlert("Erro", "Nao foi possivel pular onboarding", "error");
     }
   };
 
@@ -176,6 +185,17 @@ export function GuidedOnboardingScreen() {
                 Continuar
               </Text>
             </Pressable>
+            <Pressable
+              onPress={skipFlow}
+              style={[
+                styles.secondaryButton,
+                { borderColor: resolvedColors.border },
+              ]}
+            >
+              <Text style={{ color: resolvedColors.textPrimary }}>
+                Pular onboarding
+              </Text>
+            </Pressable>
           </>
         )}
 
@@ -191,6 +211,17 @@ export function GuidedOnboardingScreen() {
             >
               <Text style={{ color: resolvedColors.primaryForeground }}>
                 Continuar
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={skipFlow}
+              style={[
+                styles.secondaryButton,
+                { borderColor: resolvedColors.border },
+              ]}
+            >
+              <Text style={{ color: resolvedColors.textPrimary }}>
+                Pular onboarding
               </Text>
             </Pressable>
           </>
@@ -243,6 +274,21 @@ export function GuidedOnboardingScreen() {
                 </Text>
               )}
             </Pressable>
+            <Pressable
+              onPress={skipFlow}
+              disabled={savingTask}
+              style={[
+                styles.secondaryButton,
+                {
+                  borderColor: resolvedColors.border,
+                  opacity: savingTask ? 0.6 : 1,
+                },
+              ]}
+            >
+              <Text style={{ color: resolvedColors.textPrimary }}>
+                Pular onboarding
+              </Text>
+            </Pressable>
           </>
         )}
       </View>
@@ -265,5 +311,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 16,
+  },
+  secondaryButton: {
+    minHeight: 44,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 16,
+    borderWidth: 1,
   },
 });

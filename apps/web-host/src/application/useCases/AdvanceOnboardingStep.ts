@@ -10,11 +10,11 @@ export class AdvanceOnboardingStep {
 
   async execute(): Promise<OnboardingState> {
     const current = await this.repository.load();
-    if (current.status === "completed") return current;
+    if (current.status !== "pending") return current;
 
     const nextStep = Math.min(current.currentStep + 1, 3) as 1 | 2 | 3;
     const next: OnboardingState = {
-      status: "in_progress",
+      status: "pending",
       currentStep: nextStep,
       updatedAt: new Date().toISOString(),
     };

@@ -27,7 +27,7 @@ describe("OnboardingLocalStorageAdapter", () => {
 
   it("saves and loads onboarding state", async () => {
     const state = {
-      status: "in_progress" as const,
+      status: "pending" as const,
       currentStep: 2 as const,
       updatedAt: new Date().toISOString(),
     };
@@ -44,7 +44,7 @@ describe("OnboardingLocalStorageAdapter", () => {
     });
 
     const loaded = await adapter.load();
-    expect(loaded.status).toBe("not_started");
+    expect(loaded.status).toBe("pending");
     expect(loaded.currentStep).toBe(1);
   });
 
@@ -52,7 +52,7 @@ describe("OnboardingLocalStorageAdapter", () => {
     localStorageStore[ONBOARDING_STATE_STORAGE_KEY] = "{bad-json";
     const loaded = await adapter.load();
 
-    expect(loaded.status).toBe("not_started");
+    expect(loaded.status).toBe("pending");
     expect(loaded.currentStep).toBe(1);
   });
 
@@ -65,7 +65,7 @@ describe("OnboardingLocalStorageAdapter", () => {
     await adapter.clear();
 
     await expect(adapter.load()).resolves.toMatchObject({
-      status: "not_started",
+      status: "pending",
       currentStep: 1,
     });
   });

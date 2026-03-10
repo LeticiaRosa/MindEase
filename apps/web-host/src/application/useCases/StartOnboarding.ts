@@ -10,10 +10,10 @@ export class StartOnboarding {
 
   async execute(): Promise<OnboardingState> {
     const current = await this.repository.load();
-    if (current.status === "completed") return current;
+    if (current.status !== "pending") return current;
 
     const next: OnboardingState = {
-      status: "in_progress",
+      status: "pending",
       currentStep: current.currentStep,
       updatedAt: new Date().toISOString(),
     };

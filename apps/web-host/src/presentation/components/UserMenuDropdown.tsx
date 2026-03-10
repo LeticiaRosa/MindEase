@@ -8,6 +8,7 @@ import {
   Bell,
   LayoutGrid,
   Archive,
+  RotateCcw,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -32,6 +33,7 @@ import { useToast } from "@repo/ui";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { FocusTimerFocus } from "./FocusTimerFocus";
+import { useOnboarding } from "@/presentation/contexts/OnboardingContext";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -96,6 +98,7 @@ export function UserMenuDropdown() {
   const { updatePreferences, mode, complexity } = useThemePreferences();
   const toast = useToast();
   const navigate = useNavigate();
+  const { reset } = useOnboarding();
   const displayName = getDisplayName(user);
   const [showConfigTimer, setShowConfigTimer] = useState(false);
   const [showConfigAppearance, setShowConfigAppearance] = useState(false);
@@ -111,6 +114,17 @@ export function UserMenuDropdown() {
     }
   };
 
+  const handleRedoOnboarding = async () => {
+    try {
+      await reset();
+      navigate("/dashboard", { replace: true });
+      toast.success("Onboarding reiniciado");
+    } catch {
+      toast.error("Nao foi possivel reiniciar onboarding");
+    }
+  };
+
+  
   return (
     <div>
       {focusOpen &&
@@ -317,6 +331,19 @@ export function UserMenuDropdown() {
           >
             <Archive className="size-4 text-muted-foreground" />
             Tarefas Arquivadas
+          </DropdownMenuItem>
+
+          <DropdownMenuSeparator />
+
+          <DropdownMenuItem
+            className={cn(
+              "mx-1 gap-2 cursor-pointer",
+              "focus-visible:ring-2 focus-visible:ring-ring",
+            )}
+            onSelect={handleRedoOnboarding}
+          >
+            <RotateCcw className="size-4 text-muted-foreground" />
+            Refazer onboarding
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />

@@ -8,6 +8,8 @@ import { GetOnboardingState } from "@/application/useCases/GetOnboardingState";
 import { StartOnboarding } from "@/application/useCases/StartOnboarding";
 import { AdvanceOnboardingStep } from "@/application/useCases/AdvanceOnboardingStep";
 import { CompleteOnboarding } from "@/application/useCases/CompleteOnboarding";
+import { SkipOnboarding } from "@/application/useCases/SkipOnboarding";
+import { ResetOnboarding } from "@/application/useCases/ResetOnboarding";
 
 class InMemoryOnboardingRepo implements IOnboardingStateRepository {
   private state: OnboardingState;
@@ -30,19 +32,19 @@ class InMemoryOnboardingRepo implements IOnboardingStateRepository {
 }
 
 describe("Mobile onboarding use cases", () => {
-  it("progresses onboarding from not_started to in_progress and step 2", async () => {
+  it("progresses onboarding from pending and advances to step 2", async () => {
     const repo = new InMemoryOnboardingRepo();
 
     await new StartOnboarding(repo).execute();
     const advanced = await new AdvanceOnboardingStep(repo).execute();
 
-    expect(advanced.status).toBe("in_progress");
+    expect(advanced.status).toBe("pending");
     expect(advanced.currentStep).toBe(2);
   });
 
   it("keeps step capped at 3 and completes with persisted final state", async () => {
     const repo = new InMemoryOnboardingRepo({
-      status: "in_progress",
+      status: "pending",
       currentStep: 3,
       updatedAt: new Date().toISOString(),
     });
@@ -56,5 +58,16 @@ describe("Mobile onboarding use cases", () => {
     expect(completed.status).toBe("completed");
     expect(loaded.status).toBe("completed");
     expect(loaded.currentStep).toBe(3);
+  });
+
+  it("supports skip and reset transitions", async () => {
+    const repo = new InMemoryOnboardingRepo();
+    const skipped = await new SkipOnboarding(repo).execute();
+
+    expect(skipped.status).toBe("skipped");
+
+    const reset = await new ResetOnboarding(repo).execute();
+    expect(reset.status).toBe("pending");
+    expect(reset.currentStep).toBe(1);
   });
 });

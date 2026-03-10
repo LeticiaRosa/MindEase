@@ -8,6 +8,8 @@ import { GetOnboardingState } from "@/application/useCases/GetOnboardingState";
 import { StartOnboarding } from "@/application/useCases/StartOnboarding";
 import { AdvanceOnboardingStep } from "@/application/useCases/AdvanceOnboardingStep";
 import { CompleteOnboarding } from "@/application/useCases/CompleteOnboarding";
+import { SkipOnboarding } from "@/application/useCases/SkipOnboarding";
+import { ResetOnboarding } from "@/application/useCases/ResetOnboarding";
 
 class InMemoryOnboardingRepo implements IOnboardingStateRepository {
   private state: OnboardingState;
@@ -32,27 +34,27 @@ class InMemoryOnboardingRepo implements IOnboardingStateRepository {
 describe("Onboarding use cases", () => {
   it("loads onboarding state", async () => {
     const repo = new InMemoryOnboardingRepo({
-      status: "in_progress",
+      status: "pending",
       currentStep: 2,
       updatedAt: new Date().toISOString(),
     });
 
     const result = await new GetOnboardingState(repo).execute();
-    expect(result.status).toBe("in_progress");
+    expect(result.status).toBe("pending");
     expect(result.currentStep).toBe(2);
   });
 
-  it("starts onboarding as in_progress", async () => {
+  it("starts onboarding as pending", async () => {
     const repo = new InMemoryOnboardingRepo(DEFAULT_ONBOARDING_STATE);
     const result = await new StartOnboarding(repo).execute();
 
-    expect(result.status).toBe("in_progress");
+    expect(result.status).toBe("pending");
     expect(result.currentStep).toBe(1);
   });
 
   it("advances onboarding step and caps at step 3", async () => {
     const repo = new InMemoryOnboardingRepo({
-      status: "in_progress",
+      status: "pending",
       currentStep: 2,
       updatedAt: new Date().toISOString(),
     });
@@ -66,7 +68,7 @@ describe("Onboarding use cases", () => {
 
   it("completes onboarding and pins step 3", async () => {
     const repo = new InMemoryOnboardingRepo({
-      status: "in_progress",
+      status: "pending",
       currentStep: 2,
       updatedAt: new Date().toISOString(),
     });
@@ -74,5 +76,24 @@ describe("Onboarding use cases", () => {
     const result = await new CompleteOnboarding(repo).execute();
     expect(result.status).toBe("completed");
     expect(result.currentStep).toBe(3);
+  });
+
+  it("skips onboarding", async () => {
+    const repo = new InMemoryOnboardingRepo(DEFAULT_ONBOARDING_STATE);
+    const result = await new SkipOnboarding(repo).execute();
+
+    expect(result.status).toBe("skipped");
+  });
+
+  it("resets onboarding to pending step 1", async () => {
+    const repo = new InMemoryOnboardingRepo({
+      status: "completed",
+      currentStep: 3,
+      updatedAt: new Date().toISOString(),
+    });
+
+    const result = await new ResetOnboarding(repo).execute();
+    expect(result.status).toBe("pending");
+    expect(result.currentStep).toBe(1);
   });
 });

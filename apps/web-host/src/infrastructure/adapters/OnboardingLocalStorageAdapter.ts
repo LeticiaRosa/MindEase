@@ -16,9 +16,9 @@ export class OnboardingLocalStorageAdapter implements IOnboardingStateRepository
       const currentStep = parsed.currentStep;
 
       if (
-        (status !== "not_started" &&
-          status !== "in_progress" &&
-          status !== "completed") ||
+        (status !== "pending" &&
+          status !== "completed" &&
+          status !== "skipped") ||
         (currentStep !== 1 && currentStep !== 2 && currentStep !== 3)
       ) {
         return DEFAULT_ONBOARDING_STATE;

@@ -16,7 +16,7 @@ export function GuidedOnboardingFlow() {
   const [title, setTitle] = useState("");
   const [savingTask, setSavingTask] = useState(false);
 
-  const { state, start, nextStep, complete } = useOnboarding();
+  const { state, start, nextStep, complete, skip } = useOnboarding();
   const { updatePreferences, complexity } = useThemePreferences();
   const { routines, isLoading: routinesLoading } = useRoutines();
   const { activeRoutineId, setActiveRoutineId } = useActiveRoutine();
@@ -67,6 +67,15 @@ export function GuidedOnboardingFlow() {
     }
   };
 
+  const handleSkipOnboarding = async () => {
+    try {
+      await skip();
+      toast.success("Onboarding pulado. Você pode refazer no menu de usuário.");
+    } catch {
+      toast.error("Nao foi possivel pular onboarding");
+    }
+  };
+
   return (
     <section className="min-h-screen bg-background px-6 py-8 flex items-center justify-center">
       <div className="w-full max-w-2xl rounded-2xl border border-border bg-card p-8 shadow-sm space-y-6">
@@ -104,6 +113,13 @@ export function GuidedOnboardingFlow() {
             <Button className="w-full" onClick={() => nextStep()}>
               Continuar
             </Button>
+            <Button
+              variant="ghost"
+              className="w-full"
+              onClick={handleSkipOnboarding}
+            >
+              Pular onboarding
+            </Button>
           </div>
         )}
 
@@ -115,6 +131,13 @@ export function GuidedOnboardingFlow() {
             <AppearanceMenuPanel alwaysOpen />
             <Button className="w-full" onClick={() => nextStep()}>
               Continuar
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full"
+              onClick={handleSkipOnboarding}
+            >
+              Pular onboarding
             </Button>
           </div>
         )}
@@ -140,6 +163,15 @@ export function GuidedOnboardingFlow() {
               disabled={savingTask || routinesLoading || !title.trim()}
             >
               {savingTask ? "Finalizando..." : "Concluir onboarding"}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-full"
+              onClick={handleSkipOnboarding}
+              disabled={savingTask}
+            >
+              Pular onboarding
             </Button>
           </form>
         )}

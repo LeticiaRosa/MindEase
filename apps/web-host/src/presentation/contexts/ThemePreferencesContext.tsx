@@ -3,9 +3,13 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
+import { useAuth } from "auth/auth";
+import { SupabaseUserCognitivePreferencesRepository } from "@/infrastructure/adapters/SupabaseUserCognitivePreferencesRepository";
+import { mapSupabaseError } from "@/infrastructure/errors/mapSupabaseError";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -41,6 +45,8 @@ interface ThemePreferencesContextValue {
 // ─── Defaults ─────────────────────────────────────────────────────────────────
 
 const STORAGE_KEY = "mindease:theme-preferences";
+const ENABLE_REMOTE_SYNC =
+  import.meta.env.VITE_ENABLE_REMOTE_PREFERENCES_SYNC !== "false";
 
 const DEFAULT_PREFERENCES: ThemePreferences = {
   theme: "default",
@@ -79,6 +85,26 @@ function writeToStorage(prefs: ThemePreferences): void {
   } catch {
     // localStorage unavailable (private browsing etc.) — silently ignore
   }
+}
+
+function toThemePreferences(
+  prefs: Awaited<
+    ReturnType<SupabaseUserCognitivePreferencesRepository["load"]>
+  >,
+): ThemePreferences {
+  if (!prefs) {
+    return DEFAULT_PREFERENCES;
+  }
+
+  return {
+    theme: prefs.theme,
+    fontSize: prefs.fontSize,
+    spacing: prefs.spacing,
+    mode: prefs.mode,
+    helpers: prefs.helpers,
+    complexity: prefs.complexity,
+    reduceMotion: prefs.reduceMotion,
+  };
 }
 
 function applyToDocument(prefs: ThemePreferences): void {
@@ -120,10 +146,75 @@ export function ThemePreferencesProvider({
 }: {
   children: ReactNode;
 }) {
+  const { user } = useAuth();
+  const repository = useMemo(
+    () => new SupabaseUserCognitivePreferencesRepository(),
+    [],
+  );
   const [prefs, setPrefs] = useState<ThemePreferences>(readFromStorage);
   const [systemReduceMotion, setSystemReduceMotion] = useState<boolean>(
     getSystemReduceMotion,
   );
+
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      const local = readFromStorage();
+
+      if (!user?.id) {
+        if (!cancelled) {
+          setPrefs(local);
+        }
+        return;
+      }
+
+      if (!ENABLE_REMOTE_SYNC) {
+        if (!cancelled) {
+          setPrefs(local);
+        }
+        return;
+      }
+
+      try {
+        const remote = await repository.load(user.id);
+        if (cancelled) {
+          return;
+        }
+
+        if (!remote) {
+          await repository.upsert(user.id, {
+            theme: local.theme,
+            fontSize: local.fontSize,
+            spacing: local.spacing,
+            mode: local.mode,
+            helpers: local.helpers,
+            complexity: local.complexity,
+            reduceMotion: local.reduceMotion,
+          });
+          setPrefs(local);
+          return;
+        }
+
+        const mapped = toThemePreferences(remote);
+        setPrefs(mapped);
+        writeToStorage(mapped);
+      } catch (error) {
+        if (!cancelled) {
+          setPrefs(local);
+        }
+        console.warn("[ThemePreferencesContext] remote-hydration-failed", {
+          userId: user.id,
+          reason: mapSupabaseError(error),
+          error,
+        });
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [repository, user]);
 
   useEffect(() => {
     if (typeof window.matchMedia !== "function") {
@@ -144,13 +235,37 @@ export function ThemePreferencesProvider({
     applyToDocument(prefs);
   }, [prefs]);
 
-  const updatePreferences = useCallback((patch: Partial<ThemePreferences>) => {
-    setPrefs((prev) => {
-      const next = { ...prev, ...patch };
-      writeToStorage(next);
-      return next;
-    });
-  }, []);
+  const updatePreferences = useCallback(
+    (patch: Partial<ThemePreferences>) => {
+      setPrefs((prev) => {
+        const next = { ...prev, ...patch };
+        writeToStorage(next);
+
+        if (user?.id && ENABLE_REMOTE_SYNC) {
+          repository
+            .upsert(user.id, {
+              theme: next.theme,
+              fontSize: next.fontSize,
+              spacing: next.spacing,
+              mode: next.mode,
+              helpers: next.helpers,
+              complexity: next.complexity,
+              reduceMotion: next.reduceMotion,
+            })
+            .catch((error) => {
+              console.warn("[ThemePreferencesContext] remote-save-failed", {
+                userId: user.id,
+                reason: mapSupabaseError(error),
+                error,
+              });
+            });
+        }
+
+        return next;
+      });
+    },
+    [repository, user],
+  );
 
   return (
     <ThemePreferencesContext.Provider

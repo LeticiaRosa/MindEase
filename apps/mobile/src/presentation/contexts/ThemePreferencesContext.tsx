@@ -3,11 +3,15 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AccessibilityInfo } from "react-native";
+import { useAuth } from "@/presentation/hooks/useAuth";
+import { SupabaseUserCognitivePreferencesRepository } from "@/infrastructure/adapters/SupabaseUserCognitivePreferencesRepository";
+import { mapSupabaseError } from "@/infrastructure/errors/mapSupabaseError";
 import {
   colors,
   darkColors,
@@ -58,6 +62,8 @@ interface ThemePreferencesContextValue {
 // ─── Defaults ─────────────────────────────────────────────────────────────────
 
 const STORAGE_KEY = "mindease:theme-preferences";
+const ENABLE_REMOTE_SYNC =
+  process.env.EXPO_PUBLIC_ENABLE_REMOTE_PREFERENCES_SYNC !== "false";
 
 const DEFAULT_PREFERENCES: ThemePreferences = {
   theme: "default",
@@ -124,26 +130,89 @@ export function ThemePreferencesProvider({
 }: {
   children: ReactNode;
 }) {
+  const { user } = useAuth();
+  const repository = useMemo(
+    () => new SupabaseUserCognitivePreferencesRepository(),
+    [],
+  );
   const [prefs, setPrefs] = useState<ThemePreferences>(DEFAULT_PREFERENCES);
   const [systemReduceMotion, setSystemReduceMotion] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
 
   // Hydrate from AsyncStorage on mount
   useEffect(() => {
+    let cancelled = false;
+
     (async () => {
       try {
         const raw = await AsyncStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const stored = JSON.parse(raw) as Partial<ThemePreferences>;
-          setPrefs((prev) => ({ ...prev, ...stored }));
+        const local = raw
+          ? ({
+              ...DEFAULT_PREFERENCES,
+              ...(JSON.parse(raw) as Partial<ThemePreferences>),
+            } as ThemePreferences)
+          : DEFAULT_PREFERENCES;
+
+        if (!user?.id) {
+          if (!cancelled) {
+            setPrefs(local);
+          }
+          return;
         }
-      } catch {
-        // Corrupt data — keep defaults
+
+        if (!ENABLE_REMOTE_SYNC) {
+          if (!cancelled) {
+            setPrefs(local);
+          }
+          return;
+        }
+
+        const remote = await repository.load(user.id);
+        if (!remote) {
+          await repository.upsert(user.id, {
+            theme: local.theme,
+            fontSize: local.fontSize,
+            spacing: local.spacing,
+            mode: local.mode,
+            complexity: local.complexity,
+            reduceMotion: local.reduceMotion,
+          });
+          if (!cancelled) {
+            setPrefs(local);
+          }
+          return;
+        }
+
+        const synced: ThemePreferences = {
+          theme: remote.theme,
+          fontSize: remote.fontSize,
+          spacing: remote.spacing,
+          mode: remote.mode,
+          complexity: remote.complexity,
+          reduceMotion: remote.reduceMotion,
+        };
+
+        if (!cancelled) {
+          setPrefs(synced);
+        }
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(synced));
+      } catch (error) {
+        console.warn("[ThemePreferencesContext] remote-hydration-failed", {
+          userId: user?.id ?? null,
+          reason: mapSupabaseError(error),
+          error,
+        });
       } finally {
-        setIsHydrated(true);
+        if (!cancelled) {
+          setIsHydrated(true);
+        }
       }
     })();
-  }, []);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [repository, user]);
 
   useEffect(() => {
     let isMounted = true;
@@ -174,13 +243,36 @@ export function ThemePreferencesProvider({
     };
   }, []);
 
-  const updatePreferences = useCallback((patch: Partial<ThemePreferences>) => {
-    setPrefs((prev) => {
-      const next = { ...prev, ...patch };
-      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next)).catch(() => {});
-      return next;
-    });
-  }, []);
+  const updatePreferences = useCallback(
+    (patch: Partial<ThemePreferences>) => {
+      setPrefs((prev) => {
+        const next = { ...prev, ...patch };
+        AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next)).catch(() => {});
+
+        if (user?.id && ENABLE_REMOTE_SYNC) {
+          repository
+            .upsert(user.id, {
+              theme: next.theme,
+              fontSize: next.fontSize,
+              spacing: next.spacing,
+              mode: next.mode,
+              complexity: next.complexity,
+              reduceMotion: next.reduceMotion,
+            })
+            .catch((error) => {
+              console.warn("[ThemePreferencesContext] remote-save-failed", {
+                userId: user.id,
+                reason: mapSupabaseError(error),
+                error,
+              });
+            });
+        }
+
+        return next;
+      });
+    },
+    [repository, user],
+  );
 
   const resolvedColors = COLOUR_MAP[prefs.theme] ?? colors;
   const resolvedFontSizes = scaleFontSizes(prefs.fontSize);

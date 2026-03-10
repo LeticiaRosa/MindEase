@@ -5,6 +5,10 @@ import {
   useThemePreferences,
 } from "@/presentation/contexts/ThemePreferencesContext";
 
+vi.mock("auth/auth", () => ({
+  useAuth: () => ({ user: null }),
+}));
+
 const STORAGE_KEY = "mindease:theme-preferences";
 
 describe("ThemePreferencesContext", () => {

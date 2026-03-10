@@ -1,4 +1,4 @@
-export type OnboardingStatus = "not_started" | "in_progress" | "completed";
+export type OnboardingStatus = "pending" | "completed" | "skipped";
 
 export interface OnboardingState {
   status: OnboardingStatus;
@@ -9,7 +9,7 @@ export interface OnboardingState {
 export const ONBOARDING_STATE_STORAGE_KEY = "mindease:onboarding-state:v1";
 
 export const DEFAULT_ONBOARDING_STATE: OnboardingState = {
-  status: "not_started",
+  status: "pending",
   currentStep: 1,
   updatedAt: new Date(0).toISOString(),
 };

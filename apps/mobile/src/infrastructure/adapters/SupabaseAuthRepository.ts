@@ -7,6 +7,20 @@ import type {
 import supabaseClient from "@/infrastructure/api/clients/supabaseClient";
 
 export class SupabaseAuthRepository implements IAuthRepository {
+  private async ensurePreferencesRow(userId: string): Promise<void> {
+    await supabaseClient.from("user_cognitive_preferences").upsert(
+      {
+        user_id: userId,
+        onboarding_state: "pending",
+        current_step: 1,
+      },
+      {
+        onConflict: "user_id",
+        ignoreDuplicates: true,
+      },
+    );
+  }
+
   async signIn(email: string, password: string): Promise<AuthResult<User>> {
     const { data, error } = await supabaseClient.auth.signInWithPassword({
       email,
@@ -21,6 +35,10 @@ export class SupabaseAuthRepository implements IAuthRepository {
           status: error.status ?? 500,
         },
       };
+    }
+
+    if (data.user?.id) {
+      this.ensurePreferencesRow(data.user.id).catch(() => {});
     }
 
     return { success: true, data: data.user as User };
@@ -49,6 +67,10 @@ export class SupabaseAuthRepository implements IAuthRepository {
           status: error.status ?? 500,
         },
       };
+    }
+
+    if (data.user?.id) {
+      this.ensurePreferencesRow(data.user.id).catch(() => {});
     }
 
     return { success: true, data: data.user as User };
@@ -138,6 +160,7 @@ export class SupabaseAuthRepository implements IAuthRepository {
       data: { subscription },
     } = supabaseClient.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" && session?.user) {
+        this.ensurePreferencesRow(session.user.id).catch(() => {});
         callback("SIGNED_IN", session.user as User);
       } else if (event === "SIGNED_OUT") {
         callback("SIGNED_OUT", null);
