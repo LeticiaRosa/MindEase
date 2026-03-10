@@ -1,5 +1,5 @@
 import { AuthCallback } from "@/presentation/components/AuthCallback";
 
-export default function MagicLinkCallbackScreen() {
+export default function AuthCallbackScreen() {
   return <AuthCallback />;
 }

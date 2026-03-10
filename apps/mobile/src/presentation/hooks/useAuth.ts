@@ -9,6 +9,7 @@ import { signUp as signUpUseCase } from "@/application/useCases/signUp";
 import { signOut as signOutUseCase } from "@/application/useCases/signOut";
 import { signInWithMagicLink as signInWithMagicLinkUseCase } from "@/application/useCases/signInWithMagicLink";
 import { handleMagicLinkCallback as handleMagicLinkCallbackUseCase } from "@/application/useCases/handleMagicLinkCallback";
+import { exchangeAuthCodeForSession as exchangeAuthCodeForSessionUseCase } from "@/application/useCases/exchangeAuthCodeForSession";
 import supabaseClient from "@/infrastructure/api/clients/supabaseClient";
 
 const AUTH_KEYS = {
@@ -49,11 +50,13 @@ export function useAuth() {
       email,
       password,
       fullName,
+      redirectTo,
     }: {
       email: string;
       password: string;
       fullName?: string;
-    }) => signUpUseCase(repository, email, password, fullName),
+      redirectTo?: string;
+    }) => signUpUseCase(repository, email, password, fullName, redirectTo),
     onSuccess: (result: AuthResult<User>) => {
       if (result.success && result.data) {
         queryClient.setQueryData(AUTH_KEYS.user, result.data);
@@ -90,6 +93,17 @@ export function useAuth() {
       accessToken: string;
       refreshToken: string;
     }) => handleMagicLinkCallbackUseCase(repository, accessToken, refreshToken),
+    onSuccess: (result: AuthResult<User>) => {
+      if (result.success && result.data) {
+        queryClient.setQueryData(AUTH_KEYS.user, result.data);
+        queryClient.invalidateQueries({ queryKey: AUTH_KEYS.session });
+      }
+    },
+  });
+
+  const exchangeAuthCodeForSessionMutation = useMutation({
+    mutationFn: ({ authCode }: { authCode: string }) =>
+      exchangeAuthCodeForSessionUseCase(repository, authCode),
     onSuccess: (result: AuthResult<User>) => {
       if (result.success && result.data) {
         queryClient.setQueryData(AUTH_KEYS.user, result.data);
@@ -143,11 +157,17 @@ export function useAuth() {
     return { success: false as const, error: result.error };
   };
 
-  const signUp = async (email: string, password: string, fullName?: string) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    fullName?: string,
+    redirectTo?: string,
+  ) => {
     const result = await signUpMutation.mutateAsync({
       email,
       password,
       fullName,
+      redirectTo,
     });
     if (result.success) {
       return { success: true as const, user: result.data };
@@ -188,6 +208,16 @@ export function useAuth() {
     return { success: false as const, error: result.error };
   };
 
+  const exchangeAuthCodeForSession = async (authCode: string) => {
+    const result = await exchangeAuthCodeForSessionMutation.mutateAsync({
+      authCode,
+    });
+    if (result.success) {
+      return { success: true as const, user: result.data };
+    }
+    return { success: false as const, error: result.error };
+  };
+
   return {
     user,
     loading:
@@ -196,12 +226,14 @@ export function useAuth() {
       signUpMutation.isPending ||
       signOutMutation.isPending ||
       signInWithMagicLinkMutation.isPending ||
-      handleMagicLinkCallbackMutation.isPending,
+      handleMagicLinkCallbackMutation.isPending ||
+      exchangeAuthCodeForSessionMutation.isPending,
     error: userError ?? null,
     signIn,
     signUp,
     signOut,
     signInWithMagicLink,
     handleMagicLinkCallback,
+    exchangeAuthCodeForSession,
   };
 }

@@ -14,6 +14,7 @@ export interface IAuthRepository {
     email: string,
     password: string,
     fullName?: string,
+    redirectTo?: string,
   ): Promise<AuthResult<User>>;
   signOut(): Promise<AuthResult<void>>;
   signInWithMagicLink(
@@ -26,6 +27,7 @@ export interface IAuthRepository {
     accessToken: string,
     refreshToken: string,
   ): Promise<AuthResult<User>>;
+  exchangeCodeForSession(authCode: string): Promise<AuthResult<User>>;
   trackMagicLinkRequest(email: string): Promise<void>;
   onAuthStateChange(callback: AuthStateCallback): { unsubscribe: () => void };
 }

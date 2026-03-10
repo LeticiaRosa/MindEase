@@ -18,6 +18,7 @@ import {
 } from "@/domain/valueObjects/authSchemas";
 import { useAuth } from "@/presentation/hooks/useAuth";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
+import { createAuthCallbackUrl } from "@/lib/authDeepLink";
 
 export function SignUp() {
   const router = useRouter();
@@ -50,6 +51,7 @@ export function SignUp() {
       data.email,
       data.password,
       data.fullName || undefined,
+      createAuthCallbackUrl(),
     );
     if (result.success) {
       router.replace("/(app)/dashboard");

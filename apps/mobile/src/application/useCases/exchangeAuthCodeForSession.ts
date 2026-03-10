@@ -2,18 +2,17 @@ import type { AuthResult } from "@/domain/entities/AuthResult";
 import type { User } from "@/domain/entities/User";
 import type { IAuthRepository } from "@/domain/interfaces/IAuthRepository";
 
-export async function signUp(
+export async function exchangeAuthCodeForSession(
   repository: IAuthRepository,
-  email: string,
-  password: string,
-  fullName?: string,
-  redirectTo?: string,
+  authCode: string,
 ): Promise<AuthResult<User>> {
   try {
-    return await repository.signUp(email, password, fullName, redirectTo);
+    return await repository.exchangeCodeForSession(authCode);
   } catch (error: unknown) {
     const message =
-      error instanceof Error ? error.message : "Erro inesperado ao criar conta";
+      error instanceof Error
+        ? error.message
+        : "Erro ao validar codigo de autenticacao";
     return {
       success: false,
       error: { message, status: 500 },

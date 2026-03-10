@@ -14,6 +14,7 @@ import {
 } from "@/domain/valueObjects/authSchemas";
 import { useAuth } from "@/presentation/hooks/useAuth";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
+import { createAuthCallbackUrl } from "@/lib/authDeepLink";
 
 interface SignInWithMagicLinkProps {
   onSwitchToPassword: () => void;
@@ -43,7 +44,10 @@ export function SignInWithMagicLink({
 
   async function onSubmit(data: MagicLinkFormData) {
     setServerError(null);
-    const result = await signInWithMagicLink(data.email);
+    const result = await signInWithMagicLink(
+      data.email,
+      createAuthCallbackUrl(),
+    );
     if (result.success) {
       setMagicLinkSent(true);
     } else {

@@ -5,6 +5,7 @@ import type {
   AuthStateCallback,
 } from "@/domain/interfaces/IAuthRepository";
 import supabaseClient from "@/infrastructure/api/clients/supabaseClient";
+import { createAuthCallbackUrl } from "@/lib/authDeepLink";
 
 export class SupabaseAuthRepository implements IAuthRepository {
   private async ensurePreferencesRow(userId: string): Promise<void> {
@@ -48,11 +49,13 @@ export class SupabaseAuthRepository implements IAuthRepository {
     email: string,
     password: string,
     fullName?: string,
+    redirectTo?: string,
   ): Promise<AuthResult<User>> {
     const { data, error } = await supabaseClient.auth.signUp({
       email,
       password,
       options: {
+        emailRedirectTo: redirectTo ?? createAuthCallbackUrl(),
         data: {
           full_name: fullName,
         },
@@ -99,7 +102,7 @@ export class SupabaseAuthRepository implements IAuthRepository {
     const { error } = await supabaseClient.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: redirectTo ?? "mindease://magic-link-callback",
+        emailRedirectTo: redirectTo ?? createAuthCallbackUrl(),
       },
     });
 
@@ -143,6 +146,27 @@ export class SupabaseAuthRepository implements IAuthRepository {
           status: error.status ?? 500,
         },
       };
+    }
+
+    return { success: true, data: data.user as User };
+  }
+
+  async exchangeCodeForSession(authCode: string): Promise<AuthResult<User>> {
+    const { data, error } =
+      await supabaseClient.auth.exchangeCodeForSession(authCode);
+
+    if (error) {
+      return {
+        success: false,
+        error: {
+          message: error.message,
+          status: error.status ?? 500,
+        },
+      };
+    }
+
+    if (data.user?.id) {
+      this.ensurePreferencesRow(data.user.id).catch(() => {});
     }
 
     return { success: true, data: data.user as User };
