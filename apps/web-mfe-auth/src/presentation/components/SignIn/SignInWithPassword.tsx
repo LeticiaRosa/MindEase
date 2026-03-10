@@ -46,7 +46,8 @@ export function SignInWithPassword() {
       await toast.promise(loginPromise, {
         loading: "Fazendo login...",
         success: "Login realizado com sucesso!",
-        error: (error) => error.message,
+        error: (err) =>
+          err instanceof Error ? err.message : "Ocorreu um erro",
       });
     } catch {
       // O toast.promise já mostra a mensagem de erro

@@ -53,7 +53,8 @@ export function SignInWithMagicLink() {
       await toast.promise(magicLinkPromise, {
         loading: "Enviando link de acesso...",
         success: "Link enviado! Verifique seu email.",
-        error: (error) => error.message,
+        error: (err) =>
+          err instanceof Error ? err.message : "Ocorreu um erro",
       });
     } catch (error) {
       console.error("Magic link error:", error);

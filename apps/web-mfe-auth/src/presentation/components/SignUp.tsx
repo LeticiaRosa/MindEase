@@ -56,7 +56,8 @@ export function SignUp() {
       await toast.promise(signUpPromise, {
         loading: "Criando conta...",
         success: `Conta criada com sucesso! Bem-vindo, ${data.fullName}!`,
-        error: (error) => error.message,
+        error: (err) =>
+          err instanceof Error ? err.message : "Ocorreu um erro",
       });
     } catch {
       // O toast.promise já mostra a mensagem de erro
