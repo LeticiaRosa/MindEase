@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Settings } from "lucide-react";
 import {
   Button,
   Form,
@@ -83,7 +82,7 @@ export function TimerPreferencesPanel({ onClose }: TimerPreferencesPanelProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs text-muted-foreground">
-                    Focus (minutes)
+                    Focus (minutos)
                   </FormLabel>
 
                   <FormControl>
@@ -105,7 +104,7 @@ export function TimerPreferencesPanel({ onClose }: TimerPreferencesPanelProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs text-muted-foreground">
-                    Short break (minutes)
+                    Pausa curta (minutos)
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -126,7 +125,7 @@ export function TimerPreferencesPanel({ onClose }: TimerPreferencesPanelProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs text-muted-foreground">
-                    Long break (minutes)
+                    Pausa longa (minutos)
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -147,7 +146,7 @@ export function TimerPreferencesPanel({ onClose }: TimerPreferencesPanelProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs text-muted-foreground ">
-                    Cycles before long break
+                    Ciclos antes da pausa longa
                   </FormLabel>
                   <FormControl>
                     <Input
@@ -170,7 +169,7 @@ export function TimerPreferencesPanel({ onClose }: TimerPreferencesPanelProps) {
               disabled={isUpdating}
               className="flex w-20"
             >
-              Save
+              Salvar
             </Button>
           </div>
         </form>

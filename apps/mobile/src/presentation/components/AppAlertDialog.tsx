@@ -1,7 +1,10 @@
-import { Modal, View, Text, Pressable } from "react-native";
-import { CheckCircle2, XCircle, Info } from "lucide-react-native";
+import { useEffect, useRef } from "react";
+import { Animated, Modal, Pressable, Text, View } from "react-native";
+import { CheckCircle2, Info, X, XCircle } from "lucide-react-native";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 import type { AlertVariant } from "@/presentation/contexts/AlertContext";
+
+const AUTO_DISMISS_MS = 5000;
 
 interface AppAlertDialogProps {
   open: boolean;
@@ -31,99 +34,144 @@ export function AppAlertDialog({
     resolvedBorderRadius,
   } = useTheme();
 
+  const slideY = useRef(new Animated.Value(120)).current;
+  const progress = useRef(new Animated.Value(1)).current;
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const variantColor =
     variant === "error" ? resolvedColors.destructive : resolvedColors.primary;
 
   const Icon = ICONS[variant];
 
+  useEffect(() => {
+    if (!open) return;
+
+    slideY.setValue(120);
+    progress.setValue(1);
+
+    Animated.spring(slideY, {
+      toValue: 0,
+      useNativeDriver: true,
+      damping: 22,
+      stiffness: 200,
+    }).start();
+
+    Animated.timing(progress, {
+      toValue: 0,
+      duration: AUTO_DISMISS_MS,
+      useNativeDriver: false,
+    }).start();
+
+    timerRef.current = setTimeout(onDismiss, AUTO_DISMISS_MS);
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [open]);
+
   return (
     <Modal
       visible={open}
       transparent
-      animationType="fade"
+      animationType="none"
       onRequestClose={onDismiss}
       accessibilityViewIsModal
     >
-      {/* Backdrop */}
-      <Pressable
-        onPress={onDismiss}
+      {/* No backdrop — transparent so the app is visible beneath */}
+      <View
+        pointerEvents="box-none"
         style={{
           flex: 1,
-          backgroundColor: "rgba(0,0,0,0.5)",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: resolvedSpacing.md,
+          justifyContent: "flex-end",
+          paddingHorizontal: resolvedSpacing.md,
+          paddingBottom: resolvedSpacing.xl,
         }}
       >
-        {/* Card — stop propagation so tapping inside doesn't close */}
-        <Pressable
-          onPress={(e) => e.stopPropagation()}
+        <Animated.View
           style={{
+            transform: [{ translateY: slideY }],
             backgroundColor: resolvedColors.card,
             borderWidth: 1,
             borderColor: resolvedColors.border,
-            borderRadius: resolvedBorderRadius.xl ?? resolvedBorderRadius.lg,
-            padding: resolvedSpacing.lg,
-            width: "100%",
-            maxWidth: 400,
-            gap: resolvedSpacing.md,
+            borderLeftWidth: 4,
+            borderLeftColor: variantColor,
+            borderRadius: resolvedBorderRadius.lg,
+            padding: resolvedSpacing.md,
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: -2 },
+            shadowOpacity: 0.08,
+            shadowRadius: 12,
+            elevation: 5,
           }}
         >
-          {/* Icon + title */}
+          {/* Icon + title + close */}
           <View
             style={{
               flexDirection: "row",
               alignItems: "center",
               gap: resolvedSpacing.sm,
+              marginBottom: resolvedSpacing.xs,
             }}
           >
-            <Icon size={22} color={variantColor} strokeWidth={2} />
+            <Icon size={18} color={variantColor} strokeWidth={2} />
             <Text
               style={{
                 flex: 1,
-                fontSize: resolvedFontSizes.lg,
+                fontSize: resolvedFontSizes.base,
                 fontWeight: "600",
-                color: variantColor,
+                color: resolvedColors.foreground,
               }}
             >
               {title}
             </Text>
+            <Pressable
+              onPress={onDismiss}
+              accessibilityRole="button"
+              accessibilityLabel="Fechar"
+              hitSlop={8}
+            >
+              <X
+                size={16}
+                color={resolvedColors.mutedForeground}
+                strokeWidth={2}
+              />
+            </Pressable>
           </View>
 
           <Text
             style={{
-              fontSize: resolvedFontSizes.base,
+              fontSize: resolvedFontSizes.sm,
               color: resolvedColors.mutedForeground,
-              lineHeight: resolvedFontSizes.base * 1.5,
+              lineHeight: resolvedFontSizes.sm * 1.5,
+              marginBottom: resolvedSpacing.sm,
             }}
           >
             {message}
           </Text>
 
-          <Pressable
-            onPress={onDismiss}
-            accessibilityRole="button"
-            accessibilityLabel="Entendido"
-            style={({ pressed }) => ({
-              alignSelf: "flex-end",
-              paddingVertical: resolvedSpacing.sm,
-              paddingHorizontal: resolvedSpacing.lg,
-              borderRadius: resolvedBorderRadius.md,
-              backgroundColor: pressed ? variantColor + "cc" : variantColor,
-            })}
+          {/* Auto-dismiss progress bar */}
+          <View
+            style={{
+              height: 2,
+              backgroundColor: resolvedColors.border,
+              borderRadius: resolvedBorderRadius.full,
+              overflow: "hidden",
+            }}
           >
-            <Text
+            <Animated.View
               style={{
-                fontSize: resolvedFontSizes.base,
-                color: "#fff",
-                fontWeight: "600",
+                height: "100%",
+                backgroundColor: variantColor,
+                opacity: 0.6,
+                width: progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ["0%", "100%"],
+                }),
               }}
-            >
-              Entendido
-            </Text>
-          </Pressable>
-        </Pressable>
-      </Pressable>
+            />
+          </View>
+        </Animated.View>
+      </View>
     </Modal>
   );
 }

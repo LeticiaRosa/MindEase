@@ -41,10 +41,10 @@ export function FocusTimerFocus({
 
   const modeDescription =
     mode === "focus"
-      ? "Stay with the task. One step at a time."
+      ? "Continue com a tarefa. Um passo de cada vez."
       : mode === "break"
-        ? "Rest your mind. You earned it."
-        : "Take a longer rest before the next session.";
+        ? "Descanse sua mente. Você merece."
+        : "Faça uma pausa mais longa antes da próxima sessão.";
 
   // Large ring: r=88, viewBox 200x200
   const r = 88;
@@ -62,11 +62,11 @@ export function FocusTimerFocus({
       {onClose && (
         <button
           onClick={onClose}
-          aria-label="Exit focus mode"
+          aria-label="Sair do modo foco"
           className="absolute top-5 right-5 flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <X className="size-4" aria-hidden="true" />
-          <span>Exit focus</span>
+          <span>Sair do foco</span>
         </button>
       )}
 
@@ -140,7 +140,7 @@ export function FocusTimerFocus({
             variant="outline"
             className="gap-2 min-w-32"
             onClick={pause}
-            aria-label="Pause timer"
+            aria-label="Pausar timer"
           >
             <Pause className="size-4" aria-hidden="true" />
             Pause
@@ -200,7 +200,7 @@ export function FocusTimerFocus({
             ) : (
               <ChevronDown className="size-3" />
             )}
-            {open ? "Hide steps" : "Show  steps"}
+            {open ? "Ocultar steps" : "Mostrar steps"}
           </Button>
           {open && (
             <ScrollArea className="max-h-40 border-none p-2">

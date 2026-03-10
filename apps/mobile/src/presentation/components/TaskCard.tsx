@@ -407,7 +407,9 @@ export function TaskCard({
             onPress={() => setTimerOpen((v) => !v)}
             accessibilityRole="button"
             accessibilityState={{ expanded: timerOpen }}
-            accessibilityLabel={timerOpen ? "Hide timer" : "Show timer"}
+            accessibilityLabel={
+              timerOpen ? "Ocultar temporizador" : "Mostrar temporizador"
+            }
             style={{
               flexDirection: "row",
               alignItems: "center",
@@ -437,7 +439,9 @@ export function TaskCard({
             accessibilityRole="button"
             accessibilityState={{ expanded: timerFocusOpen }}
             accessibilityLabel={
-              timerFocusOpen ? "Hide focus timer" : "Show focus timer"
+              timerFocusOpen
+                ? "Ocultar temporizador de foco"
+                : "Mostrar temporizador de foco"
             }
             style={{
               flexDirection: "row",

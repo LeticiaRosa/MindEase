@@ -114,7 +114,7 @@ export function TaskCard({
             </TooltipTrigger>
             {helpers === "show" && (
               <TooltipContent>
-                <p>Total time spent on this task</p>
+                <p>Total de tempo gasto nesta tarefa</p>
               </TooltipContent>
             )}
           </Tooltip>
@@ -148,7 +148,7 @@ export function TaskCard({
             </TooltipTrigger>
             {helpers === "show" && (
               <TooltipContent>
-                <p>Edit task</p>
+                <p>Editar task</p>
               </TooltipContent>
             )}
           </Tooltip>
@@ -172,7 +172,7 @@ export function TaskCard({
           </TooltipTrigger>
           {helpers === "show" && (
             <TooltipContent>
-              <p>Delete task</p>
+              <p>Excluir task</p>
             </TooltipContent>
           )}
         </Tooltip>
@@ -196,7 +196,7 @@ export function TaskCard({
             </TooltipTrigger>
             {helpers === "show" && (
               <TooltipContent>
-                <p>Archive task</p>
+                <p>Arquivar task</p>
               </TooltipContent>
             )}
           </Tooltip>
@@ -232,7 +232,7 @@ export function TaskCard({
                   task.statusUpdatedAt,
                 ).toLocaleString()}`}
               >
-                Created {toLocaleRelativeTime()}
+                Criado em {toLocaleRelativeTime()}
               </span>
             )}
           </div>
@@ -266,7 +266,9 @@ export function TaskCard({
           )}
           onClick={() => setTimerOpen((v) => !v)}
           aria-expanded={timerOpen}
-          aria-label={timerOpen ? "Hide timer" : "Show timer"}
+          aria-label={
+            timerOpen ? "Ocultar temporizador" : "Mostrar temporizador"
+          }
         >
           <Timer className="size-3" />
           Timer
@@ -281,7 +283,11 @@ export function TaskCard({
           )}
           onClick={() => setTimerFocusOpen((v) => !v)}
           aria-expanded={timerFocusOpen}
-          aria-label={timerFocusOpen ? "Hide focus timer" : "Show focus timer"}
+          aria-label={
+            timerFocusOpen
+              ? "Ocultar temporizador de foco"
+              : "Mostrar temporizador de foco"
+          }
         >
           <Timer className="size-3" />
           Focus

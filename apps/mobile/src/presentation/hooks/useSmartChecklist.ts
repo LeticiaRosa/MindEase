@@ -75,7 +75,7 @@ export function useSmartChecklist(taskId: string) {
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(qKey, ctx.previous);
-      showAlert("Erro", "Falha ao adicionar etapa", "error");
+      showAlert("Erro", "Falha ao adicionar step", "error");
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: qKey }),
   });

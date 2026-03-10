@@ -16,7 +16,7 @@ export function AddStepForm({ onSubmit }: AddStepFormProps) {
       <Pressable
         onPress={() => setOpen(true)}
         accessibilityRole="button"
-        accessibilityLabel="Adicionar etapa"
+        accessibilityLabel="Adicionar step"
         style={{
           width: "100%",
           alignItems: "center",
@@ -29,13 +29,13 @@ export function AddStepForm({ onSubmit }: AddStepFormProps) {
             color: resolvedColors.mutedForeground,
           }}
         >
-          + Adicionar etapa
+          + Adicionar step
         </Text>
       </Pressable>
 
       <StepFormModal
         visible={open}
-        modalTitle="Adicionar etapa"
+        modalTitle="Adicionar step"
         saveLabel="Adicionar"
         initialValue=""
         onSave={(title) => {

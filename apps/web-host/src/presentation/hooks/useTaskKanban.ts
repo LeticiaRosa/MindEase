@@ -58,7 +58,7 @@ export function useTaskKanban(routineId: string) {
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["tasks", routineId], ctx.previous);
-      toast.error("Failed to create task");
+      toast.error("Falha na criação da task");
     },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
@@ -77,12 +77,12 @@ export function useTaskKanban(routineId: string) {
     },
     onSuccess: (task) => {
       if (task.status === "done")
-        toast.success("Task completed", { duration: 3000 });
+        toast.success("Task concluída", { duration: 3000 });
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["tasks", routineId], ctx.previous);
-      toast.error("Failed to update task");
+      toast.error("Falha na atualização da task");
     },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
@@ -111,7 +111,7 @@ export function useTaskKanban(routineId: string) {
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["tasks", routineId], ctx.previous);
-      toast.error("Failed to reorder tasks");
+      toast.error("Falha na reordenação das tasks");
     },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
@@ -130,7 +130,7 @@ export function useTaskKanban(routineId: string) {
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["tasks", routineId], ctx.previous);
-      toast.error("Failed to delete task");
+      toast.error("Falha na exclusão da task");
     },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
@@ -149,7 +149,7 @@ export function useTaskKanban(routineId: string) {
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["tasks", routineId], ctx.previous);
-      toast.error("Failed to archive task");
+      toast.error("Falha na arquivação da task");
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks", routineId] });
@@ -171,10 +171,10 @@ export function useTaskKanban(routineId: string) {
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["tasks", routineId], ctx.previous);
-      toast.error("Failed to update task");
+      toast.error("Falha na atualização da task");
     },
     onSuccess: () => {
-      toast.success("Task updated", { duration: 2000 });
+      toast.success("Task atualizada", { duration: 2000 });
     },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
@@ -196,10 +196,10 @@ export function useTaskKanban(routineId: string) {
     reorderTasks: reorderMutation.mutate,
     deleteTask: (id: string) => {
       deleteMutation.mutate(id);
-      toast.info("Task deleted", {
+      toast.info("Task excluída", {
         duration: 3000,
         action: {
-          label: "Undo",
+          label: "Desfazer",
           onClick: () =>
             queryClient.invalidateQueries({ queryKey: ["tasks", routineId] }),
         },
@@ -207,10 +207,10 @@ export function useTaskKanban(routineId: string) {
     },
     archiveTask: (id: string) => {
       archiveMutation.mutate(id);
-      toast.info("Task archived", {
+      toast.info("Task arquivada", {
         duration: 3000,
         action: {
-          label: "View",
+          label: "Ver",
           onClick: () => {
             window.location.href = "/archived-tasks";
           },

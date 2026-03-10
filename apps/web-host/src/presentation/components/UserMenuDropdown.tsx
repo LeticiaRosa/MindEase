@@ -104,7 +104,10 @@ export function UserMenuDropdown() {
   const handleSignOut = async () => {
     const result = await signOut();
     if (!result.success) {
-      toast.error("Couldn't sign out. Please try again.");
+      toast.error("Erro ao sair", {
+        description: result.error.message,
+        duration: 4000,
+      });
     }
   };
 
@@ -114,7 +117,7 @@ export function UserMenuDropdown() {
         createPortal(
           <FocusTimerFocus
             taskId="dashboard"
-            taskTitle="Focus Session"
+            taskTitle="Sessão de Foco"
             onClose={() => setFocusOpen(false)}
           />,
           document.body,
@@ -164,7 +167,7 @@ export function UserMenuDropdown() {
             <div className="flex items-center gap-2 mb-3">
               <Timer className="size-3.5 text-muted-foreground" />
               <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Timer
+                Temporizador
               </span>
             </div>
             <button
@@ -172,7 +175,9 @@ export function UserMenuDropdown() {
               className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors w-fit focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
               aria-expanded={showConfigTimer}
               aria-label={
-                showConfigTimer ? "Hide timer settings" : "Show timer settings"
+                showConfigTimer
+                  ? "Ocultar configurações do temporizador"
+                  : "Mostrar configurações do temporizador"
               }
             >
               {showConfigTimer ? (
@@ -180,7 +185,9 @@ export function UserMenuDropdown() {
               ) : (
                 <ChevronDown className="size-3" />
               )}
-              {showConfigTimer ? "Hide timer settings" : "Show timer settings"}
+              {showConfigTimer
+                ? "Ocultar configurações"
+                : "Mostrar configurações"}
             </button>
 
             {showConfigTimer && (
@@ -197,7 +204,7 @@ export function UserMenuDropdown() {
             <div className="flex items-center gap-2 mb-0.5">
               <Palette className="size-3.5 text-muted-foreground" />
               <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Appearance
+                Aparência
               </span>
             </div>
             <button
@@ -206,8 +213,8 @@ export function UserMenuDropdown() {
               aria-expanded={showConfigAppearance}
               aria-label={
                 showConfigAppearance
-                  ? "Hide appearance settings"
-                  : "Show appearance settings"
+                  ? "Ocultar configurações da aparência"
+                  : "Mostrar configurações da aparência"
               }
             >
               {showConfigAppearance ? (
@@ -216,8 +223,8 @@ export function UserMenuDropdown() {
                 <ChevronDown className="size-3" />
               )}
               {showConfigAppearance
-                ? "Hide appearance settings"
-                : "Show appearance settings"}
+                ? "Ocultar configurações"
+                : "Mostrar configurações"}
             </button>
 
             {showConfigAppearance && (
@@ -228,11 +235,11 @@ export function UserMenuDropdown() {
                 {/* Extra controls only in main menu */}
                 <div className="flex flex-col gap-3 mt-3">
                   <SegmentedControl<ThemeMode>
-                    label="Mode"
+                    label="Modo"
                     value={mode}
                     options={[
-                      { value: "resume", label: "Resume" },
-                      { value: "detail", label: "Detail" },
+                      { value: "resume", label: "Resumo" },
+                      { value: "detail", label: "Detalhe" },
                     ]}
                     onChange={(value) => updatePreferences({ mode: value })}
                   />
@@ -240,17 +247,17 @@ export function UserMenuDropdown() {
                     label="Helpers"
                     value={helpers}
                     options={[
-                      { value: "show", label: "Show" },
-                      { value: "hide", label: "Hide" },
+                      { value: "show", label: "Mostrar" },
+                      { value: "hide", label: "Ocultar" },
                     ]}
                     onChange={(value) => updatePreferences({ helpers: value })}
                   /> */}
                   <SegmentedControl<ComplexityMode>
-                    label="Complexity"
+                    label="Complexidade"
                     value={complexity}
                     options={[
-                      { value: "simple", label: "Simple" },
-                      { value: "complex", label: "Complex" },
+                      { value: "simple", label: "Simples" },
+                      { value: "complex", label: "Complexa" },
                     ]}
                     onChange={(value) =>
                       updatePreferences({ complexity: value })
@@ -275,7 +282,7 @@ export function UserMenuDropdown() {
                 aria-label="Enter focus mode"
               >
                 <Timer className="size-4 text-muted-foreground" />
-                Focus Mode
+                Modo Foco
               </DropdownMenuItem>
             </>
           )}

@@ -82,7 +82,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
     return (
       <div className="flex flex-col gap-2 pt-1">
         <p className="text-xs text-muted-foreground italic">
-          Break this task into smaller steps.
+          Quebre essa tarefa em passos menores.
         </p>
         <AddStepDialog onSubmit={createStep} />
       </div>
@@ -113,8 +113,8 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
           aria-expanded={showAllStepsConcluded}
           aria-label={
             showAllStepsConcluded
-              ? "Hide concluded steps"
-              : `Show ${completedSteps.length} ${completedSteps.length === 1 ? "step concluded" : "steps concluded"}`
+              ? "Ocultar steps concluídos"
+              : `Mostrar ${completedSteps.length} ${completedSteps.length === 1 ? "step concluído" : "steps concluídos"}`
           }
         >
           {showAllStepsConcluded ? (
@@ -123,8 +123,8 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
             <ChevronDown className="size-3" />
           )}
           {showAllStepsConcluded
-            ? "Hide concluded steps"
-            : `${completedSteps.length} ${completedSteps.length === 1 ? "step concluded" : "steps concluded"}`}
+            ? "Ocultar steps concluídos"
+            : `${completedSteps.length} ${completedSteps.length === 1 ? "step concluído" : "steps concluídos"}`}
         </button>
       )}
       {showAllStepsConcluded &&
@@ -139,7 +139,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                 checked
                 onCheckedChange={() => toggleStep(step.id, false)}
                 className="flex items-center gap-2 shrink-0"
-                aria-label={`Unmark: ${step.title}`}
+                aria-label={`Desmarcar: ${step.title}`}
               />
               <span className="text-xs line-through text-muted-foreground flex-1 min-w-0">
                 {step.title}
@@ -151,14 +151,14 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                   <button
                     onClick={() => startEditingStep(step.id, step.title)}
                     className="p-1.5 shrink-0 text-muted-foreground/50 hover:text-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
-                    aria-label={`Edit step: ${step.title}`}
+                    aria-label={`Editar step: ${step.title}`}
                   >
                     <Pencil className="size-3 text-muted-foreground" />
                   </button>
                 </TooltipTrigger>
                 {helpers === "show" && (
                   <TooltipContent>
-                    <p>Edit step</p>
+                    <p>Editar step</p>
                   </TooltipContent>
                 )}
               </Tooltip>
@@ -167,14 +167,14 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                   <button
                     onClick={() => setDeletingStepId(step.id)}
                     className="p-1.5 shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
-                    aria-label={`Remove step: ${step.title}`}
+                    aria-label={`Remover step: ${step.title}`}
                   >
                     <Trash2 className="size-3 text-muted-foreground" />
                   </button>
                 </TooltipTrigger>
                 {helpers === "show" && (
                   <TooltipContent>
-                    <p>Remove step</p>
+                    <p>Remover step</p>
                   </TooltipContent>
                 )}
               </Tooltip>
@@ -198,7 +198,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
               checked={false}
               onCheckedChange={() => toggleStep(currentStep.id, true)}
               className="shrink-0 mt-0.5"
-              aria-label={`Complete: ${currentStep.title}`}
+              aria-label={`Concluir step: ${currentStep.title}`}
             />
             <label
               htmlFor={`step-${currentStep.id}`}
@@ -215,14 +215,14 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                     startEditingStep(currentStep.id, currentStep.title)
                   }
                   className="p-1.5 shrink-0 text-muted-foreground/50 hover:text-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
-                  aria-label={`Edit step: ${currentStep.title}`}
+                  aria-label={`Editar step: ${currentStep.title}`}
                 >
                   <Pencil className="size-3" />
                 </button>
               </TooltipTrigger>
               {helpers === "show" && (
                 <TooltipContent>
-                  <p>Edit step</p>
+                  <p>Editar step</p>
                 </TooltipContent>
               )}
             </Tooltip>
@@ -231,14 +231,14 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                 <button
                   onClick={() => setDeletingStepId(currentStep.id)}
                   className="p-1.5 shrink-0 text-muted-foreground/50 hover:text-destructive transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring rounded"
-                  aria-label={`Remove step: ${currentStep.title}`}
+                  aria-label={`Remover step: ${currentStep.title}`}
                 >
                   <Trash2 className="size-3" />
                 </button>
               </TooltipTrigger>
               {helpers === "show" && (
                 <TooltipContent>
-                  <p>Remove step</p>
+                  <p>Remover step</p>
                 </TooltipContent>
               )}
             </Tooltip>
@@ -250,7 +250,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
       {allDone && (
         <div className="flex items-center gap-2 text-xs text-muted-foreground animate-in fade-in duration-300">
           <Check className="size-3 text-green-600" />
-          All steps complete!
+          Todos os steps concluídos!
         </div>
       )}
 
@@ -263,8 +263,8 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
             aria-expanded={showAll}
             aria-label={
               showAll
-                ? "Hide remaining steps"
-                : `Show ${remainingCount} more ${remainingCount === 1 ? "step" : "steps"}`
+                ? "Ocultar steps restantes"
+                : `Mostrar ${remainingCount} ${remainingCount === 1 ? "step" : "steps"} restantes`
             }
           >
             {showAll ? (
@@ -273,8 +273,8 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
               <ChevronDown className="size-3" />
             )}
             {showAll
-              ? "Hide pending steps "
-              : `${remainingCount} more ${remainingCount === 1 ? "step pending" : "steps pending"}`}
+              ? "Ocultar steps pendentes "
+              : `${remainingCount} ${remainingCount === 1 ? "step pendente" : "steps pendentes"}`}
           </button>
 
           {showAll && (
@@ -312,7 +312,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                       </TooltipTrigger>
                       {helpers === "show" && (
                         <TooltipContent>
-                          <p>Edit step</p>
+                          <p>Editar step</p>
                         </TooltipContent>
                       )}
                     </Tooltip>
@@ -328,7 +328,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
                       </TooltipTrigger>
                       {helpers === "show" && (
                         <TooltipContent>
-                          <p>Remove step</p>
+                          <p>Remover step</p>
                         </TooltipContent>
                       )}
                     </Tooltip>

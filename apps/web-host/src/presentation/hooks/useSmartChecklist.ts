@@ -48,7 +48,7 @@ export function useSmartChecklist(taskId: string) {
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(qKey, ctx.previous);
-      toast.error("Failed to update step");
+      toast.error("Falha na atualização do step");
     },
     onSuccess: (_, { completed }) => {
       if (completed) {
@@ -61,7 +61,7 @@ export function useSmartChecklist(taskId: string) {
           queryClient.getQueryData<ChecklistStep[]>(qKey) ?? steps;
         const remaining = current.filter((s) => !s.completed).length;
         if (remaining === 0) {
-          toast.info("All steps complete!", { duration: 3000 });
+          toast.info("Todos os steps foram concluidos!", { duration: 3000 });
         }
       }
     },
@@ -88,11 +88,11 @@ export function useSmartChecklist(taskId: string) {
       return { previous };
     },
     onSuccess: () => {
-      toast.success("Step added");
+      toast.success("Step adicionado");
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(qKey, ctx.previous);
-      toast.error("Failed to add step");
+      toast.error("Falha na adição do step");
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: qKey }),
   });
@@ -108,11 +108,11 @@ export function useSmartChecklist(taskId: string) {
       return { previous };
     },
     onSuccess: () => {
-      toast.success("Step removed");
+      toast.success("Step removido");
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(qKey, ctx.previous);
-      toast.error("Failed to remove step");
+      toast.error("Falha na remoção do step");
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: qKey }),
   });
@@ -130,10 +130,10 @@ export function useSmartChecklist(taskId: string) {
     },
     onError: (_, __, ctx) => {
       if (ctx?.previous) queryClient.setQueryData(qKey, ctx.previous);
-      toast.error("Failed to update step");
+      toast.error("Falha na atualização do step");
     },
     onSuccess: () => {
-      toast.success("Step updated", { duration: 2000 });
+      toast.success("Step atualizado", { duration: 2000 });
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: qKey }),
   });

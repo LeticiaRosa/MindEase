@@ -20,7 +20,7 @@ import {
 } from "@repo/ui";
 
 const schema = z.object({
-  title: z.string().min(1, "Title is required").max(200),
+  title: z.string().min(1, "O título é obrigatório").max(200),
   description: z.string().max(500).optional(),
 });
 
@@ -88,9 +88,9 @@ export function TaskEditForm({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="">
           <DialogHeader>
-            <DialogTitle>Edit Task</DialogTitle>
+            <DialogTitle>Editar task</DialogTitle>
             <DialogDescription>
-              Update the task title and description.
+              Atualize o título e a descrição da task.
             </DialogDescription>
           </DialogHeader>
           <form
@@ -102,10 +102,10 @@ export function TaskEditForm({
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
+                  <FormLabel>Título</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Task title…"
+                      placeholder="Título da task…"
                       className="min-h-16 resize-none"
                       {...field}
                       autoFocus
@@ -120,7 +120,7 @@ export function TaskEditForm({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description (optional)</FormLabel>
+                  <FormLabel>Descrição (opcional)</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Add more details…"
@@ -138,9 +138,9 @@ export function TaskEditForm({
                 variant="ghost"
                 onClick={() => onOpenChange(false)}
               >
-                Cancel
+                Cancelar
               </Button>
-              <Button type="submit">Save changes</Button>
+              <Button type="submit">Salvar alterações</Button>
             </DialogFooter>
           </form>
         </DialogContent>

@@ -27,9 +27,9 @@ export function AddStepForm({ onSubmit }: AddStepFormProps) {
       <button
         onClick={() => setExpanded(true)}
         className="w-full z-9999 flex items-center justify-center text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded py-0.5"
-        aria-label="Adicionar etapa"
+        aria-label="Adicionar step"
       >
-        + Adicionar etapa
+        + Adicionar step
       </button>
     );
   }
@@ -55,7 +55,7 @@ export function AddStepForm({ onSubmit }: AddStepFormProps) {
           className="flex-1 h-7 text-xs"
           disabled={!title.trim()}
           onClick={handleSubmit}
-          aria-label="Adicionar etapa"
+          aria-label="Adicionar step"
         >
           Adicionar
         </Button>

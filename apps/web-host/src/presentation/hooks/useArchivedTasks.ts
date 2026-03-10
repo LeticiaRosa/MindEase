@@ -29,7 +29,7 @@ export function useArchivedTasks() {
       return { previous };
     },
     onSuccess: (task) => {
-      toast.success(`Task restored to "${task.status.replace("_", " ")}"`, {
+      toast.success(`Task restaurada para "${task.status.replace("_", " ")}"`, {
         duration: 3000,
       });
       // Invalidate the routine's task list so it reflects the restored task
@@ -38,7 +38,7 @@ export function useArchivedTasks() {
     onError: (_, __, ctx) => {
       if (ctx?.previous)
         queryClient.setQueryData(["archivedTasks"], ctx.previous);
-      toast.error("Failed to restore task");
+      toast.error("Falha ao restaurar a task");
     },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["archivedTasks"] }),

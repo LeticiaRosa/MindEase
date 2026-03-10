@@ -50,7 +50,7 @@ export function AppearanceMenuPanel({
         >
           <Palette className="size-3.5 shrink-0" />
           <span className="text-xs font-semibold uppercase tracking-wide">
-            Appearance
+            Aparência
           </span>
           {open ? (
             <ChevronUp className="size-3 ml-auto" />
@@ -64,19 +64,19 @@ export function AppearanceMenuPanel({
       {isOpen && (
         <div className="flex flex-col gap-3 pt-1">
           <SegmentedControl<ColourTheme>
-            label="Colour theme"
+            label="Tema de cores"
             value={theme}
             options={[
-              { value: "default", label: "Default" },
-              { value: "dark", label: "Dark" },
-              { value: "soft", label: "Soft" },
-              { value: "high-contrast", label: "High contrast" },
+              { value: "default", label: "Padrão" },
+              { value: "dark", label: "Escuro" },
+              { value: "soft", label: "Suave" },
+              { value: "high-contrast", label: "Alto contraste" },
             ]}
             onChange={(value) => updatePreferences({ theme: value })}
           />
 
           <SegmentedControl<FontSize>
-            label="Font size"
+            label="Tamanho da fonte"
             value={fontSize}
             options={[
               { value: "sm", label: "S" },
@@ -87,12 +87,12 @@ export function AppearanceMenuPanel({
           />
 
           <SegmentedControl<SpacingDensity>
-            label="Spacing"
+            label="Espaçamento"
             value={spacing}
             options={[
-              { value: "compact", label: "Compact" },
-              { value: "default", label: "Default" },
-              { value: "relaxed", label: "Relaxed" },
+              { value: "compact", label: "Compacto" },
+              { value: "default", label: "Padrão" },
+              { value: "relaxed", label: "Relaxado" },
             ]}
             onChange={(value) => updatePreferences({ spacing: value })}
           />

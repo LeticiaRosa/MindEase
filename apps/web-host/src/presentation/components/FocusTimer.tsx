@@ -24,7 +24,7 @@ export function FocusTimer({ taskId }: FocusTimerProps) {
 
   // Only show when active, or on hover (parent controls visibility)
   const modeLabel =
-    mode === "focus" ? "Focus" : mode === "break" ? "Break" : "Long Break";
+    mode === "focus" ? "Foco" : mode === "break" ? "Pausa" : "Pausa longa";
 
   const circumference = 2 * Math.PI * 22; // r=22
   const dashOffset = circumference * (1 - progress);
@@ -71,7 +71,7 @@ export function FocusTimer({ taskId }: FocusTimerProps) {
           {formattedTime}
         </span>
         <span className="text-xs text-muted-foreground mt-0.5">
-          {modeLabel} · Cycle {currentCycle}/{cyclesBeforeLongBreak}
+          {modeLabel} · Ciclo {currentCycle}/{cyclesBeforeLongBreak}
         </span>
       </div>
 
@@ -85,13 +85,13 @@ export function FocusTimer({ taskId }: FocusTimerProps) {
                 variant="ghost"
                 className="size-7"
                 onClick={pause}
-                aria-label="Pause timer"
+                aria-label="Pausar timer"
               >
                 <Pause className="size-3.5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Pause timer</p>
+              <p>Pausar timer</p>
             </TooltipContent>
           </Tooltip>
         ) : (
@@ -102,13 +102,13 @@ export function FocusTimer({ taskId }: FocusTimerProps) {
                 variant="ghost"
                 className="size-7"
                 onClick={start}
-                aria-label={isPaused ? "Resume timer" : "Start timer"}
+                aria-label={isPaused ? "Retomar timer" : "Iniciar timer"}
               >
                 <Play className="size-3.5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Play timer</p>
+              <p>{isPaused ? "Retomar timer" : "Iniciar timer"}</p>
             </TooltipContent>
           </Tooltip>
         )}
@@ -127,7 +127,7 @@ export function FocusTimer({ taskId }: FocusTimerProps) {
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Reset timer</p>
+                <p>Resetar timer</p>
               </TooltipContent>
             </Tooltip>
             <Tooltip>
@@ -137,13 +137,13 @@ export function FocusTimer({ taskId }: FocusTimerProps) {
                   variant="ghost"
                   className="size-7 text-destructive/70 hover:text-destructive"
                   onClick={stop}
-                  aria-label="Stop and save time"
+                  aria-label="Parar e salvar tempo"
                 >
                   <Square className="size-3.5" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Stop and Save time</p>
+                <p>Parar e salvar tempo</p>
               </TooltipContent>
             </Tooltip>
           </>

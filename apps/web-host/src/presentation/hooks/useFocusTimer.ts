@@ -36,8 +36,8 @@ export function useFocusTimer(taskId: string) {
     if (timer.secondsRemaining === 0) {
       const modeLabel =
         timer.mode === "focus"
-          ? "Focus session complete — time for a break"
-          : "Break complete — ready to focus?";
+          ? "Focus concluido - Hora da pausa!"
+          : "Pausa concluida - Pronto para o focus?";
       toast.info(modeLabel, { duration: 4000 });
       nextMode(taskId);
     }
@@ -59,13 +59,13 @@ export function useFocusTimer(taskId: string) {
         await repository.addTaskTimeSpent(taskId, elapsedSeconds);
         queryClient.invalidateQueries({ queryKey: ["tasks"] });
         toast.success(
-          `Time tracked: ${Math.floor(elapsedSeconds / 60)}m ${elapsedSeconds % 60}s`,
+          `Tempo registrado: ${Math.floor(elapsedSeconds / 60)}m ${elapsedSeconds % 60}s`,
           {
             duration: 3000,
           },
         );
       } catch (error) {
-        toast.error("Failed to save time tracking");
+        toast.error("Falha ao salvar o tempo");
         console.error("Error saving time:", error);
       }
     }

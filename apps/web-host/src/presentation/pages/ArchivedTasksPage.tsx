@@ -44,7 +44,7 @@ function ArchivedTaskItem({
       <div className="flex flex-col gap-0.5 min-w-0">
         <p className="text-sm font-medium truncate">{task.title}</p>
         <span className="text-xs text-muted-foreground">
-          Archived on {archivedAt}
+          Arquivado em {archivedAt}
         </span>
       </div>
 
@@ -54,7 +54,7 @@ function ArchivedTaskItem({
           aria-label={`Restore task: ${task.title}`}
         >
           <ArchiveRestore className="size-3" />
-          Restore
+          Restaurar
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
           {RESTORABLE_STATUSES.map((status) => (
@@ -93,7 +93,7 @@ export default function ArchivedTasksPage() {
             </Button>
             <div>
               <h1 className="text-lg font-semibold tracking-tight">
-                Archived Tasks
+                Tasks arquivadas
               </h1>
             </div>
           </div>
@@ -119,19 +119,20 @@ export default function ArchivedTasksPage() {
           <div className="flex flex-col items-center gap-4 py-20 text-center">
             <Inbox className="size-10 text-muted-foreground/40" aria-hidden />
             <p className="text-sm text-muted-foreground">
-              No archived tasks yet.
+              Não há tasks arquivadas no momento. As tasks arquivadas aparecerão
+              aqui para que você possa restaurá-las quando quiser.
             </p>
             <p className="text-xs text-muted-foreground/70">
-              Archive a task from the board to keep it out of sight without
-              deleting it.
+              Dica: Você pode arquivar uma task selecionando "Arquivar" no menu
+              de opções da task.
             </p>
           </div>
         ) : (
           <div className="flex flex-col gap-3">
             <p className="text-xs text-muted-foreground mb-1">
               {archivedTasks.length}{" "}
-              {archivedTasks.length === 1 ? "task" : "tasks"} archived. Select a
-              status to restore any task back to the board.
+              {archivedTasks.length === 1 ? "task" : "tasks"} arquivadas. Você
+              pode restaurá-las para continuar de onde parou.
             </p>
             {archivedTasks.map((task) => (
               <ArchivedTaskItem
