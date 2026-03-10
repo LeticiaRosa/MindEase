@@ -38,7 +38,11 @@ export function SignIn() {
         role="banner"
         aria-label="Cabeçalho do formulário de login"
       >
-        <CardTitle className="text-2xl font-bold" role="heading" aria-level={1}>
+        <CardTitle
+          className="text-2xl !font-bold"
+          role="heading"
+          aria-level={1}
+        >
           Bem-vindo de volta
         </CardTitle>
         <CardDescription
