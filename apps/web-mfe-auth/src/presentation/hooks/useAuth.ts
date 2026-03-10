@@ -54,6 +54,8 @@ export function useAuth() {
       if (result.success && result.data) {
         queryClient.setQueryData(AUTH_KEYS.user, result.data);
         queryClient.invalidateQueries({ queryKey: AUTH_KEYS.session });
+      } else if (result.success) {
+        queryClient.setQueryData(AUTH_KEYS.user, null);
       }
     },
   });
@@ -105,7 +107,7 @@ export function useAuth() {
       fullName,
     });
     if (result.success) {
-      return { success: true as const, user: result.data };
+      return { success: true as const, user: result.data ?? null };
     }
     return { success: false as const, error: result.error };
   };

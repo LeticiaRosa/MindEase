@@ -7,20 +7,31 @@ import type {
 import supabaseClient from "@/infrastructure/api/clients/supabaseClient";
 
 export class SupabaseAuthRepository implements IAuthRepository {
+  private getAuthCallbackUrl(redirectTo?: string): string {
+    if (redirectTo) {
+      return redirectTo;
+    }
+
+    const hostUrl = import.meta.env.VITE_HOST_URL ?? window.location.origin;
+    const normalizedHostUrl = hostUrl.endsWith("/")
+      ? hostUrl.slice(0, -1)
+      : hostUrl;
+
+    return `${normalizedHostUrl}/auth/callback`;
+  }
+
   private async ensurePreferencesRow(userId: string): Promise<void> {
-    await supabaseClient
-      .from("user_cognitive_preferences")
-      .upsert(
-        {
-          user_id: userId,
-          onboarding_state: "pending",
-          current_step: 1,
-        },
-        {
-          onConflict: "user_id",
-          ignoreDuplicates: true,
-        },
-      );
+    await supabaseClient.from("user_cognitive_preferences").upsert(
+      {
+        user_id: userId,
+        onboarding_state: "pending",
+        current_step: 1,
+      },
+      {
+        onConflict: "user_id",
+        ignoreDuplicates: true,
+      },
+    );
   }
 
   async signIn(email: string, password: string): Promise<AuthResult<User>> {
@@ -58,6 +69,7 @@ export class SupabaseAuthRepository implements IAuthRepository {
         data: {
           full_name: fullName,
         },
+        emailRedirectTo: this.getAuthCallbackUrl(),
       },
     });
 
@@ -75,7 +87,7 @@ export class SupabaseAuthRepository implements IAuthRepository {
       this.ensurePreferencesRow(data.user.id).catch(() => {});
     }
 
-    return { success: true, data: data.user as User };
+    return { success: true, data: (data.session?.user as User) ?? undefined };
   }
 
   async signOut(): Promise<AuthResult<void>> {
@@ -101,8 +113,7 @@ export class SupabaseAuthRepository implements IAuthRepository {
     const { error } = await supabaseClient.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo:
-          redirectTo || `${window.location.origin}/auth/callback`,
+        emailRedirectTo: this.getAuthCallbackUrl(redirectTo),
       },
     });
 

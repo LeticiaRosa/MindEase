@@ -55,7 +55,8 @@ export function SignUp() {
 
       await toast.promise(signUpPromise, {
         loading: "Criando conta...",
-        success: `Conta criada com sucesso! Bem-vindo, ${data.fullName}!`,
+        success:
+          "Conta criada! Verifique seu e-mail para confirmar o cadastro antes de entrar.",
         error: (err) =>
           err instanceof Error ? err.message : "Ocorreu um erro",
       });
