@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { SupabaseRoutineRepository } from "@/infrastructure/adapters/SupabaseRoutineRepository";
 import { CreateRoutine } from "@/application/useCases/CreateRoutine";
@@ -32,30 +32,49 @@ export function useRoutines() {
   const queryClient = useQueryClient();
   const toast = useToast();
   const { activeRoutineId, setActiveRoutineId } = useActiveRoutine();
+  const isSeedingDefaultRoutinesRef = useRef(false);
 
   const { data: routines = [], isLoading } = useQuery<Routine[]>({
     queryKey: ["routines"],
     queryFn: () => repository.getRoutines(),
   });
 
-  // 6.1 Seed default routines when user has none
+  // Keep mandatory default Kanbans available for onboarding and first use.
   useEffect(() => {
-    if (isLoading || routines.length > 0) return;
+    if (isLoading || isSeedingDefaultRoutinesRef.current) return;
 
-    // 6.2 Insert as sequential to avoid race — unique constraint handles concurrent inserts silently
+    const existingNames = new Set(
+      routines.map((routine) => normalize(routine.name)),
+    );
+    const missingDefaults = DEFAULT_ROUTINES.filter(
+      (routine) => !existingNames.has(normalize(routine.name)),
+    );
+
+    if (missingDefaults.length === 0) {
+      return;
+    }
+
+    isSeedingDefaultRoutinesRef.current = true;
+
+    // Insert sequentially to avoid race conditions between tabs/devices.
     const seedRoutines = async () => {
-      for (const r of DEFAULT_ROUTINES) {
-        try {
-          await repository.createRoutine(r.name, r.icon);
-        } catch {
-          // Unique constraint violation — ignore (concurrent tab race condition)
+      try {
+        for (const routine of missingDefaults) {
+          try {
+            await repository.createRoutine(routine.name, routine.icon);
+          } catch {
+            // Ignore duplicate insertion errors in concurrent sessions.
+          }
         }
+
+        await queryClient.invalidateQueries({ queryKey: ["routines"] });
+      } finally {
+        isSeedingDefaultRoutinesRef.current = false;
       }
-      await queryClient.invalidateQueries({ queryKey: ["routines"] });
     };
 
     seedRoutines();
-  }, [isLoading, routines.length, queryClient]);
+  }, [isLoading, routines, queryClient]);
 
   // 5.2 Fallback: if stored ID is not in fetched routines, default to first
   useEffect(() => {

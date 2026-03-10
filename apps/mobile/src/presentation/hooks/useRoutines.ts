@@ -17,10 +17,10 @@ const updateRoutine = new UpdateRoutine(repository);
 const deleteRoutine = new DeleteRoutine(repository);
 const reorderRoutines = new ReorderRoutines(repository);
 
-const DEFAULT_ROUTINE = {
-  name: "Trabalho",
-  icon: "briefcase-business",
-} as const;
+const DEFAULT_ROUTINES = [
+  { name: "Trabalho", icon: "briefcase-business" },
+  { name: "Estudo", icon: "notebook-pen" },
+] as const;
 
 function normalize(value: string): string {
   return value.trim().toLocaleLowerCase("pt-BR");
@@ -30,7 +30,7 @@ export function useRoutines() {
   const queryClient = useQueryClient();
   const { showAlert } = useAlert();
   const { activeRoutineId, setActiveRoutineId } = useActiveRoutine();
-  const isSeedingDefaultRoutineRef = useRef(false);
+  const isSeedingDefaultRoutinesRef = useRef(false);
 
   const { data: routines = [], isLoading } = useQuery<Routine[]>({
     queryKey: ["routines"],
@@ -38,32 +38,42 @@ export function useRoutines() {
   });
 
   useEffect(() => {
-    if (
-      isLoading ||
-      routines.length > 0 ||
-      isSeedingDefaultRoutineRef.current
-    ) {
+    if (isLoading || isSeedingDefaultRoutinesRef.current) {
       return;
     }
 
-    isSeedingDefaultRoutineRef.current = true;
+    const existingNames = new Set(
+      routines.map((routine) => normalize(routine.name)),
+    );
+    const missingDefaults = DEFAULT_ROUTINES.filter(
+      (routine) => !existingNames.has(normalize(routine.name)),
+    );
 
-    const seedDefaultRoutine = async () => {
+    if (missingDefaults.length === 0) {
+      return;
+    }
+
+    isSeedingDefaultRoutinesRef.current = true;
+
+    const seedDefaultRoutines = async () => {
       try {
-        await repository.createRoutine(
-          DEFAULT_ROUTINE.name,
-          DEFAULT_ROUTINE.icon,
-        );
+        for (const routine of missingDefaults) {
+          try {
+            await repository.createRoutine(routine.name, routine.icon);
+          } catch {
+            // Ignore duplicate insertion errors in concurrent sessions.
+          }
+        }
       } catch {
-        // Ignore initial seed failures to avoid blocking onboarding flow.
+        // Ignore seed failures to avoid blocking onboarding flow.
       } finally {
         await queryClient.invalidateQueries({ queryKey: ["routines"] });
-        isSeedingDefaultRoutineRef.current = false;
+        isSeedingDefaultRoutinesRef.current = false;
       }
     };
 
-    seedDefaultRoutine();
-  }, [isLoading, routines.length, queryClient]);
+    seedDefaultRoutines();
+  }, [isLoading, routines, queryClient]);
 
   useEffect(() => {
     if (isLoading || routines.length === 0) {
@@ -79,7 +89,7 @@ export function useRoutines() {
     }
 
     const trabalhoRoutine = routines.find(
-      (routine) => normalize(routine.name) === normalize(DEFAULT_ROUTINE.name),
+      (routine) => normalize(routine.name) === "trabalho",
     );
 
     const fallbackRoutine = trabalhoRoutine ?? routines[0];
