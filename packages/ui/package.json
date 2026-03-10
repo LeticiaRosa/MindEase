@@ -6,11 +6,36 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js",
-    "./components/*": "./dist/components/*.js",
-    "./hooks/*": "./dist/hooks/*",
-    "./theme": "./dist/theme/index.js",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./components/*": {
+      "types": "./dist/components/*.d.ts",
+      "default": "./dist/components/*.js"
+    },
+    "./hooks/*": {
+      "types": "./dist/hooks/*.d.ts",
+      "default": "./dist/hooks/*"
+    },
+    "./theme": {
+      "types": "./dist/theme/index.d.ts",
+      "default": "./dist/theme/index.js"
+    },
     "./styles": "./dist/ui.css"
+  },
+  "typesVersions": {
+    "*": {
+      "theme": [
+        "./dist/theme/index.d.ts"
+      ],
+      "components/*": [
+        "./dist/components/*.d.ts"
+      ],
+      "hooks/*": [
+        "./dist/hooks/*.d.ts"
+      ]
+    }
   },
   "files": [
     "dist"
