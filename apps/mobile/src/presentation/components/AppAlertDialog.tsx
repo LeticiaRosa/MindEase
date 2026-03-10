@@ -67,7 +67,7 @@ export function AppAlertDialog({
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [open]);
+  }, [open, onDismiss, progress, slideY]);
 
   return (
     <Modal

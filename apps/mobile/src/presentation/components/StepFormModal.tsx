@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   View,
   TextInput,
@@ -34,10 +34,6 @@ export function StepFormModal({
     resolvedSpacing,
     resolvedBorderRadius,
   } = useTheme();
-
-  useEffect(() => {
-    if (visible) setTitle(initialValue);
-  }, [visible, initialValue]);
 
   const canSave = title.trim().length > 0;
 

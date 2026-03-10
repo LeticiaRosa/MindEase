@@ -3,7 +3,7 @@ import {
   ROUTINE_ICONS,
   ROUTINE_ICON_LABELS,
   DEFAULT_ROUTINE_ICON,
-} from "@/presentation/components/RoutineIcon";
+} from "@/presentation/constants/routineIcons";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

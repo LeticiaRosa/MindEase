@@ -18,7 +18,6 @@ import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 export default function ManageRoutinesScreen() {
   const {
     routines,
-    isLoading,
     createRoutine,
     updateRoutine,
     deleteRoutine,

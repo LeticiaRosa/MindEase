@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import {
   View,
   Text,
@@ -17,7 +17,6 @@ import type {
   FontSize,
   SpacingDensity,
 } from "@/presentation/contexts/ThemePreferencesContext";
-import { TimerPreferencesPanel } from "@/presentation/components/TimerPreferencesPanel";
 
 interface UserMenuBottomSheetProps {
   user: User;

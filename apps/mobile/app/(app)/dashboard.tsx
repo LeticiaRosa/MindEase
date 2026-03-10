@@ -30,7 +30,6 @@ import { BrainTodayBottomSheet } from "@/presentation/components/BrainTodayBotto
 import { RoutineSelector } from "@/presentation/components/RoutineSelector";
 import { TaskGroup } from "@/presentation/components/TaskGroup";
 import { CognitiveAlertModal } from "@/presentation/components/CognitiveAlertModal";
-import { TaskCreateForm } from "@/presentation/components/TaskCreateForm";
 import { CreateTaskFAB } from "@/presentation/components/CreateTaskFAB";
 import { AppearanceFloatingButton } from "@/presentation/components/AppearanceFloatingButton";
 
@@ -55,7 +54,7 @@ export default function DashboardScreen() {
 
   const router = useRouter();
   const { user } = useAuth();
-  const { routines, isLoading: routinesLoading } = useRoutines();
+  const { routines } = useRoutines();
   const { activeRoutineId, setActiveRoutineId } = useActiveRoutine();
   const {
     resolvedColors,
@@ -68,7 +67,6 @@ export default function DashboardScreen() {
   const effectiveRoutineId = activeRoutineId ?? routines[0]?.id ?? "";
 
   const {
-    tasks: _tasks,
     isLoading: tasksLoading,
     tasksByStatus,
     createTask,

@@ -1,26 +1,6 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-  type ReactNode,
-} from "react";
+import { useState, useEffect, useCallback, type ReactNode } from "react";
 import supabaseClient from "@/infrastructure/api/clients/supabaseClient";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-interface ActiveRoutineContextValue {
-  activeRoutineId: string | null;
-  setActiveRoutineId: (id: string) => void;
-  userId: string | null;
-}
-
-// ─── Context ──────────────────────────────────────────────────────────────────
-
-const ActiveRoutineContext = createContext<ActiveRoutineContextValue | null>(
-  null,
-);
+import { ActiveRoutineContext } from "@/presentation/contexts/activeRoutineContextDef";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -70,15 +50,4 @@ export function ActiveRoutineProvider({
       {children}
     </ActiveRoutineContext.Provider>
   );
-}
-
-// ─── Hook ─────────────────────────────────────────────────────────────────────
-
-export function useActiveRoutine(): ActiveRoutineContextValue {
-  const ctx = useContext(ActiveRoutineContext);
-  if (!ctx)
-    throw new Error(
-      "useActiveRoutine must be used within ActiveRoutineProvider",
-    );
-  return ctx;
 }

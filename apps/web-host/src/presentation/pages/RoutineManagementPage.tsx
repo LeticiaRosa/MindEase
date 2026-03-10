@@ -26,7 +26,7 @@ import {
 import { useRoutines } from "@/presentation/hooks/useRoutines";
 import { IconPicker } from "@/presentation/components/IconPicker";
 import { RoutineIcon } from "@/presentation/components/RoutineIcon";
-import { DEFAULT_ROUTINE_ICON } from "@/presentation/components/RoutineIcon";
+import { DEFAULT_ROUTINE_ICON } from "@/presentation/constants/routineIcons";
 import { ConfirmDeleteDialog } from "@/presentation/components/ConfirmDeleteDialog";
 import type { Routine } from "@/domain/entities/Routine";
 

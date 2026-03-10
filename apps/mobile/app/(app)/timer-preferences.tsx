@@ -1,15 +1,10 @@
-import { ScrollView, View, Text, SafeAreaView } from "react-native";
+import { ScrollView, SafeAreaView } from "react-native";
 import { PageHeader } from "@/presentation/components/PageHeader";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 import { TimerPreferencesPanel } from "@/presentation/components/TimerPreferencesPanel";
 
 export default function TimerPreferencesScreen() {
-  const {
-    resolvedColors,
-    resolvedFontSizes,
-    resolvedSpacing,
-    resolvedBorderRadius,
-  } = useTheme();
+  const { resolvedColors, resolvedSpacing } = useTheme();
 
   return (
     <SafeAreaView

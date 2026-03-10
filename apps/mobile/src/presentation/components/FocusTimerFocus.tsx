@@ -68,8 +68,6 @@ export function FocusTimerFocus({
 
   const [showChecklist, setShowChecklist] = useState(false);
 
-  const modeLabel =
-    mode === "focus" ? "Foco" : mode === "long_break" ? "Pausa Longa" : "Pausa";
   const modeDescription = MODE_DESCRIPTIONS[mode] ?? "";
   const modeColor =
     mode === "focus" ? resolvedColors.primary : resolvedColors.ring;

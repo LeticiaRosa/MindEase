@@ -18,6 +18,8 @@ import {
   type AlertTone,
   type AlertIntensity,
 } from "@/domain/valueObjects/AlertTypes";
+import { useWatch } from "react-hook-form";
+
 const TRIGGERS = Object.keys(ALERT_TRIGGER_LABELS) as AlertTrigger[];
 const TONES = Object.keys(ALERT_TONE_LABELS) as AlertTone[];
 const INTENSITIES = Object.keys(ALERT_INTENSITY_LABELS) as AlertIntensity[];
@@ -49,7 +51,6 @@ export default function CognitiveAlertConfigPage() {
   const {
     handleSubmit,
     control,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<AlertPreferencesDTO>({
     resolver: zodResolver(alertPreferencesSchema),
@@ -63,7 +64,10 @@ export default function CognitiveAlertConfigPage() {
     },
   });
 
-  const selectedTriggers = watch("triggers");
+  const selectedTriggers = useWatch({
+    control,
+    name: "triggers",
+  });
   const currentStep = STEPS[step];
   const isLastStep = step === STEPS.length - 1;
 

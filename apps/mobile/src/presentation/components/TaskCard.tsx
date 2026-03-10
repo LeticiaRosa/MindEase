@@ -7,7 +7,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Timer,
-  Move,
   Archive,
   Pencil,
 } from "lucide-react-native";
@@ -43,8 +42,6 @@ export function TaskCard({
 }: TaskCardProps) {
   const {
     mode,
-    helpers,
-    complexity,
     resolvedColors,
     resolvedFontSizes,
     resolvedSpacing,

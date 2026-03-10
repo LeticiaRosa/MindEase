@@ -8,7 +8,6 @@ import { ActivitySignalsProvider } from "@/presentation/contexts/ActivitySignals
 import { ActiveRoutineProvider } from "@/presentation/contexts/ActiveRoutineContext";
 import { TimerProvider } from "@/presentation/contexts/TimerContext";
 import { useTimerPreferences } from "@/presentation/hooks/useTimerPreferences";
-import { AppearanceFloatingButton } from "@/presentation/components/AppearanceFloatingButton";
 
 function TimerPreferencesBootstrap() {
   useTimerPreferences();

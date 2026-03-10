@@ -5,15 +5,13 @@ import { UserMenuDropdown } from "@/presentation/components/UserMenuDropdown";
 import { CognitiveAlertBanner } from "@/presentation/components/CognitiveAlertBanner";
 import { CognitiveAlertModal } from "@/presentation/components/CognitiveAlertModal";
 import { Button, cn, Logo } from "@repo/ui";
-import { Archive, Timer } from "lucide-react";
+import { Timer } from "lucide-react";
 import { FocusTimerFocus } from "../components/FocusTimerFocus";
 import { useAlertEngine } from "@/presentation/hooks/useAlertEngine";
 import { useTimerPreferences } from "@/presentation/hooks/useTimerPreferences";
 import { Routine } from "../components/Routine";
 import { useThemePreferences } from "../contexts/ThemePreferencesContext";
 import { useNavigate } from "react-router-dom";
-import { useActiveRoutine } from "../contexts/ActiveRoutineContext";
-import { useRoutines } from "../hooks/useRoutines";
 
 function DashboardContent() {
   useTimerPreferences();
@@ -28,8 +26,6 @@ function DashboardContent() {
   } = useAlertEngine();
   const { complexity } = useThemePreferences();
   const navigate = useNavigate();
-  const { routines } = useRoutines();
-  const { activeRoutineId } = useActiveRoutine();
 
   return (
     <div className="min-h-screen bg-background">

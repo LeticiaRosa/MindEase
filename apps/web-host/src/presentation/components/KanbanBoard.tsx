@@ -18,7 +18,7 @@ import { KanbanColumn } from "@/presentation/components/KanbanColumn";
 import { TaskCard } from "@/presentation/components/TaskCard";
 import { useTaskKanban } from "@/presentation/hooks/useTaskKanban";
 import { useActivitySignals } from "@/presentation/contexts/ActivitySignalsContext";
-import { useActiveRoutine } from "@/presentation/contexts/ActiveRoutineContext";
+import { useActiveRoutine } from "@/presentation/hooks/useActiveRoutine";
 
 const COLUMNS: TaskStatus[] = [TS.TODO, TS.IN_PROGRESS, TS.DONE];
 

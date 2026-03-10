@@ -1,17 +1,7 @@
-import { useState } from "react";
-import {
-  View,
-  Text,
-  Pressable,
-  FlatList,
-  LayoutAnimation,
-  Platform,
-  UIManager,
-} from "react-native";
+import { View, Text, FlatList, Platform, UIManager } from "react-native";
 import type { Task } from "@/domain/entities/Task";
 import type { TaskStatus } from "@/domain/valueObjects/TaskStatus";
 import { TaskCard } from "./TaskCard";
-import { TaskCreateForm } from "./TaskCreateForm";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 
 if (
@@ -37,10 +27,7 @@ interface TaskGroupProps {
 }
 
 export function TaskGroup({
-  title,
   tasks,
-  showCreate = false,
-  onCreateTask,
   onDeleteTask,
   onArchiveTask,
   onUpdateTask,

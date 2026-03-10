@@ -1,6 +1,5 @@
 // Import styles
 import "../index.css";
-import { TooltipProvider } from "./components/ui/tooltip";
 
 // Components
 export * from "./components/Logo";

@@ -1,13 +1,10 @@
 import { View, Text, Pressable, Modal } from "react-native";
 import { useBrainToday } from "@/presentation/contexts/BrainTodayContext";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
-import {
-  BRAIN_STATE_OPTIONS,
-  type BrainStateValue,
-} from "@/domain/entities/BrainState";
+import { BRAIN_STATE_OPTIONS } from "@/domain/entities/BrainState";
 
 export function BrainTodayBottomSheet() {
-  const { brainState, hasAnsweredToday, setBrainState, skip } = useBrainToday();
+  const { hasAnsweredToday, setBrainState, skip } = useBrainToday();
   const {
     resolvedColors,
     resolvedFontSizes,

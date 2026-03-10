@@ -9,7 +9,6 @@ export default function Auth() {
       createMemoryRouter(routes, {
         initialEntries: [window.location.pathname],
       }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 

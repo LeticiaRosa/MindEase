@@ -5,7 +5,7 @@ import { CreateRoutine } from "@/application/useCases/CreateRoutine";
 import { UpdateRoutine } from "@/application/useCases/UpdateRoutine";
 import { DeleteRoutine } from "@/application/useCases/DeleteRoutine";
 import type { Routine } from "@/domain/entities/Routine";
-import { useActiveRoutine } from "@/presentation/contexts/ActiveRoutineContext";
+import { useActiveRoutine } from "@/presentation/hooks/useActiveRoutine";
 import { useToast } from "@repo/ui";
 
 // ─── Singletons ───────────────────────────────────────────────────────────────

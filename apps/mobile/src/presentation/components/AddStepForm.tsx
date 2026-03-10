@@ -9,7 +9,7 @@ interface AddStepFormProps {
 
 export function AddStepForm({ onSubmit }: AddStepFormProps) {
   const [open, setOpen] = useState(false);
-  const { resolvedColors, resolvedFontSizes, resolvedSpacing } = useTheme();
+  const { resolvedColors, resolvedSpacing } = useTheme();
 
   return (
     <>

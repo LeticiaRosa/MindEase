@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { cn } from "@repo/ui";
 import { useRoutines } from "@/presentation/hooks/useRoutines";
-import { useActiveRoutine } from "@/presentation/contexts/ActiveRoutineContext";
+import { useActiveRoutine } from "@/presentation/hooks/useActiveRoutine";
 import { RoutineIcon } from "@/presentation/components/RoutineIcon";
 
 export function Routine() {

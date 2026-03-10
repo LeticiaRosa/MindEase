@@ -47,6 +47,7 @@ export function useFocusTimer(taskId: string) {
     timer.mode,
     nextMode,
     taskId,
+    showAlert,
   ]);
 
   const stop = async () => {

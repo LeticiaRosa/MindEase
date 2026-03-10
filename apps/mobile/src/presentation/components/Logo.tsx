@@ -4,7 +4,7 @@ import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 type LogoProps = { size?: "small" | "medium" | "large" };
 
 export function Logo({ size = "medium" }: LogoProps) {
-  const { resolvedColors, resolvedFontSizes, resolvedSpacing } = useTheme();
+  const { resolvedColors, resolvedFontSizes } = useTheme();
 
   return (
     <View
