@@ -122,10 +122,6 @@ export default function ArchivedTasksPage() {
               Não há tasks arquivadas no momento. As tasks arquivadas aparecerão
               aqui para que você possa restaurá-las quando quiser.
             </p>
-            <p className="text-xs text-muted-foreground/70">
-              Dica: Você pode arquivar uma task selecionando "Arquivar" no menu
-              de opções da task.
-            </p>
           </div>
         ) : (
           <div className="flex flex-col gap-3">

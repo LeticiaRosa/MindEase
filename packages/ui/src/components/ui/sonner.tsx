@@ -18,28 +18,30 @@ const Toaster = ({ ...props }: ToasterProps) => {
       offset={24}
       duration={5000}
       closeButton
-      className="toaster group"
       toastOptions={{
+        // Inline styles win over Sonner's class-based styles — no !important needed
+        style: {
+          background: "var(--card)",
+          color: "var(--foreground)",
+          borderWidth: "1px",
+          borderStyle: "solid",
+          borderColor: "var(--border)",
+          borderLeftWidth: "4px",
+          borderLeftColor: "var(--primary)",
+          borderRadius: "var(--radius)",
+          boxShadow: "0 -2px 12px 0 rgb(0 0 0 / 8%)",
+          padding: "12px 16px",
+          fontSize: "0.875rem",
+        },
         classNames: {
-          toast:
-            "!bg-(--card) !border !border-(--border) !border-l-4 !shadow-[0_-2px_12px_0_rgb(0_0_0/8%)] !rounded-(--radius)",
-          title: "!text-(--foreground) !font-semibold !text-sm",
-          description: "!text-(--muted-foreground) !text-xs",
+          title: "font-semibold",
+          description: "!text-[var(--muted-foreground)] !text-xs",
           closeButton:
-            "!bg-(--card) !border-0 !text-(--muted-foreground) hover:!text-(--foreground)",
-          success: "!border-l-(--primary)",
-          error: "!border-l-(--destructive)",
-          info: "!border-l-(--primary)",
-          warning: "!border-l-(--primary)",
+            "!bg-[var(--card)] !border-none !text-[var(--muted-foreground)]",
+          // !important overrides the inline borderLeftColor set above
+          error: "![border-left-color:var(--destructive)]",
         },
       }}
-      style={
-        {
-          "--normal-bg": "var(--card)",
-          "--normal-text": "var(--foreground)",
-          "--normal-border": "var(--border)",
-        } as React.CSSProperties
-      }
       {...props}
     />
   );
