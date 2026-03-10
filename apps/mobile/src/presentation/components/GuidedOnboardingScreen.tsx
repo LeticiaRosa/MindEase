@@ -52,7 +52,8 @@ export function GuidedOnboardingScreen() {
     }
 
     const trabalhoRoutine = routines.find(
-      (routine) => routine.name.trim().toLocaleLowerCase("pt-BR") === "trabalho",
+      (routine) =>
+        routine.name.trim().toLocaleLowerCase("pt-BR") === "trabalho",
     );
 
     const defaultRoutine = trabalhoRoutine ?? routines[0];

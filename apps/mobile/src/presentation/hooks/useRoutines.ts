@@ -38,7 +38,11 @@ export function useRoutines() {
   });
 
   useEffect(() => {
-    if (isLoading || routines.length > 0 || isSeedingDefaultRoutineRef.current) {
+    if (
+      isLoading ||
+      routines.length > 0 ||
+      isSeedingDefaultRoutineRef.current
+    ) {
       return;
     }
 
@@ -46,7 +50,10 @@ export function useRoutines() {
 
     const seedDefaultRoutine = async () => {
       try {
-        await repository.createRoutine(DEFAULT_ROUTINE.name, DEFAULT_ROUTINE.icon);
+        await repository.createRoutine(
+          DEFAULT_ROUTINE.name,
+          DEFAULT_ROUTINE.icon,
+        );
       } catch {
         // Ignore initial seed failures to avoid blocking onboarding flow.
       } finally {
@@ -64,7 +71,8 @@ export function useRoutines() {
     }
 
     const hasActiveRoutine =
-      activeRoutineId !== null && routines.some((routine) => routine.id === activeRoutineId);
+      activeRoutineId !== null &&
+      routines.some((routine) => routine.id === activeRoutineId);
 
     if (hasActiveRoutine) {
       return;
