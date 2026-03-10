@@ -39,6 +39,7 @@ export function AppearancePreferencesPanel({
     theme,
     fontSize,
     spacing: spacingPref,
+    reduceMotion,
     updatePreferences,
   } = useTheme();
 
@@ -57,8 +58,13 @@ export function AppearancePreferencesPanel({
 
   const spacingOptions: Array<{ label: string; value: SpacingDensity }> = [
     { label: "Compacto", value: "compact" },
-    { label: "Normal", value: "default" },
+    { label: "Padrão", value: "default" },
     { label: "Confortável", value: "relaxed" },
+  ];
+
+  const motionOptions: Array<{ label: string; value: boolean }> = [
+    { label: "Padrão", value: false },
+    { label: "Reduzidas", value: true },
   ];
 
   return (
@@ -249,6 +255,56 @@ export function AppearancePreferencesPanel({
                       : resolvedColors.textPrimary,
                   fontSize: resolvedFontSizes.sm,
                   fontWeight: spacingPref === opt.value ? "600" : "400",
+                }}
+              >
+                {opt.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
+      <View style={{ gap: resolvedSpacing.sm }}>
+        <Text
+          style={{
+            fontSize: resolvedFontSizes.base,
+            fontWeight: "600",
+            color: resolvedColors.textPrimary,
+          }}
+        >
+          Animações
+        </Text>
+        <View style={{ flexDirection: "row", gap: resolvedSpacing.sm }}>
+          {motionOptions.map((opt) => (
+            <Pressable
+              key={opt.label}
+              onPress={() => updatePreferences({ reduceMotion: opt.value })}
+              accessibilityLabel={`Animações ${opt.label}`}
+              accessibilityState={{ selected: reduceMotion === opt.value }}
+              style={{
+                flex: 1,
+                backgroundColor:
+                  reduceMotion === opt.value
+                    ? resolvedColors.primary
+                    : resolvedColors.card,
+                borderWidth: 1,
+                borderColor:
+                  reduceMotion === opt.value
+                    ? resolvedColors.primary
+                    : resolvedColors.border,
+                borderRadius: resolvedBorderRadius.md,
+                paddingVertical: resolvedSpacing.sm,
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color:
+                    reduceMotion === opt.value
+                      ? resolvedColors.primaryForeground
+                      : resolvedColors.textPrimary,
+                  fontSize: resolvedFontSizes.sm,
+                  fontWeight: reduceMotion === opt.value ? "600" : "400",
                 }}
               >
                 {opt.label}

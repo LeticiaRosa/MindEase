@@ -14,6 +14,7 @@ describe("ThemePreferencesContext", () => {
     document.documentElement.removeAttribute("data-theme");
     document.documentElement.removeAttribute("data-font-size");
     document.documentElement.removeAttribute("data-spacing");
+    document.documentElement.removeAttribute("data-reduce-motion");
   });
 
   afterEach(() => {
@@ -29,12 +30,18 @@ describe("ThemePreferencesContext", () => {
       expect(result.current.theme).toBe("default");
       expect(result.current.fontSize).toBe("md");
       expect(result.current.spacing).toBe("default");
+      expect(result.current.reduceMotion).toBe(false);
     });
 
     it("reads persisted values from localStorage on mount", () => {
       localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ theme: "soft", fontSize: "lg", spacing: "relaxed" }),
+        JSON.stringify({
+          theme: "soft",
+          fontSize: "lg",
+          spacing: "relaxed",
+          reduceMotion: true,
+        }),
       );
 
       const { result } = renderHook(() => useThemePreferences(), {
@@ -44,6 +51,7 @@ describe("ThemePreferencesContext", () => {
       expect(result.current.theme).toBe("soft");
       expect(result.current.fontSize).toBe("lg");
       expect(result.current.spacing).toBe("relaxed");
+      expect(result.current.reduceMotion).toBe(true);
     });
 
     it("falls back to defaults when localStorage throws", () => {
@@ -58,6 +66,7 @@ describe("ThemePreferencesContext", () => {
       expect(result.current.theme).toBe("default");
       expect(result.current.fontSize).toBe("md");
       expect(result.current.spacing).toBe("default");
+      expect(result.current.reduceMotion).toBe(false);
     });
   });
 
@@ -73,6 +82,19 @@ describe("ThemePreferencesContext", () => {
 
       const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
       expect(stored.theme).toBe("high-contrast");
+    });
+
+    it("persists reduceMotion changes to localStorage", () => {
+      const { result } = renderHook(() => useThemePreferences(), {
+        wrapper: ThemePreferencesProvider,
+      });
+
+      act(() => {
+        result.current.updatePreferences({ reduceMotion: true });
+      });
+
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
+      expect(stored.reduceMotion).toBe(true);
     });
 
     it("merges partial updates without losing other values", () => {
@@ -109,6 +131,20 @@ describe("ThemePreferencesContext", () => {
       );
       expect(document.documentElement.getAttribute("data-spacing")).toBe(
         "relaxed",
+      );
+    });
+
+    it("sets data-reduce-motion attribute when reduceMotion is enabled", () => {
+      const { result } = renderHook(() => useThemePreferences(), {
+        wrapper: ThemePreferencesProvider,
+      });
+
+      act(() => {
+        result.current.updatePreferences({ reduceMotion: true });
+      });
+
+      expect(document.documentElement.getAttribute("data-reduce-motion")).toBe(
+        "true",
       );
     });
 

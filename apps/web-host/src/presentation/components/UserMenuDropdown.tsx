@@ -243,21 +243,12 @@ export function UserMenuDropdown() {
                     ]}
                     onChange={(value) => updatePreferences({ mode: value })}
                   />
-                  {/* <SegmentedControl<HelpersVisibility>
-                    label="Helpers"
-                    value={helpers}
-                    options={[
-                      { value: "show", label: "Mostrar" },
-                      { value: "hide", label: "Ocultar" },
-                    ]}
-                    onChange={(value) => updatePreferences({ helpers: value })}
-                  /> */}
                   <SegmentedControl<ComplexityMode>
                     label="Complexidade"
                     value={complexity}
                     options={[
                       { value: "simple", label: "Simples" },
-                      { value: "complex", label: "Complexa" },
+                      { value: "complex", label: "Completa" },
                     ]}
                     onChange={(value) =>
                       updatePreferences({ complexity: value })

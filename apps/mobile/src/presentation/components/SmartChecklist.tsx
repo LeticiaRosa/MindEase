@@ -20,11 +20,17 @@ import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
 import { StepFormModal } from "./StepFormModal";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 
-if (
-  Platform.OS === "android" &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
+function animateLayoutIfAllowed(allowAnimation: boolean) {
+  if (!allowAnimation) return;
+
+  if (
+    Platform.OS === "android" &&
+    UIManager.setLayoutAnimationEnabledExperimental
+  ) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+
+  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 }
 
 interface SmartChecklistProps {
@@ -52,6 +58,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
     resolvedFontSizes,
     resolvedSpacing,
     resolvedBorderRadius,
+    isReducedMotion,
   } = useTheme();
 
   const [showAllStepsConcluded, setShowAllStepsConcluded] = useState(
@@ -81,7 +88,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
       prevCurrentIdRef.current = currentId;
       const t1 = setTimeout(() => {
         if (wasActive) {
-          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+          animateLayoutIfAllowed(!isReducedMotion);
           setAnimatingId(currentId);
         }
       }, 20);
@@ -91,7 +98,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
         if (animateTimerRef.current) clearTimeout(animateTimerRef.current);
       };
     }
-  }, [currentStep?.id]);
+  }, [currentStep?.id, isReducedMotion]);
 
   const startEditing = (id: string, currentTitle: string) => {
     setEditingStep({ id, title: currentTitle });
@@ -159,9 +166,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
         <View>
           <Pressable
             onPress={() => {
-              LayoutAnimation.configureNext(
-                LayoutAnimation.Presets.easeInEaseOut,
-              );
+              animateLayoutIfAllowed(!isReducedMotion);
               setShowAllStepsConcluded((prev) => !prev);
             }}
             accessibilityRole="button"
@@ -415,9 +420,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
         <View>
           <Pressable
             onPress={() => {
-              LayoutAnimation.configureNext(
-                LayoutAnimation.Presets.easeInEaseOut,
-              );
+              animateLayoutIfAllowed(!isReducedMotion);
               setShowAll((prev) => !prev);
             }}
             accessibilityRole="button"

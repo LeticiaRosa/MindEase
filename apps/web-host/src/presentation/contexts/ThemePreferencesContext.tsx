@@ -23,6 +23,7 @@ export interface ThemePreferences {
   mode: ThemeMode;
   helpers: HelpersVisibility;
   complexity: ComplexityMode;
+  reduceMotion: boolean;
 }
 
 interface ThemePreferencesContextValue {
@@ -32,6 +33,8 @@ interface ThemePreferencesContextValue {
   mode: ThemeMode;
   helpers: HelpersVisibility;
   complexity: ComplexityMode;
+  reduceMotion: boolean;
+  isReducedMotion: boolean;
   updatePreferences: (patch: Partial<ThemePreferences>) => void;
 }
 
@@ -46,6 +49,7 @@ const DEFAULT_PREFERENCES: ThemePreferences = {
   mode: "resume",
   helpers: "show",
   complexity: "simple",
+  reduceMotion: false,
 };
 
 // ─── Context ──────────────────────────────────────────────────────────────────
@@ -93,6 +97,20 @@ function applyToDocument(prefs: ThemePreferences): void {
   root.setAttribute("data-spacing", prefs.spacing);
   root.setAttribute("data-mode", prefs.mode);
   root.setAttribute("data-helpers", prefs.helpers);
+
+  if (prefs.reduceMotion) {
+    root.setAttribute("data-reduce-motion", "true");
+  } else {
+    root.removeAttribute("data-reduce-motion");
+  }
+}
+
+function getSystemReduceMotion(): boolean {
+  if (typeof window.matchMedia !== "function") {
+    return false;
+  }
+
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
@@ -103,6 +121,22 @@ export function ThemePreferencesProvider({
   children: ReactNode;
 }) {
   const [prefs, setPrefs] = useState<ThemePreferences>(readFromStorage);
+  const [systemReduceMotion, setSystemReduceMotion] =
+    useState<boolean>(getSystemReduceMotion);
+
+  useEffect(() => {
+    if (typeof window.matchMedia !== "function") {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = (event: MediaQueryListEvent) => {
+      setSystemReduceMotion(event.matches);
+    };
+
+    mediaQuery.addEventListener("change", update);
+    return () => mediaQuery.removeEventListener("change", update);
+  }, []);
 
   // Apply to document whenever prefs change
   useEffect(() => {
@@ -126,6 +160,8 @@ export function ThemePreferencesProvider({
         mode: prefs.mode,
         helpers: prefs.helpers,
         complexity: prefs.complexity,
+        reduceMotion: prefs.reduceMotion,
+        isReducedMotion: prefs.reduceMotion || systemReduceMotion,
         updatePreferences,
       }}
     >

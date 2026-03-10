@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AccessibilityInfo } from "react-native";
 import {
   colors,
   darkColors,
@@ -24,7 +25,6 @@ export type ColourTheme = "default" | "soft" | "high-contrast" | "dark";
 export type FontSize = "sm" | "md" | "lg";
 export type SpacingDensity = "compact" | "default" | "relaxed";
 export type ThemeMode = "resume" | "detail";
-export type HelpersVisibility = "show" | "hide";
 export type ComplexityMode = "simple" | "complex";
 
 export interface ThemePreferences {
@@ -32,8 +32,8 @@ export interface ThemePreferences {
   fontSize: FontSize;
   spacing: SpacingDensity;
   mode: ThemeMode;
-  helpers: HelpersVisibility;
   complexity: ComplexityMode;
+  reduceMotion: boolean;
 }
 
 type ColorTokens = { [K in keyof typeof colors]: string };
@@ -43,8 +43,9 @@ interface ThemePreferencesContextValue {
   fontSize: FontSize;
   spacing: SpacingDensity;
   mode: ThemeMode;
-  helpers: HelpersVisibility;
   complexity: ComplexityMode;
+  reduceMotion: boolean;
+  isReducedMotion: boolean;
   isHydrated: boolean;
   resolvedColors: ColorTokens;
   resolvedFontSizes: typeof fontSizes;
@@ -63,8 +64,8 @@ const DEFAULT_PREFERENCES: ThemePreferences = {
   fontSize: "md",
   spacing: "default",
   mode: "resume",
-  helpers: "show",
   complexity: "simple",
+  reduceMotion: false,
 };
 
 // ─── Colour map ───────────────────────────────────────────────────────────────
@@ -124,6 +125,7 @@ export function ThemePreferencesProvider({
   children: ReactNode;
 }) {
   const [prefs, setPrefs] = useState<ThemePreferences>(DEFAULT_PREFERENCES);
+  const [systemReduceMotion, setSystemReduceMotion] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
 
   // Hydrate from AsyncStorage on mount
@@ -143,6 +145,35 @@ export function ThemePreferencesProvider({
     })();
   }, []);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const syncReduceMotion = async () => {
+      try {
+        const enabled = await AccessibilityInfo.isReduceMotionEnabled();
+        if (isMounted) {
+          setSystemReduceMotion(enabled);
+        }
+      } catch {
+        if (isMounted) {
+          setSystemReduceMotion(false);
+        }
+      }
+    };
+
+    syncReduceMotion();
+
+    const subscription = AccessibilityInfo.addEventListener(
+      "reduceMotionChanged",
+      setSystemReduceMotion,
+    );
+
+    return () => {
+      isMounted = false;
+      subscription.remove();
+    };
+  }, []);
+
   const updatePreferences = useCallback((patch: Partial<ThemePreferences>) => {
     setPrefs((prev) => {
       const next = { ...prev, ...patch };
@@ -154,6 +185,7 @@ export function ThemePreferencesProvider({
   const resolvedColors = COLOUR_MAP[prefs.theme] ?? colors;
   const resolvedFontSizes = scaleFontSizes(prefs.fontSize);
   const resolvedSpacing = scaleSpacing(prefs.spacing);
+  const isReducedMotion = prefs.reduceMotion || systemReduceMotion;
 
   return (
     <ThemePreferencesContext.Provider
@@ -162,8 +194,9 @@ export function ThemePreferencesProvider({
         fontSize: prefs.fontSize,
         spacing: prefs.spacing,
         mode: prefs.mode,
-        helpers: prefs.helpers,
         complexity: prefs.complexity,
+        reduceMotion: prefs.reduceMotion,
+        isReducedMotion,
         isHydrated,
         resolvedColors,
         resolvedFontSizes,

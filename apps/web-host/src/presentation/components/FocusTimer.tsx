@@ -1,6 +1,7 @@
 import { Timer, Play, Pause, RotateCcw, Square } from "lucide-react";
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@repo/ui";
 import { useFocusTimer } from "@/presentation/hooks/useFocusTimer";
+import { useThemePreferences } from "@/presentation/contexts/ThemePreferencesContext";
 
 interface FocusTimerProps {
   taskId: string;
@@ -21,6 +22,7 @@ export function FocusTimer({ taskId }: FocusTimerProps) {
     reset,
     stop,
   } = useFocusTimer(taskId);
+  const { isReducedMotion } = useThemePreferences();
 
   // Only show when active, or on hover (parent controls visibility)
   const modeLabel =
@@ -53,7 +55,11 @@ export function FocusTimer({ taskId }: FocusTimerProps) {
             strokeDasharray={circumference}
             strokeDashoffset={dashOffset}
             strokeLinecap="round"
-            className="text-primary transition-all duration-1000 ease-linear"
+            className={
+              isReducedMotion
+                ? "text-primary"
+                : "text-primary transition-all duration-1000 ease-linear"
+            }
           />
         </svg>
         <span className="absolute inset-0 flex items-center justify-center">

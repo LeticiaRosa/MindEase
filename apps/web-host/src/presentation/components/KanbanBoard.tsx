@@ -19,6 +19,7 @@ import { TaskCard } from "@/presentation/components/TaskCard";
 import { useTaskKanban } from "@/presentation/hooks/useTaskKanban";
 import { useActivitySignals } from "@/presentation/contexts/ActivitySignalsContext";
 import { useActiveRoutine } from "@/presentation/hooks/useActiveRoutine";
+import { useThemePreferences } from "@/presentation/contexts/ThemePreferencesContext";
 
 const COLUMNS: TaskStatus[] = [TS.TODO, TS.IN_PROGRESS, TS.DONE];
 
@@ -36,6 +37,7 @@ export function KanbanBoard() {
   } = useTaskKanban(activeRoutineId ?? "");
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const { recordTaskSwitch, setCurrentTask } = useActivitySignals();
+  const { isReducedMotion } = useThemePreferences();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -151,7 +153,13 @@ export function KanbanBoard() {
       {/* Drag overlay — translucent preview */}
       <DragOverlay>
         {activeTask ? (
-          <div className="opacity-80 scale-105 shadow-xl rotate-1">
+          <div
+            className={
+              isReducedMotion
+                ? "opacity-90 shadow-xl"
+                : "opacity-80 scale-105 shadow-xl rotate-1"
+            }
+          >
             <TaskCard
               task={activeTask}
               onDelete={() => {}}

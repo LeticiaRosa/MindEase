@@ -1,5 +1,6 @@
 import { Bell } from "lucide-react";
 import { Button } from "@repo/ui";
+import { useThemePreferences } from "@/presentation/contexts/ThemePreferencesContext";
 
 interface CognitiveAlertBannerProps {
   active: boolean;
@@ -16,6 +17,8 @@ export function CognitiveAlertBanner({
   message,
   onDismiss,
 }: CognitiveAlertBannerProps) {
+  const { isReducedMotion } = useThemePreferences();
+
   if (!active) return null;
 
   return (
@@ -34,8 +37,8 @@ export function CognitiveAlertBanner({
         title={message}
       >
         <Bell
-          className="size-5 animate-pulse"
-          style={{ animationDuration: "1s" }}
+          className={isReducedMotion ? "size-5" : "size-5 animate-pulse"}
+          style={isReducedMotion ? undefined : { animationDuration: "1s" }}
         />
         <span className="sr-only">{message}</span>
         {/* Small dot indicator */}

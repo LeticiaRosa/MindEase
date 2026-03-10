@@ -46,6 +46,7 @@ export function TaskCard({
     resolvedFontSizes,
     resolvedSpacing,
     resolvedBorderRadius,
+    complexity,
   } = useTheme();
   const [checklistOpen, setChecklistOpen] = useState(mode === "detail");
   const [timerOpen, setTimerOpen] = useState(false);
@@ -66,13 +67,13 @@ export function TaskCard({
     const updatedAt = new Date(task.statusUpdatedAt);
     const diffMs = now.getTime() - updatedAt.getTime();
     const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
+    if (diffMins < 1) return "Agora mesmo";
+    if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? "s" : ""} atrás`;
     const diffHours = Math.floor(diffMins / 60);
     if (diffHours < 24)
-      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+      return `${diffHours} hora${diffHours > 1 ? "s" : ""} atrás`;
     const diffDays = Math.floor(diffHours / 24);
-    return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+    return `${diffDays} dia${diffDays > 1 ? "s" : ""} atrás`;
   };
 
   const formatTimeSpent = (seconds: number) => {
@@ -297,7 +298,7 @@ export function TaskCard({
             <Pressable
               onPress={() => onArchive(task.id)}
               accessibilityRole="button"
-              accessibilityLabel={`Archive task: ${task.title}`}
+              accessibilityLabel={`Arquivar task: ${task.title}`}
               hitSlop={8}
               style={{
                 padding: resolvedSpacing.md - 2,
@@ -313,7 +314,7 @@ export function TaskCard({
           <Pressable
             onPress={() => setConfirmDeleteOpen(true)}
             accessibilityRole="button"
-            accessibilityLabel={`Delete task: ${task.title}`}
+            accessibilityLabel={`Excluir task: ${task.title}`}
             hitSlop={8}
             style={{
               padding: resolvedSpacing.md - 2,
@@ -347,9 +348,9 @@ export function TaskCard({
               {task.title}
             </Text>
           </View>
-          {task.statusUpdatedAt && (
+          {complexity === "complex" && task.statusUpdatedAt && (
             <Text
-              accessibilityLabel={`Status updated at ${new Date(task.statusUpdatedAt).toLocaleString()}`}
+              accessibilityLabel={`Status atualizado em ${new Date(task.statusUpdatedAt).toLocaleString()}`}
               style={{
                 textAlign: "right",
                 fontSize: resolvedFontSizes.xs,
@@ -358,7 +359,7 @@ export function TaskCard({
                 paddingVertical: resolvedSpacing.xs,
               }}
             >
-              Created {toLocaleRelativeTime()}
+              Criado a {toLocaleRelativeTime()}
             </Text>
           )}
         </View>
@@ -400,36 +401,37 @@ export function TaskCard({
           </Pressable>
 
           {/* Timer toggle */}
-          <Pressable
-            onPress={() => setTimerOpen((v) => !v)}
-            accessibilityRole="button"
-            accessibilityState={{ expanded: timerOpen }}
-            accessibilityLabel={
-              timerOpen ? "Ocultar temporizador" : "Mostrar temporizador"
-            }
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 4,
-              padding: resolvedSpacing.sm,
-              backgroundColor: resolvedColors.muted,
-              borderRadius: 9999,
-            }}
-          >
-            <Timer
-              size={20}
-              color={isTimerActive ? resolvedColors.primary : iconColor}
-            />
-            <Text
+          {complexity === "complex" && (
+            <Pressable
+              onPress={() => setTimerOpen((v) => !v)}
+              accessibilityRole="button"
+              accessibilityState={{ expanded: timerOpen }}
+              accessibilityLabel={
+                timerOpen ? "Ocultar temporizador" : "Mostrar temporizador"
+              }
               style={{
-                fontSize: resolvedFontSizes.sm,
-                color: isTimerActive ? resolvedColors.primary : iconColor,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 4,
+                padding: resolvedSpacing.sm,
+                backgroundColor: resolvedColors.muted,
+                borderRadius: 9999,
               }}
             >
-              Timer
-            </Text>
-          </Pressable>
-
+              <Timer
+                size={20}
+                color={isTimerActive ? resolvedColors.primary : iconColor}
+              />
+              <Text
+                style={{
+                  fontSize: resolvedFontSizes.sm,
+                  color: isTimerActive ? resolvedColors.primary : iconColor,
+                }}
+              >
+                Timer
+              </Text>
+            </Pressable>
+          )}
           {/* Focus toggle */}
           <Pressable
             onPress={() => setTimerFocusOpen((v) => !v)}

@@ -3,11 +3,13 @@ import { cn } from "@repo/ui";
 import { useRoutines } from "@/presentation/hooks/useRoutines";
 import { useActiveRoutine } from "@/presentation/hooks/useActiveRoutine";
 import { RoutineIcon } from "@/presentation/components/RoutineIcon";
+import { useThemePreferences } from "../contexts/ThemePreferencesContext";
 
 export function Routine() {
   const { routines, isLoading } = useRoutines();
   const { activeRoutineId, setActiveRoutineId } = useActiveRoutine();
   const navigate = useNavigate();
+  const { complexity } = useThemePreferences();
 
   if (isLoading) {
     return (
@@ -56,13 +58,15 @@ export function Routine() {
             </button>
           );
         })}
-        <button
-          onClick={() => navigate("/settings/routines")}
-          className="text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
-          aria-label="Gerenciar rotinas"
-        >
-          Gerenciar
-        </button>
+        {complexity === "complex" && (
+          <button
+            onClick={() => navigate("/settings/routines")}
+            className="text-sm font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+            aria-label="Gerenciar rotinas"
+          >
+            Gerenciar
+          </button>
+        )}
       </div>
     </div>
   );

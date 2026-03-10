@@ -68,13 +68,13 @@ export function TaskCard({
     const updatedAt = new Date(task.statusUpdatedAt);
     const diffMs = now.getTime() - updatedAt.getTime();
     const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
+    if (diffMins < 1) return "Agora mesmo";
+    if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? "s" : ""} atrás`;
     const diffHours = Math.floor(diffMins / 60);
     if (diffHours < 24)
-      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+      return `${diffHours} hora${diffHours > 1 ? "s" : ""} atrás`;
     const diffDays = Math.floor(diffHours / 24);
-    return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+    return `${diffDays} dia${diffDays > 1 ? "s" : ""} atrás`;
   };
 
   const formatTimeSpent = (seconds: number) => {
@@ -114,7 +114,7 @@ export function TaskCard({
             </TooltipTrigger>
             {helpers === "show" && (
               <TooltipContent>
-                <p>Total de tempo gasto nesta tarefa</p>
+                <p>Total de tempo gasto nesta task</p>
               </TooltipContent>
             )}
           </Tooltip>
@@ -141,7 +141,7 @@ export function TaskCard({
                   e.stopPropagation();
                   setEditDialogOpen(true);
                 }}
-                aria-label={`Edit task: ${task.title}`}
+                aria-label={`Editar task: ${task.title}`}
               >
                 <Pencil className="size-3" />
               </Button>
@@ -165,7 +165,7 @@ export function TaskCard({
                 e.stopPropagation();
                 setConfirmDeleteOpen(true);
               }}
-              aria-label={`Delete task: ${task.title}`}
+              aria-label={`Excluir task: ${task.title}`}
             >
               <Trash2 className="size-3" />
             </Button>
@@ -189,7 +189,7 @@ export function TaskCard({
                   e.stopPropagation();
                   onArchive(task.id);
                 }}
-                aria-label={`Archive task: ${task.title}`}
+                aria-label={`Arquivar task: ${task.title}`}
               >
                 <Archive className="size-3" />
               </Button>
@@ -228,11 +228,11 @@ export function TaskCard({
             {complexity === "complex" && task.statusUpdatedAt && (
               <span
                 className="flex justify-end text-xs text-muted-foreground shrink-0 font-light py-2"
-                aria-label={`Status updated at ${new Date(
+                aria-label={`Status atualizado em ${new Date(
                   task.statusUpdatedAt,
                 ).toLocaleString()}`}
               >
-                Criado em {toLocaleRelativeTime()}
+                Criado a {toLocaleRelativeTime()}
               </span>
             )}
           </div>
@@ -247,7 +247,7 @@ export function TaskCard({
           className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground gap-1 focus-visible:ring-2 focus-visible:ring-ring"
           onClick={() => setChecklistOpen((v) => !v)}
           aria-expanded={checklistOpen}
-          aria-label={checklistOpen ? "Hide checklist" : "Show checklist"}
+          aria-label={checklistOpen ? "Ocultar checklist" : "Mostrar checklist"}
         >
           {checklistOpen ? (
             <ChevronUp className="size-3" />
@@ -257,23 +257,24 @@ export function TaskCard({
           Steps
         </Button>
 
-        <Button
-          size="sm"
-          variant="ghost"
-          className={cn(
-            "h-6 px-2 text-xs text-muted-foreground hover:text-foreground gap-1 focus-visible:ring-2 focus-visible:ring-ring",
-            isTimerActive && "text-primary",
-          )}
-          onClick={() => setTimerOpen((v) => !v)}
-          aria-expanded={timerOpen}
-          aria-label={
-            timerOpen ? "Ocultar temporizador" : "Mostrar temporizador"
-          }
-        >
-          <Timer className="size-3" />
-          Timer
-        </Button>
-
+        {complexity === "complex" && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className={cn(
+              "h-6 px-2 text-xs text-muted-foreground hover:text-foreground gap-1 focus-visible:ring-2 focus-visible:ring-ring",
+              isTimerActive && "text-primary",
+            )}
+            onClick={() => setTimerOpen((v) => !v)}
+            aria-expanded={timerOpen}
+            aria-label={
+              timerOpen ? "Ocultar temporizador" : "Mostrar temporizador"
+            }
+          >
+            <Timer className="size-3" />
+            Timer
+          </Button>
+        )}
         <Button
           size="sm"
           variant="ghost"

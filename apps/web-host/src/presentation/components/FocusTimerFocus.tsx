@@ -11,6 +11,7 @@ import { Button, ScrollArea } from "@repo/ui";
 import { useFocusTimer } from "@/presentation/hooks/useFocusTimer";
 import { SmartChecklist } from "./SmartChecklist";
 import { useState } from "react";
+import { useThemePreferences } from "@/presentation/contexts/ThemePreferencesContext";
 
 interface FocusTimerFocusProps {
   taskId: string;
@@ -37,6 +38,7 @@ export function FocusTimerFocus({
     reset,
     stop,
   } = useFocusTimer(taskId);
+  const { isReducedMotion } = useThemePreferences();
   const [open, setOpen] = useState(false);
 
   const modeDescription =
@@ -102,7 +104,11 @@ export function FocusTimerFocus({
             strokeDasharray={circumference}
             strokeDashoffset={dashOffset}
             strokeLinecap="round"
-            className="text-primary transition-all duration-1000 ease-linear"
+            className={
+              isReducedMotion
+                ? "text-primary"
+                : "text-primary transition-all duration-1000 ease-linear"
+            }
           />
         </svg>
 

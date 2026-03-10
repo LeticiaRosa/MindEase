@@ -37,7 +37,7 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
 
   const currentCheckboxRef = useRef<HTMLButtonElement>(null);
   const prevCurrentIdRef = useRef<string | null>(null);
-  const { mode, helpers, complexity } = useThemePreferences();
+  const { mode, helpers, complexity, isReducedMotion } = useThemePreferences();
   const [animatingId, setAnimatingId] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(mode === "detail");
   const animateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -186,8 +186,10 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
       {currentStep && (
         <div
           className={cn(
-            "flex flex-col gap-0.5 p-2 rounded-md bg-muted/40 border-2 border-black/40 transition-all duration-300",
+            "flex flex-col gap-0.5 p-2 rounded-md bg-muted/40 border-2 border-black/40",
+            !isReducedMotion && "transition-all duration-300",
             animatingId === currentStep.id &&
+              !isReducedMotion &&
               "animate-in fade-in slide-in-from-bottom-1",
           )}
         >
@@ -248,7 +250,12 @@ export function SmartChecklist({ taskId }: SmartChecklistProps) {
 
       {/* All done */}
       {allDone && (
-        <div className="flex items-center gap-2 text-xs text-muted-foreground animate-in fade-in duration-300">
+        <div
+          className={cn(
+            "flex items-center gap-2 text-xs text-muted-foreground",
+            !isReducedMotion && "animate-in fade-in duration-300",
+          )}
+        >
           <Check className="size-3 text-green-600" />
           Todos os steps concluídos!
         </div>

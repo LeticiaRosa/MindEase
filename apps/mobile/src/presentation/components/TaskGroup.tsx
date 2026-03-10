@@ -1,15 +1,8 @@
-import { View, Text, FlatList, Platform, UIManager } from "react-native";
+import { View, Text, FlatList } from "react-native";
 import type { Task } from "@/domain/entities/Task";
 import type { TaskStatus } from "@/domain/valueObjects/TaskStatus";
 import { TaskCard } from "./TaskCard";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
-
-if (
-  Platform.OS === "android" &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
 
 interface TaskGroupProps {
   title: string;

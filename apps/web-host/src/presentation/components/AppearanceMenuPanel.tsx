@@ -26,7 +26,8 @@ export function AppearanceMenuPanel({
   alwaysOpen = false,
   className,
 }: AppearanceMenuPanelProps) {
-  const { theme, fontSize, spacing, updatePreferences } = useThemePreferences();
+  const { theme, fontSize, spacing, reduceMotion, updatePreferences } =
+    useThemePreferences();
   const [open, setOpen] = useState(false);
 
   const isOpen = alwaysOpen || open;
@@ -92,9 +93,21 @@ export function AppearanceMenuPanel({
             options={[
               { value: "compact", label: "Compacto" },
               { value: "default", label: "Padrão" },
-              { value: "relaxed", label: "Relaxado" },
+              { value: "relaxed", label: "Confortável" },
             ]}
             onChange={(value) => updatePreferences({ spacing: value })}
+          />
+
+          <SegmentedControl<"off" | "on">
+            label="Animações"
+            value={reduceMotion ? "on" : "off"}
+            options={[
+              { value: "off", label: "Padrão" },
+              { value: "on", label: "Reduzidas" },
+            ]}
+            onChange={(value) =>
+              updatePreferences({ reduceMotion: value === "on" })
+            }
           />
         </div>
       )}

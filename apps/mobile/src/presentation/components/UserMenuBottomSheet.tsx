@@ -6,7 +6,6 @@ import {
   Modal,
   SafeAreaView,
   ScrollView,
-  Switch,
 } from "react-native";
 import type { User } from "@/domain/entities/User";
 import { useAuth } from "@/presentation/hooks/useAuth";
@@ -14,8 +13,10 @@ import { useRouter } from "expo-router";
 import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 import type {
   ColourTheme,
+  ComplexityMode,
   FontSize,
   SpacingDensity,
+  ThemeMode,
 } from "@/presentation/contexts/ThemePreferencesContext";
 
 interface UserMenuBottomSheetProps {
@@ -40,7 +41,8 @@ export function UserMenuBottomSheet({
     fontSize,
     spacing: spacingPref,
     mode,
-    helpers,
+    complexity,
+    reduceMotion,
     updatePreferences,
   } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
@@ -72,6 +74,21 @@ export function UserMenuBottomSheet({
     { label: "Compacto", value: "compact" },
     { label: "Normal", value: "default" },
     { label: "Confortável", value: "relaxed" },
+  ];
+
+  const complexityOptions: Array<{ label: string; value: ComplexityMode }> = [
+    { label: "Simples", value: "simple" },
+    { label: "Completa", value: "complex" },
+  ];
+
+  const modeOptions: Array<{ label: string; value: ThemeMode }> = [
+    { label: "Resumo", value: "resume" },
+    { label: "Detalhe", value: "detail" },
+  ];
+
+  const motionOptions: Array<{ label: string; value: boolean }> = [
+    { label: "Padrão", value: false },
+    { label: "Reduzidas", value: true },
   ];
 
   return (
@@ -313,7 +330,7 @@ export function UserMenuBottomSheet({
             </View>
           </View>
 
-          {/* Mode toggle */}
+          {/* Mode */}
           <View style={{ gap: resolvedSpacing.sm }}>
             <Text
               style={{
@@ -324,36 +341,45 @@ export function UserMenuBottomSheet({
             >
               Modo
             </Text>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: resolvedFontSizes.sm,
-                  color: resolvedColors.textPrimary,
-                }}
-              >
-                {mode === "resume" ? "Resumido" : "Detalhado"}
-              </Text>
-              <Switch
-                value={mode === "detail"}
-                onValueChange={(v) =>
-                  updatePreferences({ mode: v ? "detail" : "resume" })
-                }
-                trackColor={{
-                  false: resolvedColors.muted,
-                  true: resolvedColors.primary,
-                }}
-                thumbColor={resolvedColors.background}
-              />
+            <View style={{ flexDirection: "row", gap: resolvedSpacing.sm }}>
+              {modeOptions.map((opt) => (
+                <Pressable
+                  key={opt.value}
+                  onPress={() => updatePreferences({ mode: opt.value })}
+                  style={{
+                    flex: 1,
+                    backgroundColor:
+                      mode === opt.value
+                        ? resolvedColors.primary
+                        : resolvedColors.card,
+                    borderWidth: 1,
+                    borderColor:
+                      mode === opt.value
+                        ? resolvedColors.primary
+                        : resolvedColors.border,
+                    borderRadius: resolvedBorderRadius.md,
+                    paddingVertical: resolvedSpacing.sm,
+                    alignItems: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      color:
+                        mode === opt.value
+                          ? resolvedColors.primaryForeground
+                          : resolvedColors.textPrimary,
+                      fontSize: resolvedFontSizes.sm,
+                      fontWeight: mode === opt.value ? "600" : "400",
+                    }}
+                  >
+                    {opt.label}
+                  </Text>
+                </Pressable>
+              ))}
             </View>
           </View>
 
-          {/* Helpers toggle */}
+          {/* Motion */}
           <View style={{ gap: resolvedSpacing.sm }}>
             <Text
               style={{
@@ -362,34 +388,94 @@ export function UserMenuBottomSheet({
                 color: resolvedColors.textPrimary,
               }}
             >
-              Auxiliares Visuais
+              Animações
             </Text>
-            <View
+            <View style={{ flexDirection: "row", gap: resolvedSpacing.sm }}>
+              {motionOptions.map((opt) => (
+                <Pressable
+                  key={opt.label}
+                  onPress={() =>
+                    updatePreferences({ reduceMotion: opt.value })
+                  }
+                  style={{
+                    flex: 1,
+                    backgroundColor:
+                      reduceMotion === opt.value
+                        ? resolvedColors.primary
+                        : resolvedColors.card,
+                    borderWidth: 1,
+                    borderColor:
+                      reduceMotion === opt.value
+                        ? resolvedColors.primary
+                        : resolvedColors.border,
+                    borderRadius: resolvedBorderRadius.md,
+                    paddingVertical: resolvedSpacing.sm,
+                    alignItems: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      color:
+                        reduceMotion === opt.value
+                          ? resolvedColors.primaryForeground
+                          : resolvedColors.textPrimary,
+                      fontSize: resolvedFontSizes.sm,
+                      fontWeight: reduceMotion === opt.value ? "600" : "400",
+                    }}
+                  >
+                    {opt.label}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
+          {/* Complexity mode */}
+          <View style={{ gap: resolvedSpacing.sm }}>
+            <Text
               style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
+                fontSize: resolvedFontSizes.base,
+                fontWeight: "600",
+                color: resolvedColors.textPrimary,
               }}
             >
-              <Text
-                style={{
-                  fontSize: resolvedFontSizes.sm,
-                  color: resolvedColors.textPrimary,
-                }}
-              >
-                {helpers === "show" ? "Ativados" : "Desativados"}
-              </Text>
-              <Switch
-                value={helpers === "show"}
-                onValueChange={(v) =>
-                  updatePreferences({ helpers: v ? "show" : "hide" })
-                }
-                trackColor={{
-                  false: resolvedColors.muted,
-                  true: resolvedColors.primary,
-                }}
-                thumbColor={resolvedColors.background}
-              />
+              Complexidade
+            </Text>
+            <View style={{ flexDirection: "row", gap: resolvedSpacing.sm }}>
+              {complexityOptions.map((opt) => (
+                <Pressable
+                  key={opt.value}
+                  onPress={() => updatePreferences({ complexity: opt.value })}
+                  style={{
+                    flex: 1,
+                    backgroundColor:
+                      complexity === opt.value
+                        ? resolvedColors.primary
+                        : resolvedColors.card,
+                    borderWidth: 1,
+                    borderColor:
+                      complexity === opt.value
+                        ? resolvedColors.primary
+                        : resolvedColors.border,
+                    borderRadius: resolvedBorderRadius.md,
+                    paddingVertical: resolvedSpacing.sm,
+                    alignItems: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      color:
+                        complexity === opt.value
+                          ? resolvedColors.primaryForeground
+                          : resolvedColors.textPrimary,
+                      fontSize: resolvedFontSizes.sm,
+                      fontWeight: complexity === opt.value ? "600" : "400",
+                    }}
+                  >
+                    {opt.label}
+                  </Text>
+                </Pressable>
+              ))}
             </View>
           </View>
 

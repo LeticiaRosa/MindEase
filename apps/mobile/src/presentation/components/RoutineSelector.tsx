@@ -21,6 +21,7 @@ export function RoutineSelector({
     resolvedFontSizes,
     resolvedSpacing,
     resolvedBorderRadius,
+    complexity,
   } = useTheme();
 
   return (
@@ -48,7 +49,7 @@ export function RoutineSelector({
         >
           Kambans
         </Text>
-        {onManage && (
+        {onManage && complexity === "complex" && (
           <Pressable onPress={onManage} accessibilityLabel="Gerenciar rotinas">
             <Text
               style={{

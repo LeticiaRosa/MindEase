@@ -16,11 +16,17 @@ import { CircularProgress } from "./CircularProgress";
 import { SmartChecklist } from "./SmartChecklist";
 import { Play, Pause, RotateCcw, Square, X } from "lucide-react-native";
 
-if (
-  Platform.OS === "android" &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
+function animateLayoutIfAllowed(allowAnimation: boolean) {
+  if (!allowAnimation) return;
+
+  if (
+    Platform.OS === "android" &&
+    UIManager.setLayoutAnimationEnabledExperimental
+  ) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+
+  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 }
 
 interface FocusTimerFocusProps {
@@ -64,6 +70,7 @@ export function FocusTimerFocus({
     resolvedFontSizes,
     resolvedSpacing,
     resolvedBorderRadius,
+    isReducedMotion,
   } = useTheme();
 
   const [showChecklist, setShowChecklist] = useState(false);
@@ -78,7 +85,7 @@ export function FocusTimerFocus({
   };
 
   const toggleChecklist = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    animateLayoutIfAllowed(!isReducedMotion);
     setShowChecklist((prev) => !prev);
   };
 
