@@ -1,6 +1,6 @@
 # MindEase
 
-MindEase e uma plataforma para reduzir sobrecarga cognitiva no estudo e no trabalho, com foco em pessoas neurodivergentes (TDAH, TEA, dislexia e perfis com fadiga mental).
+MindEase é uma plataforma para reduzir sobrecarga cognitiva no estudo e no trabalho, com foco em pessoas neurodivergentes (TDAH, TEA, dislexia e perfis com fadiga mental).
 
 ## Problema Abordado
 
@@ -12,14 +12,14 @@ Ferramentas digitais tradicionais costumam aumentar a carga cognitiva em vez de 
 - pouca personalizacao de foco, contraste, fonte e espacamento
 - feedback invasivo (modais ou interrupcoes frequentes)
 
-## Visao da Solucao
+## Visão da Solução
 
-MindEase combina dashboard cognitivo, autenticacao e organizacao de tarefas em um monorepo com Web + Mobile. A proposta e:
+MindEase combina dashboard cognitivo, autenticacao e organizacao de tarefas em um monorepo com Web + Mobile. A proposta é:
 
-- reduzir estimulos visuais e decisorios
-- guiar o usuario com progressao controlada
-- manter consistencia cognitiva entre plataformas
-- persistir preferencias de acessibilidade e foco
+- reduzir estimulos visuais e decisoriais
+- guiar o usuário com progressão controlada
+- manter consistência cognitiva entre plataformas
+- persistir preferências de acessibilidade e foco
 
 Principais entregas funcionais:
 
@@ -29,103 +29,6 @@ Principais entregas funcionais:
 - timer de foco (Pomodoro adaptado)
 - checklist progressivo para decompor tarefas complexas
 - alertas cognitivos suaves, nao intrusivos, baseados em contexto
-
-## Quando Cada Mensagem de Alerta Aparece
-
-As mensagens em `alertMessages` sao escolhidas por combinacao de:
-
-- gatilho (trigger) ativo nas preferencias
-- estado cognitivo atual do usuario (brain state)
-- tom de mensagem escolhido pelo usuario
-- intensidade escolhida pelo usuario (como o alerta sera entregue)
-
-Para um alerta aparecer, todos os pontos abaixo precisam ser verdadeiros:
-
-- o usuario esta na tela `/dashboard`
-- o gatilho esta habilitado em `Configuracoes > Alertas Cognitivos`
-- a condicao do gatilho foi atingida
-- o gatilho nao esta em periodo de cool-down (15 minutos por gatilho)
-
-Observacoes de funcionamento:
-
-- o motor de alertas roda a cada 1 minuto
-- se o estado cognitivo nao estiver definido, o sistema usa fallback `focado`
-- se faltar uma mensagem especifica, o sistema usa fallback `focado + direto`
-
-### 1) Gatilhos e condicoes
-
-- `same-task-too-long`
-  condicao: tempo na tarefa atual >= `sameTaskThresholdMin` (padrao 30 min)
-
-- `task-switching`
-  condicao: trocas de tarefa >= `taskSwitchThreshold` (padrao 3)
-
-- `inactivity`
-  condicao: sem interacao por >= `inactivityThresholdMin` (padrao 10 min)
-
-- `time-overrun`
-  condicao: tempo na tarefa atual > tempo planejado da tarefa
-
-- `complex-task`
-  condicao: tarefa atual marcada como complexa
-
-### 2) Tom: qual texto sera exibido
-
-O tom define qual variante textual sera escolhida dentro do mesmo gatilho e estado cognitivo:
-
-- `direto`: texto curto e objetivo
-- `acolhedor`: texto de apoio
-- `reflexivo`: pergunta para autoavaliacao
-- `sugestao`: proximo passo recomendado
-
-Exemplo: para `task-switching` + `ansioso`, cada tom mostra uma mensagem diferente.
-
-### 3) Estado cognitivo: qual versao da mensagem sera usada
-
-O estado cognitivo selecionado na sessao altera o texto final:
-
-- `focado`
-- `cansado`
-- `sobrecarregado`
-- `ansioso`
-- `disperso`
-
-Exemplo: no gatilho `inactivity`, um usuario `ansioso` recebe texto diferente de um usuario `focado`.
-
-### 4) Intensidade: como a mensagem sera entregue
-
-- `discreto` -> canal `icon`
-  exibicao: sino/indicador discreto no header
-
-- `moderado` -> canal `toast`
-  exibicao: toast curto e nao intrusivo
-
-- `ativo` -> canal `modal`
-  exibicao: modal leve com a mensagem
-
-### 5) Ordem de avaliacao
-
-Os gatilhos sao avaliados na ordem salva nas preferencias do usuario. Quando o primeiro gatilho valido dispara, ele gera um unico alerta naquele ciclo.
-
-### 6) Como o sistema sabe que voce esta em uma tarefa
-
-O sistema nao usa o Timer para isso. A tarefa ativa e inferida pelo comportamento no Kanban:
-
-- ao mover uma tarefa entre colunas, o app registra aquela tarefa como a tarefa atual e inicia a contagem de tempo
-- a partir desse momento, o tempo nessa tarefa e incrementado a cada 1 minuto
-- uma troca de coluna tambem incrementa o contador de trocas de tarefa (`task-switching`)
-- se nenhuma movimentacao ocorreu na sessao, `timeOnCurrentTaskMs` permanece em zero e os gatilhos `same-task-too-long` e `time-overrun` nao disparam
-
-O Focus Timer existe na Dashboard e nas TaskCards, mas no estado atual ele nao alimenta diretamente os sinais do motor de alertas. O rastreio de tarefa ativa e exclusivamente via movimentacao no Kanban.
-
-### 7) Configuracao padrao (primeiro uso)
-
-- triggers: `same-task-too-long`, `task-switching`, `inactivity`
-- tone: `direto`
-- intensity: `moderado`
-- sameTaskThresholdMin: `30`
-- taskSwitchThreshold: `3`
-- inactivityThresholdMin: `10`
 
 ## Tecnologias Utilizadas
 
@@ -243,7 +146,6 @@ A documentacao arquitetural detalhada esta em `docs/ARCHITECTURE.md`.
 
 - mais arquivos, camadas e boilerplate para features pequenas
 - curva inicial maior para onboarding de novos contribuidores
-- risco de sobre-engenharia se fronteiras de dominio nao forem aplicadas com criterio
 
 **Mitigacao adotada:** priorizamos casos de uso e entidades apenas onde ha regra de negocio real; para fluxos simples, mantemos implementacoes enxutas para evitar complexidade acidental.
 
@@ -305,31 +207,17 @@ pnpm format
 
 ## Prints ou GIFs da Aplicacao
 
-Ainda nao ha capturas oficiais versionadas do produto no repositorio. Para fechar este requisito, adicione arquivos em `docs/media/` e atualize esta secao.
+https://github.com/user-attachments/assets/e2719c78-ff9f-4ca8-b839-43be1fc6f35b
 
-Sugestao minima:
+https://github.com/user-attachments/assets/e1b5eaa2-7781-4807-b452-88c53b90e117
 
-- `docs/media/web-dashboard.png`
-- `docs/media/web-focus-mode.gif`
-- `docs/media/mobile-dashboard.png`
 
-Exemplo de como referenciar quando os arquivos forem adicionados:
-
-```md
-![Dashboard Web](docs/media/web-dashboard.png)
-![Modo Foco (GIF)](docs/media/web-focus-mode.gif)
-![Dashboard Mobile](docs/media/mobile-dashboard.png)
-```
 
 ## Link do Video
 
 Video tecnico (arquitetura + criterios cognitivos + demo):
 
-- Pendente de publicacao
-- Recomendacao: video de ate 15 minutos com secao de decisoes arquiteturais e secao de acessibilidade cognitiva
-
 ## Documentacao Complementar
 
-- `AGENTS.md`: padroes e operacao do projeto
 - `docs/ARCHITECTURE.md`: visao de arquitetura Clean
 - `docs/CHECKLIST_AVALIACAO.md`: avaliacao objetiva dos requisitos
