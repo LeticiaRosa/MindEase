@@ -13,9 +13,11 @@ import { CreateChecklistStep } from "@/application/useCases/CreateChecklistStep"
 function makeRepo(overrides: Partial<ITaskRepository> = {}): ITaskRepository {
   return {
     getTasks: vi.fn(),
+    getArchivedTasks: vi.fn(),
     createTask: vi.fn(),
     updateTask: vi.fn(),
     deleteTask: vi.fn(),
+    addTaskTimeSpent: vi.fn(),
     reorderTasks: vi.fn(),
     getChecklistSteps: vi.fn(),
     createChecklistStep: vi.fn(),
@@ -30,11 +32,14 @@ function makeRepo(overrides: Partial<ITaskRepository> = {}): ITaskRepository {
 const makeTask = (overrides: Partial<Task> = {}): Task => ({
   id: "task-1",
   userId: "user-1",
+  routineId: "routine-1",
   title: "Test task",
   status: TaskStatus.TODO,
   position: 0,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
+  statusUpdatedAt: new Date().toISOString(),
+  totalTimeSpent: 0,
   ...overrides,
 });
 
@@ -54,16 +59,20 @@ describe("CreateTask use case", () => {
     const repo = makeRepo({ createTask: vi.fn().mockResolvedValue(task) });
     const uc = new CreateTask(repo);
 
-    await uc.execute("  My task  ");
+    await uc.execute("routine-1", "  My task  ");
 
-    expect(repo.createTask).toHaveBeenCalledWith("My task", undefined);
+    expect(repo.createTask).toHaveBeenCalledWith(
+      "routine-1",
+      "My task",
+      undefined,
+    );
   });
 
   it("throws when title is empty", async () => {
     const repo = makeRepo();
     const uc = new CreateTask(repo);
 
-    await expect(uc.execute("   ")).rejects.toThrow(
+    await expect(uc.execute("routine-1", "   ")).rejects.toThrow(
       "Task title cannot be empty",
     );
     expect(repo.createTask).not.toHaveBeenCalled();

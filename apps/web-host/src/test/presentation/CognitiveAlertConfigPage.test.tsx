@@ -57,10 +57,10 @@ describe("CognitiveAlertConfigPage", () => {
 
   it("shows validation error when no triggers are selected and user advances", async () => {
     renderPage();
-    // Deselect all default triggers
+    // Deselect all default triggers (Radix UI checkboxes use aria-checked, not .checked)
     const checkboxes = screen.getAllByRole("checkbox");
     checkboxes.forEach((cb) => {
-      if ((cb as HTMLInputElement).checked) fireEvent.click(cb);
+      if (cb.getAttribute("aria-checked") === "true") fireEvent.click(cb);
     });
     fireEvent.click(screen.getByRole("button", { name: /próximo/i }));
     // The next button should stay disabled when no triggers are selected

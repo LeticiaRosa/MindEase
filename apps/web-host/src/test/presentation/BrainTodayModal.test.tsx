@@ -19,6 +19,10 @@ vi.mock("@/presentation/contexts/BrainTodayContext", () => ({
   hasBrainStateForSession: () => false,
 }));
 
+vi.mock("@/presentation/contexts/ThemePreferencesContext", () => ({
+  useThemePreferences: () => ({ theme: "light" }),
+}));
+
 vi.mock("@/presentation/contexts/AlertPreferencesContext", () => ({
   useAlertPreferences: () => ({
     preferences: null,

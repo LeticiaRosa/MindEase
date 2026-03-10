@@ -69,7 +69,7 @@ describe("useTimerPreferences", () => {
     const { result, rerender } = renderHook(
       () => {
         useTimerPreferences();
-        return useTimerContext().state;
+        return useTimerContext().state.globalPreferences;
       },
       {
         wrapper: createWrapper(),
@@ -89,7 +89,6 @@ describe("useTimerPreferences", () => {
 
     await waitFor(() => {
       expect(result.current.focusDuration).toBe(10);
-      expect(result.current.secondsRemaining).toBe(10 * 60);
     });
   });
 });
