@@ -22,11 +22,15 @@ interface AppearanceFloatingButtonProps {
   baseBottom?: number;
 }
 
-export function AppearanceFloatingButton({
-  baseBottom = 32,
-}: AppearanceFloatingButtonProps) {
-  const [visible, setVisible] = useState(false);
-  const insets = useSafeAreaInsets();
+interface AppearancePreferencesPanelProps {
+  title?: string;
+  onClose?: () => void;
+}
+
+export function AppearancePreferencesPanel({
+  title = "Aparência",
+  onClose,
+}: AppearancePreferencesPanelProps) {
   const {
     resolvedColors,
     resolvedFontSizes,
@@ -56,6 +60,213 @@ export function AppearanceFloatingButton({
     { label: "Normal", value: "default" },
     { label: "Confortável", value: "relaxed" },
   ];
+
+  return (
+    <ScrollView
+      contentContainerStyle={{
+        padding: resolvedSpacing.lg,
+        gap: resolvedSpacing.lg,
+      }}
+    >
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Text
+          style={{
+            fontSize: resolvedFontSizes.xl,
+            fontWeight: "700",
+            color: resolvedColors.textPrimary,
+          }}
+        >
+          {title}
+        </Text>
+        {onClose ? (
+          <Pressable
+            onPress={onClose}
+            accessibilityLabel="Fechar painel de aparência"
+            hitSlop={12}
+          >
+            <Text
+              style={{
+                fontSize: resolvedFontSizes.xl,
+                color: resolvedColors.mutedForeground,
+                paddingLeft: resolvedSpacing.sm,
+              }}
+            >
+              ✕
+            </Text>
+          </Pressable>
+        ) : null}
+      </View>
+
+      <View style={{ gap: resolvedSpacing.sm }}>
+        <Text
+          style={{
+            fontSize: resolvedFontSizes.base,
+            fontWeight: "600",
+            color: resolvedColors.textPrimary,
+          }}
+        >
+          Tema Visual
+        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: resolvedSpacing.sm,
+          }}
+        >
+          {themeOptions.map((opt) => (
+            <Pressable
+              key={opt.value}
+              onPress={() => updatePreferences({ theme: opt.value })}
+              accessibilityLabel={`Tema ${opt.label}`}
+              accessibilityState={{ selected: theme === opt.value }}
+              style={{
+                backgroundColor:
+                  theme === opt.value
+                    ? resolvedColors.primary
+                    : resolvedColors.card,
+                borderWidth: 1,
+                borderColor:
+                  theme === opt.value
+                    ? resolvedColors.primary
+                    : resolvedColors.border,
+                borderRadius: resolvedBorderRadius.md,
+                paddingHorizontal: resolvedSpacing.md,
+                paddingVertical: resolvedSpacing.sm,
+              }}
+            >
+              <Text
+                style={{
+                  color:
+                    theme === opt.value
+                      ? resolvedColors.primaryForeground
+                      : resolvedColors.textPrimary,
+                  fontSize: resolvedFontSizes.sm,
+                  fontWeight: theme === opt.value ? "600" : "400",
+                }}
+              >
+                {opt.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
+      <View style={{ gap: resolvedSpacing.sm }}>
+        <Text
+          style={{
+            fontSize: resolvedFontSizes.base,
+            fontWeight: "600",
+            color: resolvedColors.textPrimary,
+          }}
+        >
+          Tamanho da Fonte
+        </Text>
+        <View style={{ flexDirection: "row", gap: resolvedSpacing.sm }}>
+          {fontOptions.map((opt) => (
+            <Pressable
+              key={opt.value}
+              onPress={() => updatePreferences({ fontSize: opt.value })}
+              accessibilityLabel={`Fonte ${opt.label}`}
+              accessibilityState={{ selected: fontSize === opt.value }}
+              style={{
+                flex: 1,
+                backgroundColor:
+                  fontSize === opt.value
+                    ? resolvedColors.primary
+                    : resolvedColors.card,
+                borderWidth: 1,
+                borderColor:
+                  fontSize === opt.value
+                    ? resolvedColors.primary
+                    : resolvedColors.border,
+                borderRadius: resolvedBorderRadius.md,
+                paddingVertical: resolvedSpacing.sm,
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color:
+                    fontSize === opt.value
+                      ? resolvedColors.primaryForeground
+                      : resolvedColors.textPrimary,
+                  fontSize: resolvedFontSizes.sm,
+                  fontWeight: fontSize === opt.value ? "600" : "400",
+                }}
+              >
+                {opt.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
+      <View style={{ gap: resolvedSpacing.sm }}>
+        <Text
+          style={{
+            fontSize: resolvedFontSizes.base,
+            fontWeight: "600",
+            color: resolvedColors.textPrimary,
+          }}
+        >
+          Espaçamento
+        </Text>
+        <View style={{ flexDirection: "row", gap: resolvedSpacing.sm }}>
+          {spacingOptions.map((opt) => (
+            <Pressable
+              key={opt.value}
+              onPress={() => updatePreferences({ spacing: opt.value })}
+              accessibilityLabel={`Espaçamento ${opt.label}`}
+              accessibilityState={{ selected: spacingPref === opt.value }}
+              style={{
+                flex: 1,
+                backgroundColor:
+                  spacingPref === opt.value
+                    ? resolvedColors.primary
+                    : resolvedColors.card,
+                borderWidth: 1,
+                borderColor:
+                  spacingPref === opt.value
+                    ? resolvedColors.primary
+                    : resolvedColors.border,
+                borderRadius: resolvedBorderRadius.md,
+                paddingVertical: resolvedSpacing.sm,
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color:
+                    spacingPref === opt.value
+                      ? resolvedColors.primaryForeground
+                      : resolvedColors.textPrimary,
+                  fontSize: resolvedFontSizes.sm,
+                  fontWeight: spacingPref === opt.value ? "600" : "400",
+                }}
+              >
+                {opt.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+    </ScrollView>
+  );
+}
+
+export function AppearanceFloatingButton({
+  baseBottom = 32,
+}: AppearanceFloatingButtonProps) {
+  const [visible, setVisible] = useState(false);
+  const insets = useSafeAreaInsets();
+  const { resolvedColors } = useTheme();
 
   return (
     <>
@@ -92,204 +303,7 @@ export function AppearanceFloatingButton({
         <SafeAreaView
           style={{ flex: 1, backgroundColor: resolvedColors.background }}
         >
-          <ScrollView
-            contentContainerStyle={{
-              padding: resolvedSpacing.lg,
-              gap: resolvedSpacing.lg,
-            }}
-          >
-            {/* Header */}
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: resolvedFontSizes.xl,
-                  fontWeight: "700",
-                  color: resolvedColors.textPrimary,
-                }}
-              >
-                Aparência
-              </Text>
-              <Pressable
-                onPress={() => setVisible(false)}
-                accessibilityLabel="Fechar painel de aparência"
-                hitSlop={12}
-              >
-                <Text
-                  style={{
-                    fontSize: resolvedFontSizes.xl,
-                    color: resolvedColors.mutedForeground,
-                    paddingLeft: resolvedSpacing.sm,
-                  }}
-                >
-                  ✕
-                </Text>
-              </Pressable>
-            </View>
-
-            {/* Theme */}
-            <View style={{ gap: resolvedSpacing.sm }}>
-              <Text
-                style={{
-                  fontSize: resolvedFontSizes.base,
-                  fontWeight: "600",
-                  color: resolvedColors.textPrimary,
-                }}
-              >
-                Tema Visual
-              </Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  flexWrap: "wrap",
-                  gap: resolvedSpacing.sm,
-                }}
-              >
-                {themeOptions.map((opt) => (
-                  <Pressable
-                    key={opt.value}
-                    onPress={() => updatePreferences({ theme: opt.value })}
-                    accessibilityLabel={`Tema ${opt.label}`}
-                    accessibilityState={{ selected: theme === opt.value }}
-                    style={{
-                      backgroundColor:
-                        theme === opt.value
-                          ? resolvedColors.primary
-                          : resolvedColors.card,
-                      borderWidth: 1,
-                      borderColor:
-                        theme === opt.value
-                          ? resolvedColors.primary
-                          : resolvedColors.border,
-                      borderRadius: resolvedBorderRadius.md,
-                      paddingHorizontal: resolvedSpacing.md,
-                      paddingVertical: resolvedSpacing.sm,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color:
-                          theme === opt.value
-                            ? resolvedColors.primaryForeground
-                            : resolvedColors.textPrimary,
-                        fontSize: resolvedFontSizes.sm,
-                        fontWeight: theme === opt.value ? "600" : "400",
-                      }}
-                    >
-                      {opt.label}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-            </View>
-
-            {/* Font size */}
-            <View style={{ gap: resolvedSpacing.sm }}>
-              <Text
-                style={{
-                  fontSize: resolvedFontSizes.base,
-                  fontWeight: "600",
-                  color: resolvedColors.textPrimary,
-                }}
-              >
-                Tamanho da Fonte
-              </Text>
-              <View style={{ flexDirection: "row", gap: resolvedSpacing.sm }}>
-                {fontOptions.map((opt) => (
-                  <Pressable
-                    key={opt.value}
-                    onPress={() => updatePreferences({ fontSize: opt.value })}
-                    accessibilityLabel={`Fonte ${opt.label}`}
-                    accessibilityState={{ selected: fontSize === opt.value }}
-                    style={{
-                      flex: 1,
-                      backgroundColor:
-                        fontSize === opt.value
-                          ? resolvedColors.primary
-                          : resolvedColors.card,
-                      borderWidth: 1,
-                      borderColor:
-                        fontSize === opt.value
-                          ? resolvedColors.primary
-                          : resolvedColors.border,
-                      borderRadius: resolvedBorderRadius.md,
-                      paddingVertical: resolvedSpacing.sm,
-                      alignItems: "center",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color:
-                          fontSize === opt.value
-                            ? resolvedColors.primaryForeground
-                            : resolvedColors.textPrimary,
-                        fontSize: resolvedFontSizes.sm,
-                        fontWeight: fontSize === opt.value ? "600" : "400",
-                      }}
-                    >
-                      {opt.label}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-            </View>
-
-            {/* Spacing */}
-            <View style={{ gap: resolvedSpacing.sm }}>
-              <Text
-                style={{
-                  fontSize: resolvedFontSizes.base,
-                  fontWeight: "600",
-                  color: resolvedColors.textPrimary,
-                }}
-              >
-                Espaçamento
-              </Text>
-              <View style={{ flexDirection: "row", gap: resolvedSpacing.sm }}>
-                {spacingOptions.map((opt) => (
-                  <Pressable
-                    key={opt.value}
-                    onPress={() => updatePreferences({ spacing: opt.value })}
-                    accessibilityLabel={`Espaçamento ${opt.label}`}
-                    accessibilityState={{ selected: spacingPref === opt.value }}
-                    style={{
-                      flex: 1,
-                      backgroundColor:
-                        spacingPref === opt.value
-                          ? resolvedColors.primary
-                          : resolvedColors.card,
-                      borderWidth: 1,
-                      borderColor:
-                        spacingPref === opt.value
-                          ? resolvedColors.primary
-                          : resolvedColors.border,
-                      borderRadius: resolvedBorderRadius.md,
-                      paddingVertical: resolvedSpacing.sm,
-                      alignItems: "center",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color:
-                          spacingPref === opt.value
-                            ? resolvedColors.primaryForeground
-                            : resolvedColors.textPrimary,
-                        fontSize: resolvedFontSizes.sm,
-                        fontWeight: spacingPref === opt.value ? "600" : "400",
-                      }}
-                    >
-                      {opt.label}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-            </View>
-          </ScrollView>
+          <AppearancePreferencesPanel onClose={() => setVisible(false)} />
         </SafeAreaView>
       </Modal>
     </>

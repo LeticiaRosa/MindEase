@@ -8,6 +8,7 @@ import {
 } from "@/presentation/contexts/ThemePreferencesContext";
 import { SystemBarsManager } from "@/presentation/components/SystemBarsManager";
 import { AlertProvider } from "@/presentation/contexts/AlertContext";
+import { OnboardingProvider } from "@/presentation/contexts/OnboardingContext";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -56,7 +57,9 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemePreferencesProvider>
-        <AppShell />
+        <OnboardingProvider>
+          <AppShell />
+        </OnboardingProvider>
       </ThemePreferencesProvider>
     </QueryClientProvider>
   );

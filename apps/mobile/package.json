@@ -11,7 +11,8 @@
     "web": "expo start --web",
     "build": "echo 'No build step for mobile'",
     "lint": "eslint .",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@babel/runtime": "^7.28.6",
@@ -49,6 +50,7 @@
     "@types/node": "^25.3.3",
     "@types/react": "~18.3.0",
     "globals": "^16.5.0",
-    "typescript": "~5.3.0"
+    "typescript": "~5.3.0",
+    "vitest": "^4.0.18"
   }
 }

@@ -8,6 +8,8 @@ import { ActivitySignalsProvider } from "@/presentation/contexts/ActivitySignals
 import { ActiveRoutineProvider } from "@/presentation/contexts/ActiveRoutineContext";
 import { TimerProvider } from "@/presentation/contexts/TimerContext";
 import { useTimerPreferences } from "@/presentation/hooks/useTimerPreferences";
+import { useOnboarding } from "@/presentation/contexts/OnboardingContext";
+import { GuidedOnboardingScreen } from "@/presentation/components/GuidedOnboardingScreen";
 
 function TimerPreferencesBootstrap() {
   useTimerPreferences();
@@ -17,8 +19,10 @@ function TimerPreferencesBootstrap() {
 export default function AppLayout() {
   const { user, loading } = useAuth();
   const { resolvedColors, isHydrated } = useTheme();
+  const { isHydrated: onboardingHydrated, shouldShowOnboarding } =
+    useOnboarding();
 
-  if (loading || !isHydrated) {
+  if (loading || !isHydrated || !onboardingHydrated) {
     return (
       <View
         style={[styles.loader, { backgroundColor: resolvedColors.background }]}
@@ -30,6 +34,14 @@ export default function AppLayout() {
 
   if (!user) {
     return <Redirect href="/(auth)/login" />;
+  }
+
+  if (shouldShowOnboarding) {
+    return (
+      <ActiveRoutineProvider>
+        <GuidedOnboardingScreen />
+      </ActiveRoutineProvider>
+    );
   }
 
   return (

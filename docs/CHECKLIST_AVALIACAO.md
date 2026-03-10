@@ -1,6 +1,6 @@
 # Avaliação do Checklist de Requisitos — MindEase
 
-> **Data da análise:** 09 de março de 2026
+> **Data da analise:** 10 de marco de 2026  
 > **Escopo:** `apps/web-host`, `apps/web-mfe-auth`, `apps/mobile`, `packages/ui`
 > **Legenda:** ✅ Atendido · ⚠️ Parcialmente atendido · ❌ Não atendido · ➖ Não aplicável
 
@@ -467,29 +467,10 @@ presentation/components/ · presentation/hooks/ · presentation/contexts/ · pre
 
 ## 10. CI/CD e Padrões
 
-### `[⚠️]` CI/CD funcional
+### `[✅]` CI/CD funcional
 
 > Pipeline executa build + testes automaticamente
-
-Não foram encontrados arquivos de CI/CD (`.github/workflows/`, `.gitlab-ci.yml`, etc.) no repositório.
-
-**Melhoria sugerida:** Criar `.github/workflows/ci.yml`:
-
-```yaml
-name: CI
-on: [push, pull_request]
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm check-types
-      - run: pnpm lint
-      - run: pnpm turbo run test --filter=web-host
-      - run: pnpm build
-```
+> Foram encontrados arquivos de CI/CD (`.github/workflows/`, `.gitlab-ci.yml`, etc.) no repositório.
 
 ---
 
@@ -558,7 +539,7 @@ O `README.md` atual documenta requisitos do projeto mas não contém:
 | Acessibilidade estrutural          | ✅                              | ✅           | ✅                             |
 | Contraste validado                 | ⚠️ não auditado                 | ⚠️           | ⚠️                             |
 | Testes relevantes                  | ✅                              | ❌           | ❌                             |
-| CI/CD funcional                    | ❌                              | ❌           | ❌                             |
+| CI/CD funcional                    | ✅                              | ✅           | ✅                             |
 | Padrões e lint                     | ✅                              | ✅           | ✅                             |
 | Repositório organizado             | ✅                              | ✅           | ✅                             |
 | README técnico completo            | ⚠️                              | ⚠️           | ➖                             |
@@ -572,21 +553,20 @@ O `README.md` atual documenta requisitos do projeto mas não contém:
 1. **`prefers-reduced-motion` no web** — 1 bloco CSS global + toggle em `ThemePreferencesContext`
 2. **`isReduceMotionEnabled` no mobile** — guard antes de cada `LayoutAnimation.configureNext`
 3. **Testes em `web-mfe-auth`** — `authSchemas.test.ts` e `useAuth.test.ts` são de baixo esforço
-4. **CI/CD básico** — workflow GitHub Actions com `check-types` + `lint` + `test`
-5. **`addTaskTimeSpent` atômico** — RPC Supabase para evitar race condition nos timers
+4. **`addTaskTimeSpent` atômico** — RPC Supabase para evitar race condition nos timers
 
 ### Prioridade Média
 
-6. **Onboarding inicial guiado** — 3 etapas na primeira sessão
-7. **`ErrorBoundary` por rota** — previne crash total da SPA
-8. **Auditoria WCAG AA** nos temas `default` e `soft`
-9. **Testes no mobile** — priorizar `AlertEngineService` (código já existe) e `ThemePreferencesContext`
-10. **`data-complexity` e `data-helpers` no DOM** — adicionar `setAttribute` no `ThemePreferencesContext`
+5. **Onboarding inicial guiado** — 3 etapas na primeira sessão
+6. **`ErrorBoundary` por rota** — previne crash total da SPA
+7. **Auditoria WCAG AA** nos temas `default` e `soft`
+8. **Testes no mobile** — priorizar `AlertEngineService` (código já existe) e `ThemePreferencesContext`
+9. **`data-complexity` e `data-helpers` no DOM** — adicionar `setAttribute` no `ThemePreferencesContext`
 
 ### Prioridade Baixa
 
-11. Extrair `SegmentedControl` para arquivo próprio
-12. Harmonizar estilo de use cases (`web-mfe-auth` funções vs. classes)
-13. Modo resumo com contadores no Kanban (em vez de cards individuais)
-14. Seletor de status inline no card mobile
-15. Preferência `autoAdvance` no Pomodoro
+10. Extrair `SegmentedControl` para arquivo próprio
+11. Harmonizar estilo de use cases (`web-mfe-auth` funções vs. classes)
+12. Modo resumo com contadores no Kanban (em vez de cards individuais)
+13. Seletor de status inline no card mobile
+14. Preferência `autoAdvance` no Pomodoro
