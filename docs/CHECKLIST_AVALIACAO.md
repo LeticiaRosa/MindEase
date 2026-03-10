@@ -403,9 +403,26 @@ presentation/components/ · presentation/hooks/ · presentation/contexts/ · pre
 
 > Cores respeitam WCAG mínimo (AA)
 
-**packages/ui:** `highContrastColors` foi explicitamente projetado com ratios WCAG AAA. Os outros temas (`default`, `soft`, `dark`) não têm validação documentada.
+**Status atual por plataforma:**
 
-**Melhoria sugerida:** Rodar um audit WCAG AA nos temas `default` e `soft` (ex.: com `axe-core` via `@axe-core/react` em dev, ou Colour Contrast Analyser). O tema `soft` usa tons pastel que podem falhar em textos secundários.
+- **web-host:** ✅ Validação automatizada com `src/test/accessibility/colorContrast.test.ts` (contraste de tokens) e `src/test/accessibility/LandingPage.a11y.test.tsx` (auditoria com `jest-axe`).
+- **mobile:** ✅ Validação automatizada com `src/test/presentation/colorContrast.test.ts`.
+- **web-mfe-auth:** ⚠️ Ainda sem suíte dedicada de contraste/acessibilidade.
+
+**packages/ui:** A validação de contraste passou a ser documentada e testada para os temas `default`, `soft`, `dark` e `high-contrast` usando os tokens compartilhados em `src/theme/index.ts`.
+
+**Correções aplicadas nesta rodada (guiadas pelos testes):**
+
+- Ajuste do token `ring` para garantir contraste mínimo de indicador de foco nos temas claro/soft.
+- Ajuste de `primaryForeground` no tema dark para atender AA em botões primários.
+- Correções semânticas na landing (`heading-order`, role ARIA inválida e landmark de footer aninhada).
+
+**Execução validada:**
+
+- `pnpm --filter web-host test -- src/test/accessibility/colorContrast.test.ts src/test/accessibility/LandingPage.a11y.test.tsx` ✅
+- `pnpm --filter @mindease/mobile test -- src/test/presentation/colorContrast.test.ts` ✅
+
+**Melhoria sugerida:** Expandir a mesma auditoria para `web-mfe-auth` e incluir páginas adicionais além da landing no web-host.
 
 ---
 
@@ -415,7 +432,7 @@ presentation/components/ · presentation/hooks/ · presentation/contexts/ · pre
 
 > Testes unitários cobrindo regras de negócio (não apenas snapshot)
 
-**web-host:** ✅ 15 arquivos de teste com Vitest:
+**web-host:** ✅ 17 arquivos de teste com Vitest:
 
 - `AlertEngineService.test.ts` — pure functions com `clockFn` injectable
 - `CalibrateAlertPreferencesFromBrainState.test.ts`, `RecordBrainState.test.ts`
@@ -425,19 +442,22 @@ presentation/components/ · presentation/hooks/ · presentation/contexts/ · pre
 - `OnboardingLocalStorageAdapter.test.ts`, `AlertPreferencesLocalStorageAdapter.test.ts`
 - `ProtectedRouteOnboarding.test.tsx`, `BrainTodayModal.test.tsx`, `CognitiveAlertConfigPage.test.tsx`
 - `ThemePreferencesContext.test.tsx`, `useTimerPreferences.test.tsx`
+- `accessibility/colorContrast.test.ts` — valida contraste WCAG dos tokens compartilhados
+- `accessibility/LandingPage.a11y.test.tsx` — auditoria de acessibilidade com `jest-axe`
 
 **web-mfe-auth:** ✅ Vitest configurado e testes adicionados:
 
 - `authSchemas.test.ts` — valida login, signup (incluindo mismatch de senha) e magic link.
 - `useAuth.test.tsx` — cobre carregamento de usuário, fluxo de sucesso/erro no `signIn` e unsubscribe no unmount.
 
-**mobile:** ⚠️ 5 arquivos de teste com Vitest:
+**mobile:** ⚠️ 6 arquivos de teste com Vitest:
 
 - `OnboardingUseCases.test.ts` — cobre Start, Advance (cap a step 5), Complete, Skip, Reset
 - `OnboardingAsyncStorageAdapter.test.ts` — save/restore, fallback para estado corrompido
 - `authDeepLink.test.ts` — criação de URL de callback e extração de tokens de hash/query params
 - `AlertEngineService.test.ts` — cobre gatilhos, mapeamento de canal e cooldown
 - `ThemePreferencesContext.test.tsx` — cobre hidratação/persistência e integração com `AccessibilityInfo` mockado
+- `presentation/colorContrast.test.ts` — valida contraste WCAG dos tokens em todos os temas
 
 Ainda faltam testes para hooks principais de tela e fluxos de integração end-to-end.
 
@@ -525,7 +545,7 @@ O README cobre todos os pontos essenciais:
 | Mobile funcional real              | ➖       | ➖           | ✅           |
 | Coerência cognitiva Web/Mobile     | ✅       | ➖           | ✅           |
 | Acessibilidade estrutural          | ✅       | ✅           | ✅           |
-| Contraste validado                 | ⚠️       | ⚠️           | ⚠️           |
+| Contraste validado                 | ✅       | ⚠️           | ✅           |
 | Testes relevantes                  | ✅       | ✅           | ⚠️           |
 | CI/CD funcional                    | ✅       | ✅           | ✅           |
 | Padrões e lint                     | ✅       | ✅           | ✅           |
@@ -545,7 +565,7 @@ O README cobre todos os pontos essenciais:
 ### Prioridade Média
 
 4. **`data-complexity` no DOM** — 1 linha em `applyToDocument`: `root.setAttribute('data-complexity', prefs.complexity)` no `ThemePreferencesContext` do web-host
-5. **Auditoria WCAG AA** nos temas `default` e `soft` — rodar `@axe-core/react` em dev
+5. **Expandir auditoria WCAG AA para `web-mfe-auth`** — criar suíte equivalente de contraste e axe no app de autenticação
 6. **Testes em `packages/ui`** — snapshot + acessibilidade nos primitivos compartilhados
 
 ### Prioridade Baixa

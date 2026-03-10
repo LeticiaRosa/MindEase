@@ -3,7 +3,7 @@ import { useToast } from "@repo/ui";
 import { useActivitySignals } from "@/presentation/contexts/ActivitySignalsContext";
 import { useAlertPreferences } from "@/presentation/contexts/AlertPreferencesContext";
 import { useBrainToday } from "@/presentation/contexts/BrainTodayContext";
-import { evaluateAlerts } from "@/application/services/AlertEngineService";
+import { evaluateAlerts, evaluateAlert } from "@/application/services/AlertEngineService";
 import type { AlertPayload } from "@/domain/entities/AlertPayload";
 import type { AlertTrigger } from "@/domain/valueObjects/AlertTypes";
 
@@ -97,6 +97,14 @@ export function useAlertEngine(options: UseAlertEngineOptions = {}) {
     setState((prev) => ({ ...prev, modalOpen: false }));
   }, []);
 
+  const debugTrigger = useCallback(
+    (trigger: AlertTrigger) => {
+      const payload = evaluateAlert(trigger, brainState, preferences);
+      dispatch(payload);
+    },
+    [brainState, preferences, dispatch],
+  );
+
   return {
     bannerActive: state.bannerActive,
     bannerMessage: state.bannerMessage,
@@ -104,5 +112,6 @@ export function useAlertEngine(options: UseAlertEngineOptions = {}) {
     modalMessage: state.modalMessage,
     dismissBanner,
     dismissModal,
+    debugTrigger: import.meta.env.DEV ? debugTrigger : undefined,
   };
 }

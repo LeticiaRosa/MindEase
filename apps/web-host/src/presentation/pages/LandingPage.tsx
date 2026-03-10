@@ -70,7 +70,7 @@ type DifferentialCardProps = {
 function DifferentialCard({ title, description }: DifferentialCardProps) {
   return (
     <div className="space-y-2 border-l-2 border-primary/40 pl-5">
-      <h4 className="text-sm font-semibold text-foreground">{title}</h4>
+      <h3 className="text-sm font-semibold text-foreground">{title}</h3>
       <p className="text-sm leading-relaxed text-muted-foreground">
         {description}
       </p>
@@ -82,7 +82,7 @@ function DifferentialCard({ title, description }: DifferentialCardProps) {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground" role="main">
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
       <nav className="sticky top-0 z-20 border-b border-border/50 bg-background/95 backdrop-blur-sm">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-3 py-3 sm:px-6 sm:py-4">
@@ -172,10 +172,15 @@ export default function LandingPage() {
       <section
         id="features"
         className="border-t border-border/50 bg-muted/30 px-6 py-20"
+        role="region"
+        aria-labelledby="features-heading"
       >
         <div className="mx-auto max-w-5xl space-y-12">
           <div className="mx-auto max-w-xl space-y-3 text-center">
-            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+            <h2
+              id="features-heading"
+              className="text-2xl font-semibold tracking-tight sm:text-3xl"
+            >
               Tudo que você precisa, sem complexidade desnecessária
             </h2>
             <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
@@ -375,14 +380,14 @@ export default function LandingPage() {
       </section>
 
       {/* ── Footer ───────────────────────────────────────────────────────── */}
-      <footer className="border-t border-border/50 px-6 py-8">
+      <div className="border-t border-border/50 px-6 py-8">
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 text-xs text-muted-foreground sm:flex-row">
           <Logo size="sm" />
           <p>
             © {new Date().getFullYear()} MindEase. Todos os direitos reservados.
           </p>
         </div>
-      </footer>
+      </div>
     </div>
   );
 }

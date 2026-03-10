@@ -26,7 +26,7 @@ export const colors = {
   destructiveForeground: "#F9FAFB", // oklch(0.985 0.002 247.839)
   border: "#E5E7EB", // oklch(0.928 0.006 264.531)
   input: "#E5E7EB", // oklch(0.928 0.006 264.531)
-  ring: "#99A1AF", // oklch(0.707 0.022 261.325)
+  ring: "#6A7282", // oklch(0.551 0.027 264.364)
   textPrimary: "#030712", // = foreground
   textSecondary: "#6A7282", // = mutedForeground
   // Semantic state colors (brain-today / cognitive alerts)
@@ -47,7 +47,7 @@ export const darkColors = {
   popover: "#101828", // oklch(0.21 0.034 264.665)
   popoverForeground: "#F9FAFB", // oklch(0.985 0.002 247.839)
   primary: "#B45309", // oklch(0.5553 0.1455 49) — unchanged in dark
-  primaryForeground: "#101828", // oklch(0.21 0.034 264.665)
+  primaryForeground: "#F9FAFB", // oklch(0.985 0.002 247.839)
   secondary: "#B45309", // oklch(0.5553 0.1455 49)
   secondaryForeground: "#F9FAFB", // oklch(0.985 0.002 247.839)
   muted: "#1E2939", // oklch(0.278 0.033 256.848)
@@ -90,7 +90,7 @@ export const softColors = {
   destructiveForeground: "#F6F9FC",
   border: "#DCDEE2", // oklch(0.9 0.006 264.531)
   input: "#DCDEE2", // oklch(0.9 0.006 264.531)
-  ring: "#99A1AF", // inherited from root
+  ring: "#6A7282", // inherited from root
   textPrimary: "#232933", // = foreground
   textSecondary: "#6C727C", // = mutedForeground
   // Semantic state colors

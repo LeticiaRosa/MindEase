@@ -92,10 +92,10 @@ export function TaskCard({
 
   const toLocaleRelativeTime = () => {
     const now = new Date();
-    const updatedAt = new Date(task.statusUpdatedAt);
+    const updatedAt = new Date(task.createdAt);
     const diffMs = now.getTime() - updatedAt.getTime();
     const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 1) return "Agora mesmo";
+    if (diffMins < 1) return "agora mesmo";
     if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? "s" : ""} atrás`;
     const diffHours = Math.floor(diffMins / 60);
     if (diffHours < 24)

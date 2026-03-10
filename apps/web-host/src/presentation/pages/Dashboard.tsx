@@ -4,6 +4,7 @@ import { KanbanBoard } from "@/presentation/components/KanbanBoard";
 import { UserMenuDropdown } from "@/presentation/components/UserMenuDropdown";
 import { CognitiveAlertBanner } from "@/presentation/components/CognitiveAlertBanner";
 import { CognitiveAlertModal } from "@/presentation/components/CognitiveAlertModal";
+import { AlertDebugPanel } from "@/presentation/components/AlertDebugPanel";
 import { Button, cn, Logo } from "@repo/ui";
 import { Timer } from "lucide-react";
 import { FocusTimerFocus } from "../components/FocusTimerFocus";
@@ -23,6 +24,7 @@ function DashboardContent() {
     modalMessage,
     dismissBanner,
     dismissModal,
+    debugTrigger,
   } = useAlertEngine();
   const { complexity } = useThemePreferences();
   const navigate = useNavigate();
@@ -103,6 +105,10 @@ function DashboardContent() {
         message={modalMessage}
         onClose={dismissModal}
       />
+
+      {import.meta.env.DEV && debugTrigger && (
+        <AlertDebugPanel onTrigger={debugTrigger} />
+      )}
     </div>
   );
 }
