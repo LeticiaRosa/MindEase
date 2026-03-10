@@ -51,7 +51,7 @@ export function SignIn() {
       </CardHeader>
       <CardContent role="form" aria-label="Conteúdo do formulário de login">
         <Tabs defaultValue="password" className="w-full">
-          <TabsList className="w-full mb-4 grid grid-cols-2">
+          <TabsList className="w-full mb-4 !grid grid-cols-2">
             <TabsTrigger
               value="password"
               className="gap-1.5 overflow-hidden data-[state=active]:border data-[state=active]:border-primary data-[state=active]:shadow-md cursor-pointer min-w-0"
