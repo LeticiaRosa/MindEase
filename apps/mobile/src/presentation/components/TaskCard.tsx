@@ -47,6 +47,7 @@ export function TaskCard({
     resolvedSpacing,
     resolvedBorderRadius,
     complexity,
+    isReducedMotion,
   } = useTheme();
   const [checklistOpen, setChecklistOpen] = useState(mode === "detail");
   const [timerOpen, setTimerOpen] = useState(false);
@@ -88,7 +89,33 @@ export function TaskCard({
 
   // ─── Swipe to change status ───────────────────────────────────────────
   const dragX = useRef(new Animated.Value(0)).current;
+  const moveAnim = useRef(new Animated.Value(0)).current;
   const [swipeHint, setSwipeHint] = useState<"prev" | "next" | null>(null);
+  const previousStatusRef = useRef(task.status);
+
+  useEffect(() => {
+    if (previousStatusRef.current === task.status) return;
+    previousStatusRef.current = task.status;
+
+    if (isReducedMotion) {
+      moveAnim.setValue(0);
+      return;
+    }
+
+    moveAnim.setValue(0);
+    Animated.sequence([
+      Animated.timing(moveAnim, {
+        toValue: 1,
+        duration: 190,
+        useNativeDriver: true,
+      }),
+      Animated.timing(moveAnim, {
+        toValue: 0,
+        duration: 260,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [task.status, isReducedMotion, moveAnim]);
 
   // Keep mutable refs so PanResponder (created once) always sees fresh values
   const onStatusChangeRef = useRef(onStatusChange);
@@ -114,6 +141,35 @@ export function TaskCard({
         }
       },
       onPanResponderRelease: (_, { dx }) => {
+        const idx = STATUS_FLOW.indexOf(taskStatusRef.current as TaskStatus);
+        const canMovePrev = dx < -SWIPE_THRESHOLD && idx > 0;
+        const canMoveNext =
+          dx > SWIPE_THRESHOLD && idx < STATUS_FLOW.length - 1;
+
+        if (canMovePrev || canMoveNext) {
+          const targetStatus = canMovePrev
+            ? STATUS_FLOW[idx - 1]
+            : STATUS_FLOW[idx + 1];
+
+          if (isReducedMotion) {
+            dragX.setValue(0);
+            setSwipeHint(null);
+            onStatusChangeRef.current?.(taskIdRef.current, targetStatus);
+            return;
+          }
+
+          Animated.timing(dragX, {
+            toValue: canMovePrev ? -170 : 170,
+            duration: 220,
+            useNativeDriver: true,
+          }).start(() => {
+            dragX.setValue(0);
+            setSwipeHint(null);
+            onStatusChangeRef.current?.(taskIdRef.current, targetStatus);
+          });
+          return;
+        }
+
         Animated.spring(dragX, {
           toValue: 0,
           useNativeDriver: true,
@@ -121,12 +177,6 @@ export function TaskCard({
           friction: 10,
         }).start();
         setSwipeHint(null);
-        const idx = STATUS_FLOW.indexOf(taskStatusRef.current as TaskStatus);
-        if (dx < -SWIPE_THRESHOLD && idx > 0) {
-          onStatusChangeRef.current?.(taskIdRef.current, STATUS_FLOW[idx - 1]);
-        } else if (dx > SWIPE_THRESHOLD && idx < STATUS_FLOW.length - 1) {
-          onStatusChangeRef.current?.(taskIdRef.current, STATUS_FLOW[idx + 1]);
-        }
       },
       onPanResponderTerminate: () => {
         Animated.spring(dragX, {
@@ -223,10 +273,37 @@ export function TaskCard({
             shadowRadius: 2,
             elevation: 1,
           },
-          { transform: [{ translateX: dragX }] },
+          {
+            transform: [
+              { translateX: dragX },
+              {
+                scale: moveAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [1, 1.06],
+                }),
+              },
+            ],
+          },
         ]}
         {...(onStatusChange ? panResponder.panHandlers : {})}
       >
+        {!isReducedMotion && (
+          <Animated.View
+            pointerEvents="none"
+            style={{
+              position: "absolute",
+              inset: -1,
+              borderRadius: resolvedBorderRadius.lg,
+              borderWidth: 2,
+              borderColor: resolvedColors.primary,
+              opacity: moveAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 0.65],
+              }),
+            }}
+          />
+        )}
+
         {/* Top action row */}
         <View
           style={{

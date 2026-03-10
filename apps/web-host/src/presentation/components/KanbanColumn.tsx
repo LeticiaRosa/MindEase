@@ -14,6 +14,7 @@ import type { UpdateTaskParams } from "@/application/useCases/UpdateTask";
 interface KanbanColumnProps {
   status: TaskStatus;
   tasks: Task[];
+  recentlyMovedTaskId?: string | null;
   onCreateTask: (title: string) => void;
   onUpdateTask: (id: string, params: UpdateTaskParams) => void;
   onDeleteTask: (id: string) => void;
@@ -30,6 +31,7 @@ const COLUMN_STYLES: Record<TaskStatus, string> = {
 export function KanbanColumn({
   status,
   tasks,
+  recentlyMovedTaskId,
   onCreateTask,
   onUpdateTask,
   onDeleteTask,
@@ -83,6 +85,7 @@ export function KanbanColumn({
               <TaskCard
                 key={task.id}
                 task={task}
+                isJustMoved={task.id === recentlyMovedTaskId}
                 onUpdate={onUpdateTask}
                 onDelete={onDeleteTask}
                 onArchive={onArchiveTask}

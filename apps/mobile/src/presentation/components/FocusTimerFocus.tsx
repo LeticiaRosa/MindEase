@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
   Pressable,
   Modal,
-  ScrollView,
   LayoutAnimation,
   Platform,
   UIManager,
+  Animated,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusTimer } from "@/presentation/hooks/useFocusTimer";
@@ -74,6 +74,10 @@ export function FocusTimerFocus({
   } = useTheme();
 
   const [showChecklist, setShowChecklist] = useState(false);
+  const contentOpacity = useRef(new Animated.Value(0)).current;
+  const contentTranslateY = useRef(new Animated.Value(22)).current;
+  const ringScale = useRef(new Animated.Value(1)).current;
+  const shouldAnimateFocus = !isReducedMotion && isRunning;
 
   const modeDescription = MODE_DESCRIPTIONS[mode] ?? "";
   const modeColor =
@@ -89,23 +93,84 @@ export function FocusTimerFocus({
     setShowChecklist((prev) => !prev);
   };
 
+  useEffect(() => {
+    if (!visible) {
+      contentOpacity.setValue(0);
+      contentTranslateY.setValue(22);
+      ringScale.setValue(1);
+      return;
+    }
+
+    if (!shouldAnimateFocus) {
+      contentOpacity.setValue(1);
+      contentTranslateY.setValue(0);
+      ringScale.setValue(1);
+      return;
+    }
+
+    Animated.parallel([
+      Animated.timing(contentOpacity, {
+        toValue: 1,
+        duration: 360,
+        useNativeDriver: true,
+      }),
+      Animated.spring(contentTranslateY, {
+        toValue: 0,
+        tension: 55,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(ringScale, {
+          toValue: 1.06,
+          duration: 1300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(ringScale, {
+          toValue: 1,
+          duration: 1300,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+
+    loop.start();
+    return () => {
+      loop.stop();
+      ringScale.setValue(1);
+    };
+  }, [
+    visible,
+    shouldAnimateFocus,
+    contentOpacity,
+    contentTranslateY,
+    ringScale,
+  ]);
+
   return (
     <Modal
       visible={visible}
-      animationType="fade"
+      animationType={shouldAnimateFocus ? "fade" : "none"}
       presentationStyle="fullScreen"
       onRequestClose={onClose}
     >
       <SafeAreaView
         style={{ flex: 1, backgroundColor: resolvedColors.background }}
       >
-        <ScrollView
+        <Animated.ScrollView
           contentContainerStyle={{
             flexGrow: 1,
             padding: resolvedSpacing.xl,
             alignItems: "center",
           }}
           keyboardShouldPersistTaps="handled"
+          style={{
+            opacity: contentOpacity,
+            transform: [{ translateY: contentTranslateY }],
+          }}
         >
           {/* Close button */}
           <Pressable
@@ -134,13 +199,14 @@ export function FocusTimerFocus({
           </Pressable>
 
           {/* Large circular progress ring with time and cycle centered */}
-          <View
+          <Animated.View
             style={{
               width: RING_SIZE,
               height: RING_SIZE,
               alignItems: "center",
               justifyContent: "center",
               marginBottom: resolvedSpacing.xl,
+              transform: [{ scale: ringScale }],
             }}
           >
             <View style={{ position: "absolute" }}>
@@ -173,7 +239,7 @@ export function FocusTimerFocus({
                 {currentCycle} / {cyclesBeforeLongBreak}
               </Text>
             </View>
-          </View>
+          </Animated.View>
           {/* Task title */}
           <Text
             numberOfLines={2}
@@ -305,7 +371,7 @@ export function FocusTimerFocus({
               )}
             </View>
           )}
-        </ScrollView>
+        </Animated.ScrollView>
       </SafeAreaView>
     </Modal>
   );

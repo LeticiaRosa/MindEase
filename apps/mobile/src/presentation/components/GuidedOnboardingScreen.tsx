@@ -47,8 +47,17 @@ export function GuidedOnboardingScreen() {
   }, [start]);
 
   useEffect(() => {
-    if (!activeRoutineId && routines[0]?.id) {
-      setActiveRoutineId(routines[0].id);
+    if (activeRoutineId) {
+      return;
+    }
+
+    const trabalhoRoutine = routines.find(
+      (routine) => routine.name.trim().toLocaleLowerCase("pt-BR") === "trabalho",
+    );
+
+    const defaultRoutine = trabalhoRoutine ?? routines[0];
+    if (defaultRoutine?.id) {
+      setActiveRoutineId(defaultRoutine.id);
     }
   }, [activeRoutineId, routines, setActiveRoutineId]);
 

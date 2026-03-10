@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
@@ -24,6 +24,7 @@ import type { UpdateTaskParams } from "@/application/useCases/UpdateTask";
 
 interface TaskCardProps {
   task: Task;
+  isJustMoved?: boolean;
   onDelete: (id: string) => void;
   onArchive?: (id: string) => void;
   onUpdate?: (id: string, params: UpdateTaskParams) => void;
@@ -31,19 +32,45 @@ interface TaskCardProps {
 
 export function TaskCard({
   task,
+  isJustMoved = false,
   onDelete,
   onArchive,
   onUpdate,
 }: TaskCardProps) {
-  const { mode, helpers, complexity } = useThemePreferences();
+  const { mode, helpers, complexity, isReducedMotion } = useThemePreferences();
   const [checklistOpen, setChecklistOpen] = useState(mode === "detail");
   const [timerOpen, setTimerOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [statusMoved, setStatusMoved] = useState(isJustMoved);
+  const previousStatusRef = useRef(task.status);
 
   useEffect(() => {
     setChecklistOpen(mode === "detail");
   }, [mode]);
+
+  useEffect(() => {
+    if (previousStatusRef.current !== task.status) {
+      previousStatusRef.current = task.status;
+
+      if (isReducedMotion) {
+        setStatusMoved(false);
+        return;
+      }
+
+      setStatusMoved(true);
+      const timeoutId = setTimeout(() => setStatusMoved(false), 740);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [task.status, isReducedMotion]);
+
+  useEffect(() => {
+    if (!isJustMoved || isReducedMotion) return;
+
+    setStatusMoved(true);
+    const timeoutId = setTimeout(() => setStatusMoved(false), 740);
+    return () => clearTimeout(timeoutId);
+  }, [isJustMoved, isReducedMotion]);
   const [timerFocusOpen, setTimerFocusOpen] = useState(false);
   const { state: timerState } = useTimerContext();
   const taskTimer = timerState.timers[task.id];
@@ -97,6 +124,9 @@ export function TaskCard({
         "transition-all duration-200 ease-in-out",
         "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-1",
         isDragging && "opacity-50 scale-95 shadow-lg ring-2 ring-primary/30",
+        (statusMoved || isJustMoved) &&
+          !isReducedMotion &&
+          "mindease-card-arrive ring-2 ring-primary/25",
       )}
       aria-label={`Task: ${task.title}`}
     >

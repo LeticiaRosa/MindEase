@@ -18,9 +18,13 @@ const deleteRoutine = new DeleteRoutine(repository);
 // ─── Default seed routines ────────────────────────────────────────────────────
 
 const DEFAULT_ROUTINES = [
-  { name: "Estudo", icon: "notebook-pen" },
   { name: "Trabalho", icon: "briefcase-business" },
+  { name: "Estudo", icon: "notebook-pen" },
 ] as const;
+
+function normalize(value: string): string {
+  return value.trim().toLocaleLowerCase("pt-BR");
+}
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
@@ -62,8 +66,11 @@ export function useRoutines() {
       routines.some((r) => r.id === activeRoutineId);
 
     if (!isValid) {
-      const first = routines[0];
-      if (first) setActiveRoutineId(first.id);
+      const trabalhoRoutine = routines.find(
+        (routine) => normalize(routine.name) === "trabalho",
+      );
+      const fallbackRoutine = trabalhoRoutine ?? routines[0];
+      if (fallbackRoutine) setActiveRoutineId(fallbackRoutine.id);
     }
   }, [routines, isLoading, activeRoutineId, setActiveRoutineId]);
 

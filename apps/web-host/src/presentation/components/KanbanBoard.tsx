@@ -36,6 +36,9 @@ export function KanbanBoard() {
     archiveTask,
   } = useTaskKanban(activeRoutineId ?? "");
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [recentlyMovedTaskId, setRecentlyMovedTaskId] = useState<string | null>(
+    null,
+  );
   const { recordTaskSwitch, setCurrentTask } = useActivitySignals();
   const { isReducedMotion } = useThemePreferences();
 
@@ -86,6 +89,8 @@ export function KanbanBoard() {
         ...columnTasks.filter((t) => t.id !== activeId),
         { ...activeTask, status: targetStatus },
       ];
+      setRecentlyMovedTaskId(activeId);
+      window.setTimeout(() => setRecentlyMovedTaskId(null), 840);
     } else {
       // Sorting within the same column
       const oldIndex = columnTasks.findIndex((t) => t.id === activeId);
@@ -142,6 +147,7 @@ export function KanbanBoard() {
             key={status}
             status={status}
             tasks={tasksByStatus(status)}
+            recentlyMovedTaskId={recentlyMovedTaskId}
             onCreateTask={createTask}
             onUpdateTask={updateTask}
             onDeleteTask={deleteTask}

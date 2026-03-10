@@ -1,5 +1,7 @@
+import { useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAlert } from "@/presentation/contexts/AlertContext";
+import { useActiveRoutine } from "@/presentation/contexts/ActiveRoutineContext";
 import type { Routine } from "@/domain/entities/Routine";
 import { SupabaseRoutineRepository } from "@/infrastructure/adapters/SupabaseRoutineRepository";
 import { GetRoutines } from "@/application/useCases/GetRoutines";
@@ -15,14 +17,68 @@ const updateRoutine = new UpdateRoutine(repository);
 const deleteRoutine = new DeleteRoutine(repository);
 const reorderRoutines = new ReorderRoutines(repository);
 
+const DEFAULT_ROUTINE = {
+  name: "Trabalho",
+  icon: "briefcase-business",
+} as const;
+
+function normalize(value: string): string {
+  return value.trim().toLocaleLowerCase("pt-BR");
+}
+
 export function useRoutines() {
   const queryClient = useQueryClient();
   const { showAlert } = useAlert();
+  const { activeRoutineId, setActiveRoutineId } = useActiveRoutine();
+  const isSeedingDefaultRoutineRef = useRef(false);
 
   const { data: routines = [], isLoading } = useQuery<Routine[]>({
     queryKey: ["routines"],
     queryFn: () => getRoutines.execute(),
   });
+
+  useEffect(() => {
+    if (isLoading || routines.length > 0 || isSeedingDefaultRoutineRef.current) {
+      return;
+    }
+
+    isSeedingDefaultRoutineRef.current = true;
+
+    const seedDefaultRoutine = async () => {
+      try {
+        await repository.createRoutine(DEFAULT_ROUTINE.name, DEFAULT_ROUTINE.icon);
+      } catch {
+        // Ignore initial seed failures to avoid blocking onboarding flow.
+      } finally {
+        await queryClient.invalidateQueries({ queryKey: ["routines"] });
+        isSeedingDefaultRoutineRef.current = false;
+      }
+    };
+
+    seedDefaultRoutine();
+  }, [isLoading, routines.length, queryClient]);
+
+  useEffect(() => {
+    if (isLoading || routines.length === 0) {
+      return;
+    }
+
+    const hasActiveRoutine =
+      activeRoutineId !== null && routines.some((routine) => routine.id === activeRoutineId);
+
+    if (hasActiveRoutine) {
+      return;
+    }
+
+    const trabalhoRoutine = routines.find(
+      (routine) => normalize(routine.name) === normalize(DEFAULT_ROUTINE.name),
+    );
+
+    const fallbackRoutine = trabalhoRoutine ?? routines[0];
+    if (fallbackRoutine) {
+      setActiveRoutineId(fallbackRoutine.id);
+    }
+  }, [activeRoutineId, isLoading, routines, setActiveRoutineId]);
 
   const createMutation = useMutation({
     mutationFn: ({ name, icon }: { name: string; icon?: string }) =>

@@ -8,6 +8,7 @@ import {
   Square,
 } from "lucide-react";
 import { Button, ScrollArea } from "@repo/ui";
+import { cn } from "@repo/ui";
 import { useFocusTimer } from "@/presentation/hooks/useFocusTimer";
 import { SmartChecklist } from "./SmartChecklist";
 import { useState } from "react";
@@ -40,6 +41,7 @@ export function FocusTimerFocus({
   } = useFocusTimer(taskId);
   const { isReducedMotion } = useThemePreferences();
   const [open, setOpen] = useState(false);
+  const shouldAnimateFocus = !isReducedMotion && isRunning;
 
   const modeDescription =
     mode === "focus"
@@ -58,7 +60,10 @@ export function FocusTimerFocus({
       role="dialog"
       aria-modal="true"
       aria-label="Full-screen focus timer"
-      className="fixed inset-0 z-999 flex flex-col items-center justify-center bg-background overflow-hidden"
+      className={cn(
+        "fixed inset-0 z-999 flex flex-col items-center justify-center bg-background overflow-hidden",
+        shouldAnimateFocus && "animate-in fade-in duration-300",
+      )}
     >
       {/* Exit button — top-right, unobtrusive */}
       {onClose && (
@@ -74,7 +79,10 @@ export function FocusTimerFocus({
 
       {/* Circular progress ring + time */}
       <div
-        className="relative flex items-center justify-center"
+        className={cn(
+          "relative flex items-center justify-center rounded-full",
+          shouldAnimateFocus && "mindease-focus-ring-default",
+        )}
         aria-hidden="true"
       >
         <svg
@@ -105,7 +113,7 @@ export function FocusTimerFocus({
             strokeDashoffset={dashOffset}
             strokeLinecap="round"
             className={
-              isReducedMotion
+              !shouldAnimateFocus
                 ? "text-primary"
                 : "text-primary transition-all duration-1000 ease-linear"
             }
