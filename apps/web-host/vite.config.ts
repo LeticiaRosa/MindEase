@@ -21,7 +21,9 @@ export default defineConfig({
         auth: {
           type: "module",
           name: "auth",
-          entry: process.env.VITE_AUTH_REMOTE_URL ?? "http://localhost:3001/remoteEntry.js",
+          entry:
+            process.env.VITE_AUTH_REMOTE_URL ??
+            "http://localhost:3001/remoteEntry.js",
         },
       },
       shared: {
