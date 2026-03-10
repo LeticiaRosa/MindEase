@@ -6,7 +6,7 @@ export default function MagicLinkCallbackPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      const hostUrl = import.meta.env.VITE_HOST_URL ?? "http://localhost:3000";
+      const hostUrl = import.meta.env.VITE_HOST_URL ?? window.location.origin;
       window.location.href = `${hostUrl}/dashboard`;
     }
   }, [user, loading]);

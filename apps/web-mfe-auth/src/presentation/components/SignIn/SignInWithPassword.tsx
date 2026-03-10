@@ -35,7 +35,7 @@ export function SignInWithPassword() {
       const loginPromise = signIn(data.email, data.password).then((result) => {
         if (result.success) {
           const hostUrl =
-            import.meta.env.VITE_HOST_URL ?? "http://localhost:3000";
+            import.meta.env.VITE_HOST_URL ?? window.location.origin;
           window.location.href = `${hostUrl}/dashboard`;
           return result;
         } else {
