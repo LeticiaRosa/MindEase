@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { User } from "@/domain/entities/User";
 import type { AuthResult } from "@/domain/entities/AuthResult";
-import { SupabaseAuthRepository } from "@/infrastructure/adapters/SupabaseAuthRepository";
+import { authRepository as repository } from "@/infrastructure/factories/repositories";
 import { signIn as signInUseCase } from "@/application/useCases/signIn";
 import { signUp as signUpUseCase } from "@/application/useCases/signUp";
 import { signOut as signOutUseCase } from "@/application/useCases/signOut";
@@ -12,8 +12,6 @@ const AUTH_KEYS = {
   user: ["auth", "user"] as const,
   session: ["auth", "session"] as const,
 } as const;
-
-const repository = new SupabaseAuthRepository();
 
 export function useAuth() {
   const queryClient = useQueryClient();

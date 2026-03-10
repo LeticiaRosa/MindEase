@@ -3,14 +3,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAlert } from "@/presentation/contexts/AlertContext";
 import { useActiveRoutine } from "@/presentation/contexts/ActiveRoutineContext";
 import type { Routine } from "@/domain/entities/Routine";
-import { SupabaseRoutineRepository } from "@/infrastructure/adapters/SupabaseRoutineRepository";
+import { routineRepository as repository } from "@/infrastructure/factories/repositories";
 import { GetRoutines } from "@/application/useCases/GetRoutines";
 import { CreateRoutine } from "@/application/useCases/CreateRoutine";
 import { UpdateRoutine } from "@/application/useCases/UpdateRoutine";
 import { DeleteRoutine } from "@/application/useCases/DeleteRoutine";
 import { ReorderRoutines } from "@/application/useCases/ReorderRoutines";
 
-const repository = new SupabaseRoutineRepository();
 const getRoutines = new GetRoutines(repository);
 const createRoutine = new CreateRoutine(repository);
 const updateRoutine = new UpdateRoutine(repository);

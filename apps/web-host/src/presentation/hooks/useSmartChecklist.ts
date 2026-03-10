@@ -1,14 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@repo/ui";
 
-import { SupabaseTaskRepository } from "@/infrastructure/adapters/SupabaseTaskRepository";
+import { taskRepository as repository } from "@/infrastructure/factories/repositories";
 import { ToggleChecklistStep } from "@/application/useCases/ToggleChecklistStep";
 import { CreateChecklistStep } from "@/application/useCases/CreateChecklistStep";
 import { DeleteChecklistStep } from "@/application/useCases/DeleteChecklistStep";
 import { UpdateChecklistStep } from "@/application/useCases/UpdateChecklistStep";
 import type { ChecklistStep } from "@/domain/entities/ChecklistStep";
 
-const repository = new SupabaseTaskRepository();
 const toggleStep = new ToggleChecklistStep(repository);
 const createStep = new CreateChecklistStep(repository);
 const deleteStep = new DeleteChecklistStep(repository);

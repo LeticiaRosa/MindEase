@@ -2,14 +2,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useAuth } from "@/presentation/hooks/useAuth";
 import { useAlert } from "@/presentation/contexts/AlertContext";
-import { SupabaseTimerPreferencesRepository } from "@/infrastructure/adapters/SupabaseTimerPreferencesRepository";
+import { timerPreferencesRepository as repository } from "@/infrastructure/factories/repositories";
 import { useTimerContext } from "@/presentation/contexts/TimerContext";
 import {
   DEFAULT_TIMER_PREFERENCES,
   type TimerPreferences,
 } from "@/domain/entities/TimerPreferences";
-
-const repository = new SupabaseTimerPreferencesRepository();
 
 export function useTimerPreferences() {
   const queryClient = useQueryClient();

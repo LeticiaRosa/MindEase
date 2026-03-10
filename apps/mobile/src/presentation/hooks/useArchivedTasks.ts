@@ -1,11 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAlert } from "@/presentation/contexts/AlertContext";
-import { SupabaseTaskRepository } from "@/infrastructure/adapters/SupabaseTaskRepository";
+import { taskRepository as repository } from "@/infrastructure/factories/repositories";
 import { UpdateTaskStatus } from "@/application/useCases/UpdateTaskStatus";
 import type { Task } from "@/domain/entities/Task";
 import type { TaskStatus } from "@/domain/valueObjects/TaskStatus";
 
-const repository = new SupabaseTaskRepository();
 const updateTaskStatus = new UpdateTaskStatus(repository);
 
 export function useArchivedTasks() {

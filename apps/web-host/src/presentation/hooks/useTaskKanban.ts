@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { SupabaseTaskRepository } from "@/infrastructure/adapters/SupabaseTaskRepository";
+import { taskRepository as repository } from "@/infrastructure/factories/repositories";
 import { CreateTask } from "@/application/useCases/CreateTask";
 import {
   UpdateTask,
@@ -11,8 +11,8 @@ import { DeleteTask } from "@/application/useCases/DeleteTask";
 import type { Task } from "@/domain/entities/Task";
 import type { TaskStatus } from "@/domain/valueObjects/TaskStatus";
 import { useToast } from "@repo/ui";
+import { useActivitySignals } from "@/presentation/contexts/ActivitySignalsContext";
 
-const repository = new SupabaseTaskRepository();
 const createTask = new CreateTask(repository);
 const updateTask = new UpdateTask(repository);
 const updateTaskStatus = new UpdateTaskStatus(repository);
@@ -185,6 +185,24 @@ export function useTaskKanban(routineId: string) {
       .filter((t) => t.status === status)
       .sort((a, b) => a.position - b.position);
 
+  const { recordTaskSwitch, setCurrentTask } = useActivitySignals();
+
+  const moveTask = (
+    updates: Array<{
+      id: string;
+      position: number;
+      status: TaskStatus;
+      previousStatus: TaskStatus;
+    }>,
+  ) => {
+    const hasColumnChange = updates.some((u) => u.status !== u.previousStatus);
+    if (hasColumnChange) {
+      recordTaskSwitch();
+      setCurrentTask({ startedAt: Date.now(), isComplex: false });
+    }
+    reorderMutation.mutate(updates);
+  };
+
   return {
     tasks,
     isLoading,
@@ -194,6 +212,7 @@ export function useTaskKanban(routineId: string) {
       updateTaskMutation.mutate({ id, params }),
     updateTaskStatus: updateStatusMutation.mutate,
     reorderTasks: reorderMutation.mutate,
+    moveTask,
     deleteTask: (id: string) => {
       deleteMutation.mutate(id);
       toast.info("Task excluída", {

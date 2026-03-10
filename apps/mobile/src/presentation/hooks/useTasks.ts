@@ -1,9 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import type { Task } from "@/domain/entities/Task";
-import { SupabaseTaskRepository } from "@/infrastructure/adapters/SupabaseTaskRepository";
+import { taskRepository as repository } from "@/infrastructure/factories/repositories";
 import { GetTasks } from "@/application/useCases/GetTasks";
 
-const repository = new SupabaseTaskRepository();
 const getTasks = new GetTasks(repository);
 
 export function useTasks() {

@@ -15,6 +15,7 @@ import { useTheme } from "@/presentation/contexts/ThemePreferencesContext";
 import { CircularProgress } from "./CircularProgress";
 import { SmartChecklist } from "./SmartChecklist";
 import { Play, Pause, RotateCcw, Square, X } from "lucide-react-native";
+import { useSmartChecklist } from "../hooks/useSmartChecklist";
 
 function animateLayoutIfAllowed(allowAnimation: boolean) {
   if (!allowAnimation) return;
@@ -72,7 +73,7 @@ export function FocusTimerFocus({
     resolvedBorderRadius,
     isReducedMotion,
   } = useTheme();
-
+  const { currentStep } = useSmartChecklist(taskId);
   const [showChecklist, setShowChecklist] = useState(false);
   const contentOpacity = useRef(new Animated.Value(0)).current;
   const contentTranslateY = useRef(new Animated.Value(22)).current;
@@ -197,7 +198,31 @@ export function FocusTimerFocus({
               Sair do Foco
             </Text>
           </Pressable>
+          {/* Task title */}
+          <Text
+            numberOfLines={2}
+            style={{
+              fontSize: resolvedFontSizes.lg,
+              color: resolvedColors.mutedForeground,
+              textAlign: "center",
+              marginBottom: resolvedSpacing.lg,
+              fontWeight: "700",
+            }}
+          >
+            {taskTitle}
+          </Text>
 
+          {currentStep && currentStep.title && (
+            <Text
+              style={{
+                fontSize: resolvedFontSizes.sm,
+                color: resolvedColors.mutedForeground,
+                marginBottom: resolvedSpacing.md,
+              }}
+            >
+              {currentStep.title}
+            </Text>
+          )}
           {/* Large circular progress ring with time and cycle centered */}
           <Animated.View
             style={{
@@ -240,19 +265,6 @@ export function FocusTimerFocus({
               </Text>
             </View>
           </Animated.View>
-          {/* Task title */}
-          <Text
-            numberOfLines={2}
-            style={{
-              fontSize: resolvedFontSizes.lg,
-              color: resolvedColors.mutedForeground,
-              textAlign: "center",
-              marginBottom: resolvedSpacing.lg,
-              fontWeight: "700",
-            }}
-          >
-            {taskTitle}
-          </Text>
 
           {/* Mode description */}
           <Text

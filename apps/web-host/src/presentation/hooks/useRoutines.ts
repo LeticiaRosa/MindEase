@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { SupabaseRoutineRepository } from "@/infrastructure/adapters/SupabaseRoutineRepository";
+import { routineRepository as repository } from "@/infrastructure/factories/repositories";
 import { CreateRoutine } from "@/application/useCases/CreateRoutine";
 import { UpdateRoutine } from "@/application/useCases/UpdateRoutine";
 import { DeleteRoutine } from "@/application/useCases/DeleteRoutine";
@@ -10,7 +10,6 @@ import { useToast } from "@repo/ui";
 
 // ─── Singletons ───────────────────────────────────────────────────────────────
 
-const repository = new SupabaseRoutineRepository();
 const createRoutine = new CreateRoutine(repository);
 const updateRoutine = new UpdateRoutine(repository);
 const deleteRoutine = new DeleteRoutine(repository);

@@ -9,19 +9,13 @@ import {
 import { useAuth } from "@/presentation/hooks/useAuth";
 import type { OnboardingState } from "@/domain/entities/OnboardingState";
 import { DEFAULT_ONBOARDING_STATE } from "@/domain/entities/OnboardingState";
-import { OnboardingAsyncStorageAdapter } from "@/infrastructure/adapters/OnboardingAsyncStorageAdapter";
-import { SupabaseUserCognitivePreferencesRepository } from "@/infrastructure/adapters/SupabaseUserCognitivePreferencesRepository";
+import { HybridOnboardingRepository } from "@/infrastructure/adapters/HybridOnboardingRepository";
 import { GetOnboardingState } from "@/application/useCases/GetOnboardingState";
 import { StartOnboarding } from "@/application/useCases/StartOnboarding";
 import { AdvanceOnboardingStep } from "@/application/useCases/AdvanceOnboardingStep";
 import { CompleteOnboarding } from "@/application/useCases/CompleteOnboarding";
 import { SkipOnboarding } from "@/application/useCases/SkipOnboarding";
 import { ResetOnboarding } from "@/application/useCases/ResetOnboarding";
-import type { IOnboardingStateRepository } from "@/domain/interfaces/IOnboardingStateRepository";
-import { mapSupabaseError } from "@/infrastructure/errors/mapSupabaseError";
-
-const ENABLE_REMOTE_SYNC =
-  process.env.EXPO_PUBLIC_ENABLE_REMOTE_PREFERENCES_SYNC !== "false";
 
 interface OnboardingContextValue {
   state: OnboardingState;
@@ -32,65 +26,6 @@ interface OnboardingContextValue {
   complete: () => Promise<void>;
   skip: () => Promise<void>;
   reset: () => Promise<void>;
-}
-
-const localRepository = new OnboardingAsyncStorageAdapter();
-const remoteRepository = new SupabaseUserCognitivePreferencesRepository();
-
-class HybridOnboardingRepository implements IOnboardingStateRepository {
-  private readonly userId: string | null;
-
-  constructor(userId: string | null) {
-    this.userId = userId;
-  }
-
-  async load(): Promise<OnboardingState> {
-    const local = await localRepository.load();
-
-    if (!this.userId || !ENABLE_REMOTE_SYNC) {
-      return local;
-    }
-
-    try {
-      const remote = await remoteRepository.loadOnboardingState(this.userId);
-      if (!remote) {
-        await remoteRepository.saveOnboardingState(this.userId, local);
-        return local;
-      }
-
-      await localRepository.save(remote);
-      return remote;
-    } catch (error) {
-      console.warn("[OnboardingContext] remote-load-failed", {
-        userId: this.userId,
-        reason: mapSupabaseError(error),
-        error,
-      });
-      return local;
-    }
-  }
-
-  async save(state: OnboardingState): Promise<void> {
-    await localRepository.save(state);
-
-    if (!this.userId || !ENABLE_REMOTE_SYNC) {
-      return;
-    }
-
-    try {
-      await remoteRepository.saveOnboardingState(this.userId, state);
-    } catch (error) {
-      console.warn("[OnboardingContext] remote-save-failed", {
-        userId: this.userId,
-        reason: mapSupabaseError(error),
-        error,
-      });
-    }
-  }
-
-  async clear(): Promise<void> {
-    await localRepository.clear();
-  }
 }
 
 const OnboardingContext = createContext<OnboardingContextValue | undefined>(

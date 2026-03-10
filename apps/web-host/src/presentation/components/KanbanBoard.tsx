@@ -17,7 +17,6 @@ import { TaskStatus as TS } from "@/domain/valueObjects/TaskStatus";
 import { KanbanColumn } from "@/presentation/components/KanbanColumn";
 import { TaskCard } from "@/presentation/components/TaskCard";
 import { useTaskKanban } from "@/presentation/hooks/useTaskKanban";
-import { useActivitySignals } from "@/presentation/contexts/ActivitySignalsContext";
 import { useActiveRoutine } from "@/presentation/hooks/useActiveRoutine";
 import { useThemePreferences } from "@/presentation/contexts/ThemePreferencesContext";
 
@@ -31,7 +30,7 @@ export function KanbanBoard() {
     tasksByStatus,
     createTask,
     updateTask,
-    reorderTasks,
+    moveTask,
     deleteTask,
     archiveTask,
   } = useTaskKanban(activeRoutineId ?? "");
@@ -39,7 +38,6 @@ export function KanbanBoard() {
   const [recentlyMovedTaskId, setRecentlyMovedTaskId] = useState<string | null>(
     null,
   );
-  const { recordTaskSwitch, setCurrentTask } = useActivitySignals();
   const { isReducedMotion } = useThemePreferences();
 
   const sensors = useSensors(
@@ -81,9 +79,6 @@ export function KanbanBoard() {
     let reordered: Task[];
 
     if (activeTask.status !== targetStatus) {
-      // Moving to a different column — record task switch signal
-      recordTaskSwitch();
-      setCurrentTask({ startedAt: Date.now(), isComplex: false });
       // append at end
       reordered = [
         ...columnTasks.filter((t) => t.id !== activeId),
@@ -109,7 +104,7 @@ export function KanbanBoard() {
       };
     });
 
-    reorderTasks(updates);
+    moveTask(updates);
   };
 
   if (isLoading) {

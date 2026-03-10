@@ -13,6 +13,7 @@ import { useFocusTimer } from "@/presentation/hooks/useFocusTimer";
 import { SmartChecklist } from "./SmartChecklist";
 import { useState } from "react";
 import { useThemePreferences } from "@/presentation/contexts/ThemePreferencesContext";
+import { useSmartChecklist } from "../hooks/useSmartChecklist";
 
 interface FocusTimerFocusProps {
   taskId: string;
@@ -40,6 +41,8 @@ export function FocusTimerFocus({
     stop,
   } = useFocusTimer(taskId);
   const { isReducedMotion } = useThemePreferences();
+  const { currentStep } = useSmartChecklist(taskId);
+
   const [open, setOpen] = useState(false);
   const shouldAnimateFocus = !isReducedMotion && isRunning;
 
@@ -76,7 +79,18 @@ export function FocusTimerFocus({
           <span>Sair do foco</span>
         </button>
       )}
-
+      {/* Task title (if provided) */}
+      {taskTitle && (
+        <p className="mt-2 text-2xl font-medium text-foreground text-center max-w-xs truncate">
+          {taskTitle}
+        </p>
+      )}
+      {/* Current step (if available) */}
+      {currentStep && currentStep.title && (
+        <p className="mt-2 text-lg font-medium text-foreground text-center max-w-xs truncate">
+          {currentStep.title}
+        </p>
+      )}
       {/* Circular progress ring + time */}
       <div
         className={cn(
@@ -135,12 +149,6 @@ export function FocusTimerFocus({
         </div>
       </div>
 
-      {/* Task title (if provided) */}
-      {taskTitle && (
-        <p className="mt-2 text-lg font-medium text-foreground text-center max-w-xs truncate">
-          {taskTitle}
-        </p>
-      )}
       {/* Contextual description */}
       <p className="mt-2 text-xs text-muted-foreground text-center max-w-xs leading-relaxed">
         {modeDescription}

@@ -13,11 +13,7 @@ import {
 } from "@/domain/entities/AlertPreferences";
 import { LoadAlertPreferences } from "@/application/useCases/LoadAlertPreferences";
 import { SaveAlertPreferences } from "@/application/useCases/SaveAlertPreferences";
-import { AlertPreferencesAsyncStorageAdapter } from "@/infrastructure/adapters/AlertPreferencesAsyncStorageAdapter";
-
-// ─── Singleton adapter ────────────────────────────────────────────────────────
-
-const repository = new AlertPreferencesAsyncStorageAdapter();
+import { alertPreferencesRepository as repository } from "@/infrastructure/factories/repositories";
 
 // ─── Context value ────────────────────────────────────────────────────────────
 

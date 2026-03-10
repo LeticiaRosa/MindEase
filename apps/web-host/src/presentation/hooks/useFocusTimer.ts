@@ -1,10 +1,8 @@
 import { useEffect } from "react";
 import { useToast } from "@repo/ui";
 import { useTimerContext } from "@/presentation/contexts/TimerContext";
-import { SupabaseTaskRepository } from "@/infrastructure/adapters/SupabaseTaskRepository";
+import { taskRepository as repository } from "@/infrastructure/factories/repositories";
 import { useQueryClient } from "@tanstack/react-query";
-
-const repository = new SupabaseTaskRepository();
 
 export function useFocusTimer(taskId: string) {
   const {
