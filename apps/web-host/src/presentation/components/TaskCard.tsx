@@ -233,7 +233,7 @@ export function TaskCard({
         )}
       </div>
       {/* Drag handle + title row */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 select-none">
         {/* Drag handle */}
         <span
           {...listeners}
@@ -250,7 +250,7 @@ export function TaskCard({
                 className="size-3 text-muted-foreground"
                 aria-hidden="true"
               />
-              <p className="flex-1 text-sm font-medium min-w-0 wrap-break-word">
+              <p className="flex-1 text-sm font-medium min-w-0 wrap-break-word select-none">
                 {task.title}
               </p>
             </div>
