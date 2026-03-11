@@ -2,7 +2,7 @@
 
 MindEase e uma plataforma para reduzir sobrecarga cognitiva no estudo e no trabalho, com foco em pessoas neurodivergentes (TDAH, TEA, dislexia e perfis com fadiga mental).
 
-<img width="1091" height="489" alt="image" src="https://github.com/user-attachments/assets/2f9ea63b-5981-4edf-9bd7-479052719dba" />
+[<img width="1091" height="489" alt="image" src="https://github.com/user-attachments/assets/2f9ea63b-5981-4edf-9bd7-479052719dba" />](https://mindease-com.netlify.app/)
 
 
 ## Problema Abordado
