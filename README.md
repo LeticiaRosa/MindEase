@@ -2,6 +2,9 @@
 
 MindEase e uma plataforma para reduzir sobrecarga cognitiva no estudo e no trabalho, com foco em pessoas neurodivergentes (TDAH, TEA, dislexia e perfis com fadiga mental).
 
+<img width="1091" height="489" alt="image" src="https://github.com/user-attachments/assets/2f9ea63b-5981-4edf-9bd7-479052719dba" />
+
+
 ## Problema Abordado
 
 Ferramentas digitais tradicionais costumam aumentar a carga cognitiva em vez de reduzir:
@@ -208,28 +211,16 @@ pnpm format
 
 ## Prints ou GIFs da Aplicacao
 
-Ainda nao ha capturas oficiais versionadas do produto no repositorio. Para fechar este requisito, adicione arquivos em `docs/media/` e atualize esta secao.
+[Web+Mobile](https://github.com/user-attachments/assets/bf58e684-34e0-4069-a86a-edca7a7c07e8)
 
-Sugestao minima:
+## Site
 
-- `docs/media/web-dashboard.png`
-- `docs/media/web-focus-mode.gif`
-- `docs/media/mobile-dashboard.png`
+[Clique aqui para ver o site](https://mindease-com.netlify.app/)
 
-Exemplo de como referenciar quando os arquivos forem adicionados:
+## Link do Video Técnico (arquitetura + criterios cognitivos + demo)
 
-```md
-![Dashboard Web](docs/media/web-dashboard.png)
-![Modo Foco (GIF)](docs/media/web-focus-mode.gif)
-![Dashboard Mobile](docs/media/mobile-dashboard.png)
-```
+[Clique aqui para ver o Video Técnico](https://drive.google.com/drive/u/0/folders/1L9Ns_-DpWCzIvruW7In-1Gv3LenIlPdY)
 
-## Link do Video
-
-Video tecnico (arquitetura + criterios cognitivos + demo):
-
-- Pendente de publicacao
-- Recomendacao: video de ate 15 minutos com secao de decisoes arquiteturais e secao de acessibilidade cognitiva
 
 ## Documentacao Complementar
 
