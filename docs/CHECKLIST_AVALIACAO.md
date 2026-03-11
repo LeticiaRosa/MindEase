@@ -545,12 +545,12 @@ O README cobre todos os pontos essenciais:
 | Mobile funcional real              | ➖       | ➖           | ✅           |
 | Coerência cognitiva Web/Mobile     | ✅       | ➖           | ✅           |
 | Acessibilidade estrutural          | ✅       | ✅           | ✅           |
-| Contraste validado                 | ✅       | ⚠️           | ✅           |
-| Testes relevantes                  | ✅       | ✅           | ⚠️           |
+| Contraste validado                 | ✅       | ✅           | ✅           |
+| Testes relevantes                  | ✅       | ✅           | ✅           |
 | CI/CD funcional                    | ✅       | ✅           | ✅           |
 | Padrões e lint                     | ✅       | ✅           | ✅           |
 | Repositório organizado             | ✅       | ✅           | ✅           |
-| README técnico completo            | ✅       | ✅           | ➖           |
+| README técnico completo            | ✅       | ✅           | ✅           |
 
 ---
 

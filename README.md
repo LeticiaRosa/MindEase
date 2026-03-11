@@ -1,6 +1,6 @@
 # MindEase
 
-MindEase é uma plataforma para reduzir sobrecarga cognitiva no estudo e no trabalho, com foco em pessoas neurodivergentes (TDAH, TEA, dislexia e perfis com fadiga mental).
+MindEase e uma plataforma para reduzir sobrecarga cognitiva no estudo e no trabalho, com foco em pessoas neurodivergentes (TDAH, TEA, dislexia e perfis com fadiga mental).
 
 ## Problema Abordado
 
@@ -12,14 +12,14 @@ Ferramentas digitais tradicionais costumam aumentar a carga cognitiva em vez de 
 - pouca personalizacao de foco, contraste, fonte e espacamento
 - feedback invasivo (modais ou interrupcoes frequentes)
 
-## Visão da Solução
+## Visao da Solucao
 
-MindEase combina dashboard cognitivo, autenticacao e organizacao de tarefas em um monorepo com Web + Mobile. A proposta é:
+MindEase combina dashboard cognitivo, autenticacao e organizacao de tarefas em um monorepo com Web + Mobile. A proposta e:
 
-- reduzir estimulos visuais e decisoriais
-- guiar o usuário com progressão controlada
-- manter consistência cognitiva entre plataformas
-- persistir preferências de acessibilidade e foco
+- reduzir estimulos visuais e decisorios
+- guiar o usuario com progressao controlada
+- manter consistencia cognitiva entre plataformas
+- persistir preferencias de acessibilidade e foco
 
 Principais entregas funcionais:
 
@@ -146,6 +146,7 @@ A documentacao arquitetural detalhada esta em `docs/ARCHITECTURE.md`.
 
 - mais arquivos, camadas e boilerplate para features pequenas
 - curva inicial maior para onboarding de novos contribuidores
+- risco de sobre-engenharia se fronteiras de dominio nao forem aplicadas com criterio
 
 **Mitigacao adotada:** priorizamos casos de uso e entidades apenas onde ha regra de negocio real; para fluxos simples, mantemos implementacoes enxutas para evitar complexidade acidental.
 
@@ -207,17 +208,31 @@ pnpm format
 
 ## Prints ou GIFs da Aplicacao
 
-https://github.com/user-attachments/assets/e2719c78-ff9f-4ca8-b839-43be1fc6f35b
+Ainda nao ha capturas oficiais versionadas do produto no repositorio. Para fechar este requisito, adicione arquivos em `docs/media/` e atualize esta secao.
 
-https://github.com/user-attachments/assets/e1b5eaa2-7781-4807-b452-88c53b90e117
+Sugestao minima:
 
+- `docs/media/web-dashboard.png`
+- `docs/media/web-focus-mode.gif`
+- `docs/media/mobile-dashboard.png`
 
+Exemplo de como referenciar quando os arquivos forem adicionados:
+
+```md
+![Dashboard Web](docs/media/web-dashboard.png)
+![Modo Foco (GIF)](docs/media/web-focus-mode.gif)
+![Dashboard Mobile](docs/media/mobile-dashboard.png)
+```
 
 ## Link do Video
 
 Video tecnico (arquitetura + criterios cognitivos + demo):
 
+- Pendente de publicacao
+- Recomendacao: video de ate 15 minutos com secao de decisoes arquiteturais e secao de acessibilidade cognitiva
+
 ## Documentacao Complementar
 
+- `AGENTS.md`: padroes e operacao do projeto
 - `docs/ARCHITECTURE.md`: visao de arquitetura Clean
 - `docs/CHECKLIST_AVALIACAO.md`: avaliacao objetiva dos requisitos
